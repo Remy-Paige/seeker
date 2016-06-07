@@ -1,0 +1,19 @@
+%h1 Listing user_tickets
+
+%table
+  %thead
+    %tr
+      %th
+      %th
+      %th
+
+  %tbody
+    - @user_tickets.each do |user_ticket|
+      %tr
+        %td= link_to 'Show', user_ticket
+        %td= link_to 'Edit', edit_user_ticket_path(user_ticket)
+        %td= link_to 'Destroy', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New User ticket', new_user_ticket_path

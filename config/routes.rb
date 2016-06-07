@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  root 'home#index'
+
+  resources :user_tickets
+
+  resources :users
+
+  resources :documents
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

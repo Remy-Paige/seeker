@@ -17,7 +17,7 @@ class DocumentsController < ApplicationController
     @document = Document.new
   end
 
-  # GET /documents/1/edit
+  # GET /documenfetch(:document, {})fetch(:document, {})ts/1/edit
   def edit
   end
 
@@ -25,9 +25,18 @@ class DocumentsController < ApplicationController
   # POST /documents.json
   def create
     @document = Document.new(document_params)
+    puts @document.inspect
+
+    # parse document synchronously
+    begin
+      @document = DocumentParserJob.new.perform(@document)
+    rescue OpenURI::HTTPError
+      # TODO check 404 and respond accordingly
+    end
+    puts @document.inspect
 
     respond_to do |format|
-      if @document.save
+      if true # @document.save
         format.html { redirect_to @document, notice: 'Document was successfully created.' }
         format.json { render :show, status: :created, location: @document }
       else
@@ -69,6 +78,6 @@ class DocumentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def document_params
-      params.fetch(:document, {})
+      params.require(:document).permit(:url, :country, :year, :cycle)
     end
 end

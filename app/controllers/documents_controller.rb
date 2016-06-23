@@ -25,12 +25,12 @@ class DocumentsController < ApplicationController
   # POST /documents.json
   def create
     @document = Document.new(document_params)
-    puts @document.inspect
 
     # parse document synchronously
     begin
       @document = DocumentParserJob.new.perform(@document)
-    rescue OpenURI::HTTPError
+    rescue OpenURI::HTTPError => e
+      puts e.inspect
       # TODO check 404 and respond accordingly
     end
     puts @document.inspect

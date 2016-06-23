@@ -18,5 +18,10 @@ gem 'devise'
 gem 'pundit'
 gem 'pry'
 gem 'searchkick'
-gem 'pdf-reader'
 gem 'sucker_punch', '~> 2.0'
+
+gem "pdftk"
+gem "docsplit"
+gem "glib2"
+gem "gdk_pixbuf2"
+gem "poppler"

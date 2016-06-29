@@ -9,6 +9,10 @@ class Document < ActiveRecord::Base
     "public/storage/#{self.url.gsub(/https?:\/\//, '')}"
   end
 
+  def url_text
+    self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
+  end
+
   private
 
   def set_url_local

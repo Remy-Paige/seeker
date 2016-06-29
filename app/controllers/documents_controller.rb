@@ -26,18 +26,16 @@ class DocumentsController < ApplicationController
   def create
     @document = Document.new(document_params)
 
-    # parse document synchronously
+    # parse document asynchronously
     begin
-      @document = DocumentParserJob.new.perform(@document)
+      DocumentParserJob.perform_async(@document)
     rescue OpenURI::HTTPError => e
-      puts e.inspect
       # TODO check 404 and respond accordingly
     end
-    puts @document.inspect
 
     respond_to do |format|
       if true # @document.save
-        format.html { redirect_to @document, notice: 'Document was successfully created.' }
+        format.html { redirect_to @document, notice: 'Document was successfully added to processing queue.' }
         format.json { render :show, status: :created, location: @document }
       else
         format.html { render :new }

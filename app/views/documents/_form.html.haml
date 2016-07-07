@@ -6,6 +6,10 @@
         - @document.errors.full_messages.each do |msg|
           %li= msg
   = f.input :url, placeholder: 'URL of document', label: false
+  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries
+  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types
+  = f.input :year, placeholder: 'Year', label: false
+  = f.input :cycle, placeholder: 'Cycle (1, 2, 3, ...)', label: false
 
   .actions
     = f.submit 'Save'

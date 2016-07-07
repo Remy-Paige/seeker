@@ -11,27 +11,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160622051604) do
+ActiveRecord::Schema.define(version: 20160707190909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "documents", force: :cascade do |t|
-    t.string   "url"
-    t.string   "country"
-    t.integer  "year"
-    t.integer  "cycle"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "url_local"
-  end
-
-  create_table "languages", force: :cascade do |t|
-    t.string   "country"
+  create_table "countries", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "documents", force: :cascade do |t|
+    t.string   "url"
+    t.integer  "country_id"
+    t.integer  "year"
+    t.integer  "cycle"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.string   "url_local"
+    t.boolean  "parsing_finished", default: false
+    t.integer  "document_type"
+  end
+
+  add_index "documents", ["country_id"], name: "index_documents_on_country_id", using: :btree
+
+  create_table "languages", force: :cascade do |t|
+    t.integer  "country_id"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "languages", ["country_id"], name: "index_languages_on_country_id", using: :btree
 
   create_table "sections", force: :cascade do |t|
     t.integer  "document_id"

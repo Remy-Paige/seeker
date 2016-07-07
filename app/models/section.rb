@@ -8,10 +8,10 @@ class Section < ActiveRecord::Base
     {
       content: content,
       section_name: section_name,
-      country: document.country,
+      country: document.country&.name,
       year: document.year,
       cycle: document.cycle,
-      language: language.name
+      language: language&.name
     }
   end
 end

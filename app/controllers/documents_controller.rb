@@ -15,6 +15,8 @@ class DocumentsController < ApplicationController
   # GET /documents/new
   def new
     @document = Document.new
+    @countries = Country.all
+    @document_types = Document::DOCUMENT_TYPES_ID
   end
 
   # GET /documenfetch(:document, {})fetch(:document, {})ts/1/edit
@@ -34,7 +36,7 @@ class DocumentsController < ApplicationController
     end
 
     respond_to do |format|
-      if true # @document.save
+      if @document.save
         format.html { redirect_to @document, notice: 'Document was successfully added to processing queue.' }
         format.json { render :show, status: :created, location: @document }
       else
@@ -76,6 +78,6 @@ class DocumentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def document_params
-      params.require(:document).permit(:url, :country, :year, :cycle)
+      params.require(:document).permit(:url, :country_id, :document_type, :year, :cycle)
     end
 end

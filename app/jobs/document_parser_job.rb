@@ -14,15 +14,20 @@ class DocumentParserJob
     Docsplit.extract_text(document.clean_url, output: dir, no_ocr: true)
 
     # check no ocr content
-    no_ocr_result = File.read(document.url_text)
+    no_ocr_result = File.read(document.url_text)[0...2000]
     alphabet_count = 0
     no_ocr_result.split('').each do |chr|
-      alphabet_count += 1 if chr =~ /[A-Za-z., \n\r]/
+      alphabet_count += 1 if chr =~ /[A-Za-z.,:; \n\r]/
     end
     alphabet_ratio = alphabet_count * 1.0 / no_ocr_result.length
 
     # ocr if gibberish suspected
-    Docsplit.extract_text(document.clean_url, output: dir, ocr: true) if alphabet_ratio < ACCEPTABLE_ALPHABET_RATIO
+    if alphabet_ratio < ACCEPTABLE_ALPHABET_RATIO
+      Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
+      ocred = File.read(document.url_text)
+      ocred.gsub!(/\?/, ' ')
+      File.write(document.url_text, ocred)
+    end
 
     document
   end

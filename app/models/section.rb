@@ -1,5 +1,5 @@
 class Section < ActiveRecord::Base
-  searchkick callbacks: :async
+  searchkick callbacks: :async, highlight: [:content]
 
   belongs_to :document
   belongs_to :language

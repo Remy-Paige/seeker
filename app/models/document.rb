@@ -1,6 +1,6 @@
 class Document < ActiveRecord::Base
 
-  has_many :sections
+  has_many :sections, dependent: :destroy
   belongs_to :country
 
   after_create :set_url_local

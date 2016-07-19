@@ -5,7 +5,10 @@ Rails.application.routes.draw do
 
   resources :users
 
-  resources :documents
+  resources :documents do
+    resources :sections
+    get 'edit_section_separation', on: :member
+  end
 
   get 'search' => 'documents#search'
 

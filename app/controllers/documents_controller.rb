@@ -4,7 +4,7 @@ class DocumentsController < ApplicationController
   # GET /documents
   # GET /documents.json
   def index
-    @documents = Document.all
+    @grouped_documents = Document.all.sort_by(&:country).group_by(&:country)
   end
 
   # GET /documents/1
@@ -21,6 +21,16 @@ class DocumentsController < ApplicationController
 
   # GET /documenfetch(:document, {})fetch(:document, {})ts/1/edit
   def edit
+  end
+
+  def edit_section_separation
+    @document = Document.find(params[:id])
+    @sections =
+      @document.sections.group_by(&:section_number).map do |section_number, sections|
+        section_name = sections.first.section_name
+        content = sections.sort_by(&:section_part).map(&:content).join
+        Section.new(section_number: section_number, section_name: section_name, content: content)
+      end
   end
 
   # POST /documents

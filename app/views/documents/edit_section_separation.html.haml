@@ -1,0 +1,21 @@
+%h1 Editing document's sections
+
+%table{ border: 1 }
+  %thead
+    %tr
+      %th Section Number
+      %th Section Name
+      %th Content
+  = form_tag update_section_separation_document_path, method: :post do
+    - @sections.each do |section|
+      %tr
+        %td
+          = text_field_tag :section_number, section.section_number
+        %td
+          = text_field_tag :section_name, section.section_name
+        %td
+          = text_area_tag :content, section.content
+
+= link_to 'Add New Section', documents_path
+
+= link_to 'Back', documents_path

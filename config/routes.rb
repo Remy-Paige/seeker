@@ -7,7 +7,10 @@ Rails.application.routes.draw do
 
   resources :documents do
     resources :sections
-    get 'edit_section_separation', on: :member
+    member do
+      get 'edit_section_separation'
+      post 'update_section_separation'
+    end
   end
 
   get 'search' => 'documents#search'

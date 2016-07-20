@@ -1,7 +1,5 @@
 %h1 Listing documents
 
-- grouped_documents = @documents.group_by(&:country)
-
 %table{ border: 1 }
   %thead
     %tr
@@ -13,7 +11,7 @@
       %th Actions
 
   %tbody
-    - grouped_documents.each do |country, documents|
+    - @grouped_documents.each do |country, documents|
       - country_row = true
       - documents.sort_by{ |doc| [doc.document_type, doc.cycle, doc.year] }.each do |document|
         %tr

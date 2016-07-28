@@ -30,7 +30,7 @@ class DocumentsController < ApplicationController
         section_name = sections.first.section_name
         content = sections.sort_by(&:section_part).map(&:content).join
         Section.new(section_number: section_number, section_name: section_name, content: content)
-      end
+      end.sort_by(&:section_number)
   end
 
   # POST /documents

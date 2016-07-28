@@ -25,4 +25,8 @@ class Section < ActiveRecord::Base
       self.create(section_number: section_number, section_name: section_name, content: content[section_start...section_end], section_part: section_part)
     end
   end
+
+  def full_content?
+    self.section_number == '-' && self.section_name == 'Full Content'
+  end
 end

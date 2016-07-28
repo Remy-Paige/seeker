@@ -1,21 +1,22 @@
 %h1 Editing document's sections
 
-%table{ border: 1 }
-  %thead
+= form_tag update_section_separation_document_path, method: :post do
+  %table#section_table{ border: 1 }
     %tr
       %th Section Number
       %th Section Name
-      %th Content
-  = form_tag update_section_separation_document_path, method: :post do
+      %th{ colspan: 2 } Content
     - @sections.each do |section|
       %tr
         %td
-          = text_field_tag :section_number, section.section_number
+          = text_field_tag 'section_number[]', section.section_number, size: 8, readonly: section.full_content?
         %td
-          = text_field_tag :section_name, section.section_name
+          = text_field_tag 'section_name[]', section.section_name, size: 40, readonly: section.full_content?
         %td
-          = text_area_tag :content, section.content
+          = text_area_tag 'content[]', section.content, rows: 10, cols: 100, readonly: section.full_content?
+        %td
+          = link_to 'Delete Section', '#', class: 'delete_section', data: { confirm: 'Are you sure? All unsaved changes will be lost' }
 
-= link_to 'Add New Section', documents_path
-
-= link_to 'Back', documents_path
+  %div= submit_tag 'Save sections'
+  %div= link_to 'Add New Section', '#', id: 'add_section'
+  %div= link_to 'Cancel Editing', documents_path, data: { confirm: 'Are you sure? All unsaved changes will be lost' }

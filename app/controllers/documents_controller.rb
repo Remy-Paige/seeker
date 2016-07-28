@@ -36,7 +36,7 @@ class DocumentsController < ApplicationController
   # POST /documents
   # POST /documents.json
   def create
-    @document = Document.new(document_params)
+    @document = Document.create(document_params)
 
     # parse document asynchronously
     begin

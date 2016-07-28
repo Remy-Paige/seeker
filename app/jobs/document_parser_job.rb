@@ -1,5 +1,3 @@
-require 'open-uri'
-
 class DocumentParserJob
   include SuckerPunch::Job
 
@@ -7,9 +5,6 @@ class DocumentParserJob
 
   def perform(document)
     dir = document.clean_url.split('/')[0...-1].join('/')
-    FileUtils.mkdir_p(dir)
-    IO.copy_stream(open(document.url), document.clean_url)
-
     puts 'ocr-ing...'
     Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
     content = File.read(document.url_text)

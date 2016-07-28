@@ -22,11 +22,15 @@
           %td= Document::DOCUMENT_TYPES[document.document_type]
           %td= document.cycle
           %td= document.year
-          %td= document.parsing_finished ? 'Completed' : 'In Progress'
+          - if document.parsing_finished
+            %td{ bgcolor: 'green' }= 'Completed'
+          - else
+            %td{ bgcolor: 'red' }= 'In Progress'
           %td= link_to 'Original document', document.url, target: '_blank'
           %td
-            = link_to 'Edit Sections', edit_section_separation_document_path(document)
             = link_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
+            - if document.parsing_finished
+              = link_to 'Edit Sections', edit_section_separation_document_path(document)
 
 %br
 

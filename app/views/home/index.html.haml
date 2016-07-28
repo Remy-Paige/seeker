@@ -3,3 +3,8 @@
 = form_tag search_path, method: :get do
   = text_field_tag :s
   = submit_tag 'Search documents'
+
+%br
+%br
+- unless user_signed_in?
+  = link_to 'Login', new_user_session_path

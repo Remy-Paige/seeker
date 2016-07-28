@@ -1,5 +1,6 @@
 class DocumentsController < ApplicationController
   before_action :set_document, only: [:show, :edit, :edit_section_separation, :update, :update_section_separation, :destroy]
+  before_action :authenticate_user!
 
   # GET /documents
   # GET /documents.json

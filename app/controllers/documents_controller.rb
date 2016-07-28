@@ -1,5 +1,5 @@
 class DocumentsController < ApplicationController
-  before_action :set_document, only: [:show, :edit, :update, :destroy]
+  before_action :set_document, only: [:show, :edit, :edit_section_separation, :update, :update_section_separation, :destroy]
 
   # GET /documents
   # GET /documents.json
@@ -24,7 +24,6 @@ class DocumentsController < ApplicationController
   end
 
   def edit_section_separation
-    @document = Document.find(params[:id])
     @sections =
       @document.sections.group_by(&:section_number).map do |section_number, sections|
         section_name = sections.first.section_name
@@ -68,6 +67,22 @@ class DocumentsController < ApplicationController
         format.json { render json: @document.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def update_section_separation
+    # destroy previous sections
+    @document.sections.map(&:destroy)
+
+    # create new sections
+    params[:section_number].count.times do |idx|
+      @document.sections.add_section(
+        section_number: params[:section_number][idx],
+        section_name: params[:section_name][idx],
+        content: params[:content][idx]
+      )
+    end
+
+    redirect_to documents_path, notice: 'Sections Updated!'
   end
 
   # DELETE /documents/1

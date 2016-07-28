@@ -12,7 +12,7 @@ $ ->
     new_row += '<td><textarea name="content[]" rows="10" cols="100"/></td>'
     new_row += '<td><a href="#" class="delete_section" data-confirm="Are you sure? All unsaved changes will be lost">Delete Section</a></td>'
     new_row += '</tr>'
-    $('#section_table tbody').append(new_row)
+    $('#section_table').append(new_row)
     return
 
   $(document).on 'click', '.delete_section', (e) ->

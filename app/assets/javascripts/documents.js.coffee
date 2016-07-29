@@ -2,8 +2,9 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$ ->
-  $('#add_section').on 'click', (e) ->
+section_separation_table = ->
+  $(document).off 'click', '#add_section'
+  $(document).on 'click', '#add_section', (e) ->
     e.preventDefault()
     e.stopPropagation()
     new_row = '<tr>'
@@ -15,7 +16,11 @@ $ ->
     $('#section_table').append(new_row)
     return
 
+  $(document).off 'click', '.delete_section'
   $(document).on 'click', '.delete_section', (e) ->
     e.preventDefault()
     e.stopPropagation()
     $(this).closest('tr').remove()
+
+$(document).on "page:change", ->
+  section_separation_table()

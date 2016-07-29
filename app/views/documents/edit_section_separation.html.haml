@@ -15,7 +15,8 @@
         %td
           = text_area_tag 'content[]', section.content, rows: 10, cols: 100, readonly: section.full_content?
         %td
-          = link_to 'Delete Section', '#', class: 'delete_section', data: { confirm: 'Are you sure? All unsaved changes will be lost' }
+          - unless section.full_content?
+            = link_to 'Delete Section', '#', class: 'delete_section', data: { confirm: 'Are you sure? All unsaved changes will be lost' }
 
   %div= submit_tag 'Save sections'
   %div= link_to 'Add New Section', '#', id: 'add_section'

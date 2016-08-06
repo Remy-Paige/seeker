@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160728193238) do
+ActiveRecord::Schema.define(version: 20160806193102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,14 @@ ActiveRecord::Schema.define(version: 20160728193238) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "countries_languages", id: false, force: :cascade do |t|
+    t.integer "country_id"
+    t.integer "language_id"
+  end
+
+  add_index "countries_languages", ["country_id"], name: "index_countries_languages_on_country_id", using: :btree
+  add_index "countries_languages", ["language_id"], name: "index_countries_languages_on_language_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string   "url"
@@ -37,13 +45,10 @@ ActiveRecord::Schema.define(version: 20160728193238) do
   add_index "documents", ["country_id"], name: "index_documents_on_country_id", using: :btree
 
   create_table "languages", force: :cascade do |t|
-    t.integer  "country_id"
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
-
-  add_index "languages", ["country_id"], name: "index_languages_on_country_id", using: :btree
 
   create_table "sections", force: :cascade do |t|
     t.integer  "document_id"

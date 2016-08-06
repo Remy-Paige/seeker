@@ -11,6 +11,9 @@ section_separation_table = ->
     new_row += '<td><input type="text" name="section_number[]" size="8"/></td>'
     new_row += '<td><input type="text" name="section_name[]" size="40"/></td>'
     new_row += '<td><textarea name="content[]" rows="10" cols="100"/></td>'
+    new_row += '<td>'
+    new_row += $('.language_list').html()
+    new_row += '</td>'
     new_row += '<td><a href="#" class="delete_section" data-confirm="Are you sure? All unsaved changes will be lost">Delete Section</a></td>'
     new_row += '</tr>'
     $('#section_table').append(new_row)

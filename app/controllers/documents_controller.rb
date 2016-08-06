@@ -25,11 +25,13 @@ class DocumentsController < ApplicationController
   end
 
   def edit_section_separation
+    @languages = @document.country.languages
     @sections =
       @document.sections.group_by(&:section_number).map do |section_number, sections|
         section_name = sections.first.section_name
+        language_id = sections.first.language_id
         content = sections.sort_by(&:section_part).map(&:content).join
-        Section.new(section_number: section_number, section_name: section_name, content: content)
+        Section.new(section_number: section_number, section_name: section_name, content: content, language_id: language_id)
       end.sort_by(&:section_number)
   end
 
@@ -79,7 +81,8 @@ class DocumentsController < ApplicationController
       @document.sections.add_section(
         section_number: params[:section_number][idx],
         section_name: params[:section_name][idx],
-        content: params[:content][idx]
+        content: params[:content][idx],
+        language_id: params[:language][idx].presence
       )
     end
 

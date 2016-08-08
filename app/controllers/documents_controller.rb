@@ -1,6 +1,6 @@
 class DocumentsController < ApplicationController
   before_action :set_document, only: [:show, :edit, :edit_section_separation, :update, :update_section_separation, :destroy]
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: :search
 
   # GET /documents
   # GET /documents.json
@@ -100,8 +100,20 @@ class DocumentsController < ApplicationController
   end
 
   def search
-    @search_result = Section.search(params[:s], fields: [:content], highlight: { tag: "<strong>" })
-    render :search_result
+    if params[:q].present?
+      @search_result = Section.search(params[:q], fields: [:content], highlight: { tag: "<strong>" })
+      render :search_result
+    else
+      @available_queries = [
+        'Section Number',
+        'Section Name',
+        'Country',
+        'Language',
+        'Year',
+        'Cycle'
+      ]
+      render 'home/index'
+    end
   end
 
   private

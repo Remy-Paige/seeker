@@ -12,6 +12,7 @@ class Section < ActiveRecord::Base
   def search_data
     {
       content: content,
+      section_number: section_number,
       section_name: section_name,
       country: document.country&.name,
       year: document.year,

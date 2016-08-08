@@ -1,8 +1,0 @@
-- @search_result.with_details.each do |section, details|
-  = section.section_name
-  %br
-  = details[:highlight][:content].html_safe
-  %br
-  = link_to 'Original document', section.document.url, target: '_blank'
-  %br
-  %br

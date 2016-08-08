@@ -100,17 +100,44 @@ class DocumentsController < ApplicationController
   end
 
   def search
-    if params[:q].present?
-      @search_result = Section.search(params[:q], fields: [:content], highlight: { tag: "<strong>" })
-      render :search_result
+    if params[:q].present? || params[:keyword]&.any?(&:present?)
+      numeric_queries = [:year, :cycle]
+      query = params[:keyword]&.each_with_index&.map do |keyword, idx|
+        if keyword.present?
+          field = params[:query][idx].parameterize.underscore.to_sym
+          next unless numeric_queries.include?(field)
+          [field, keyword]
+        end
+      end&.compact&.to_h
+
+      highlight = { tag: "<strong>" }
+      @search_results =
+        Section.search(params[:q].presence || '*', fields: [:content], where: query, highlight: highlight).with_details
+      params[:query]&.each_with_index do |query, idx|
+        if (keyword = params[:keyword][idx]).present?
+          field = query.parameterize.underscore.to_sym
+          next if numeric_queries.include?(field)
+          options = {
+            fields: [field],
+            highlight: highlight,
+            misspellings: {
+              below: 10
+            }
+          }
+          options.merge!(match: :word_start, misspellings: false) if field == :section_number
+          @search_results.intersect_nested_search_result!(Section.search(keyword, options).with_details)
+        end
+      end
+      @search_results = @search_results.paginate(page: params[:page], per_page: 10)
+      render :search_results
     else
       @available_queries = [
         'Section Number',
         'Section Name',
         'Country',
-        'Language',
         'Year',
-        'Cycle'
+        'Cycle',
+        'Language'
       ]
       render 'home/index'
     end

@@ -16,5 +16,7 @@
   %br
   - if user_signed_in?
     = link_to 'Manage Documents', documents_path
+    %br
+    = link_to 'Manage Administrators', users_path
   - else
     = link_to 'Login', new_user_session_path

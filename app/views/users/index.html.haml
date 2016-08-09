@@ -4,16 +4,12 @@
   %thead
     %tr
       %th Email
-      %th Name
-      %th Role
       %th Actions
 
   %tbody
     - @users.each do |user|
       %tr
         %td= user.email
-        %td= user.name
-        %td= user.role
         %td
           = link_to 'Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
 

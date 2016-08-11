@@ -1,7 +1,7 @@
 %center
   %h1 Welcome to the Seeker Project
   %br
-  = form_tag search_path, method: :get do
+  = form_tag search_path, method: :get, target: '_blank' do
     - @available_queries.each do |query|
       = hidden_field_tag 'available_queries', query, class: 'available_queries', disabled: true
     %table#search_form{ style: "width: 20%" }

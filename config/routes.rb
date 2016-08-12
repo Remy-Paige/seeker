@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   resources :users
 
-  resources :documents do
+  resources :documents, except: [:show] do
     resources :sections
     member do
       get 'edit_section_separation'

@@ -25,3 +25,16 @@ gem "docsplit"
 gem "glib2"
 gem "gdk_pixbuf2"
 gem "poppler"
+
+group :development, :test do
+  gem 'rspec-rails', '~> 3.4'
+  gem 'factory_girl_rails'
+  gem 'capybara'
+  gem 'guard-rspec'
+  gem 'spring-commands-rspec'
+  gem 'vcr'
+end
+
+group :test do
+  gem 'webmock'
+end

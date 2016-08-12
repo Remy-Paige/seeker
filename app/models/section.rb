@@ -6,6 +6,10 @@ class Section < ActiveRecord::Base
 
   default_scope { order('section_number ASC') }
 
+  validates :section_number, presence: true
+  validates :section_name, presence: true
+  validates :content, presence: true
+
   # elasticsearch string length limit is 32766, take caution
   STRING_LEN_LIMIT = 30_000
 

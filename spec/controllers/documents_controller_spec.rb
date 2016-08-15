@@ -104,7 +104,7 @@ RSpec.describe DocumentsController, type: :controller do
 
       it 'redirects to the created document' do
         post :create, document: valid_attributes
-        expect(response).to redirect_to(Document.last)
+        expect(response).to redirect_to(documents_path)
       end
     end
 

@@ -49,7 +49,7 @@ class DocumentsController < ApplicationController
 
     respond_to do |format|
       if @document.save
-        format.html { redirect_to @document, notice: 'Document was successfully added to processing queue.' }
+        format.html { redirect_to :documents, notice: 'Document was successfully added to processing queue.' }
         format.json { render :show, status: :created, location: @document }
       else
         format.html { render :new }

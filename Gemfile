@@ -35,6 +35,14 @@ group :development, :test do
   gem 'vcr'
 end
 
+group :development do
+  gem 'capistrano'
+  gem 'capistrano-rails'
+  gem 'capistrano-passenger'
+  gem 'capistrano-bundler'
+  gem 'capistrano-rvm'
+end
+
 group :test do
   gem 'webmock'
 end

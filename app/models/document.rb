@@ -44,5 +44,6 @@ class Document < ActiveRecord::Base
     return if Rails.env.test?
     FileUtils.rm(self.url_local)
     FileUtils.rm(self.url_text)
+  rescue
   end
 end

@@ -21,7 +21,8 @@ class Section < ActiveRecord::Base
       country: document.country&.name,
       year: document.year,
       cycle: document.cycle,
-      language: language&.name
+      language: language&.name,
+      full_content: full_content?
     }
   end
 

@@ -111,8 +111,9 @@ class DocumentsController < ApplicationController
       end&.compact&.to_h
 
       highlight = { tag: "<strong>" }
+      boost_where = { full_content: false }
       @search_results =
-        Section.search(params[:q].presence || '*', fields: [:content], where: query, highlight: highlight).with_details
+        Section.search(params[:q].presence || '*', fields: [:content], where: query, highlight: highlight.merge({ fields: { content: { type: 'plain', fragment_size: (params[:q].presence&.length || 100) } } }), boost_where: boost_where).with_details
       params[:query]&.each_with_index do |query, idx|
         if (keyword = params[:keyword][idx]).present?
           field = query.parameterize.underscore.to_sym
@@ -120,6 +121,7 @@ class DocumentsController < ApplicationController
           options = {
             fields: [field],
             highlight: highlight,
+            boost_where: boost_where,
             misspellings: {
               below: 10
             }

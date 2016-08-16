@@ -1,5 +1,4 @@
 %h1 Listing documents
-
 %table{ border: 1 }
   %thead
     %tr
@@ -7,10 +6,14 @@
       %th Type
       %th Cycle
       %th Year
-      %th Parsing Status
+      %th
+        - if user_signed_in?
+          Parsing Status
+        - else
+          Index status
       %th Original Document
-      %th Actions
-
+      - if user_signed_in?
+        %th Actions
   %tbody
     - @grouped_documents.each do |country, documents|
       - country_row = true
@@ -23,15 +26,14 @@
           %td= document.cycle
           %td= document.year
           - if document.parsing_finished
-            %td{ bgcolor: 'green' }= 'Completed'
+            %td{ bgcolor: 'green' }= user_signed_in? ? 'Completed' : 'Ready'
           - else
-            %td{ bgcolor: 'red' }= 'In Progress'
+            %td{ bgcolor: 'red' }= user_signed_in? ? 'In Progress' : 'Not indexed yet'
           %td= link_to 'Original document', document.url, target: '_blank'
-          %td
-            = link_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
-            - if document.parsing_finished
-              = link_to 'Edit Sections', edit_section_separation_document_path(document)
-
+          - if user_signed_in?
+            %td
+              = link_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
+              - if document.parsing_finished
+                = link_to 'Edit Sections', edit_section_separation_document_path(document)
 %br
-
-= link_to 'New Document', new_document_path
+= link_to 'New Document', new_document_path if user_signed_in?

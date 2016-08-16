@@ -44,10 +44,10 @@ RSpec.describe DocumentsController, type: :controller do
   }
 
   describe 'GET #index' do
-    it 'redirects non logged-in users to login page' do
+    it 'allows non logged-in users to see all documents' do
       login_with nil
       get :index
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to render_template(:index)
     end
 
     it 'lets logged-in users to see all documents' do

@@ -14,9 +14,9 @@
     = submit_tag 'Search documents'
 
   %br
+  = link_to (user_signed_in? ? 'Manage Documents' : 'See list of indexed documents'), documents_path
+  %br
   - if user_signed_in?
-    = link_to 'Manage Documents', documents_path
-    %br
     = link_to 'Manage Administrators', users_path
   - else
     = link_to 'Login', new_user_session_path

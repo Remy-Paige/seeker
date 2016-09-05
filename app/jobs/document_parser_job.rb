@@ -4,14 +4,16 @@ class DocumentParserJob
   ACCEPTABLE_ALPHABET_RATIO = 0.9
 
   def perform(document)
+    @doc = document
+    @l = Logger.new("#{Rails.root}/log/parser.log")
     unless Rails.env.test?
       dir = document.clean_url.split('/')[0...-1].join('/')
-      puts 'ocr-ing...'
+      write_to_log('ocr-ing...')
       Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
       content = File.read(document.url_text)
       content.gsub!(/\?/, ' ')
       File.write(document.url_text, content)
-      puts 'ocr done...'
+      write_to_log('ocr done...')
 
       # fix new lines after numbering
       content.gsub!(/^((\d|\w)\.)+[\n\r]+/mi, '\1 ')
@@ -55,11 +57,14 @@ class DocumentParserJob
       begin
         document.sections.add_section(section_number: '-', section_name: 'Full Content', content: content)
       rescue Searchkick::ImportError
-        puts "too long, not indexed"
+        write_to_log("too long, not indexed")
       end
     end
 
+    write_to_log('parsing finished')
     document.finish_parsing!
+  rescue StandardError => e
+    write_to_log(e.message + "\n" + e.backtrace)
   end
 
   def save_section(document, prev_section_number, prev_section_name, prev_content)
@@ -68,6 +73,11 @@ class DocumentParserJob
     content_exists &&= prev_content.present?
     content_exists && document.sections.add_section(section_number: prev_section_number, section_name: prev_section_name, content: prev_content)
   rescue Searchkick::ImportError
-    puts "too long, not indexed"
+    write_to_log("too long, not indexed")
+  end
+
+  def write_to_log(message)
+    @l.info(@doc.inspect)
+    @l.info(message)
   end
 end

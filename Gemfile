@@ -14,6 +14,7 @@ gem 'spring', group: :development
 gem 'haml-rails'
 gem 'will_paginate', '~> 3.0.6'
 gem 'simple_form'
+gem 'bootstrap-sass'
 gem 'devise'
 gem 'pundit'
 gem 'pry'

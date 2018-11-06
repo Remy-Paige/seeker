@@ -4,8 +4,27 @@
     %title Seeker
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
+    = stylesheet_link_tag    'https://use.fontawesome.com/releases/v5.5.0/css/all.css', integrity:'sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU', crossorigin:'anonymous'
     = csrf_meta_tags
   %body
-    %p#notice= notice
-    %p#alert= alert
-    = yield
+    %header{:class => "navbar navbar-fixed-top navbar-inverse", :id => "navbar"}
+      %div{:class => "container"}
+        = link_to 'search', root_path, {:class => "navbar-brand"}
+        = link_to 'advanced search', advanced_path, {:class => "navbar-brand"}
+        %nav{:class => "navbar-right"}
+          - if user_signed_in?
+            = link_to 'Manage Documents', documents_path, {:class => "navbar-brand"}
+            = link_to 'Manage Administrators', users_path, {:class => "navbar-brand"}
+            -#TODO: get this pointing to a user account page
+            = link_to image_tag('icon.png', :alt => "brand"), root_path, {:class => "navbar-brand"}
+          - else
+            = link_to 'indexed documents', documents_path, {:class => "navbar-brand"}
+            = link_to 'Login', new_user_session_path, {:class => "btn btn-default navbar-btn"}
+
+
+
+
+    %div{:class => "grid"}
+      %p#notice= notice
+      %p#alert= alert
+      = yield

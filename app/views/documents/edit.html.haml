@@ -1,7 +1,8 @@
-%h1 Editing document
+%div{:class => "form"}
+    %h1 Editing document
 
-= render 'form'
+    = render 'form'
 
-= link_to 'Show', @document
-\|
-= link_to 'Back', documents_path
+    = link_to 'Show', @document
+    \|
+    = link_to 'Back', documents_path

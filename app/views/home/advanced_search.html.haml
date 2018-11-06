@@ -1,0 +1,37 @@
+%div{:class => "box form"}
+  %h1{:class => "main_title"} Advanced Search
+  %br
+  = form_tag search_path, method: :get, target: '_blank' do
+    = hidden_field_tag numeric_filters = ['all','only','less than','greater than','between'], class: 'numeric_filters', disabled: true
+    = hidden_field_tag queries = %w['Country','Language','Text'], class: 'queries', disabled: true
+    = hidden_field_tag logical_filters = ['Only','Not','At least one of'], class: 'logical_filters', disabled: true
+
+    %div{:class => "sub_grid"}
+      %div{:class => "box caption"} Section Number:
+      %div{:class => "box select"}
+        %select{id:'filter_section'}
+          - numeric_filters.each do |query|
+            %option{:value => query}= query
+      %div{:class => "box field", id:'field_section'}
+      %i{:class => "question_icon fas fa-question-circle black", :title => "Filter based on a numerical value. For example, if you input greater than: 4.5, you will see sections numbered greater than 4.5", :id => 'ignore'}
+      %div{:class => "box caption"} Year:
+      %div{:class => "box select"}
+        %select{id:'filter_year'}
+          - numeric_filters.each do |query|
+            %option{:value => query}= query
+      %div{:class => "box field", id:'field_year'}
+      %i{:class => "question_icon fas fa-question-circle black", :title => "Filter based on a numerical value. For example, if you input between: 2005-2010, you will see sections from documents that were released between and including 2005 and 2010", :id => 'ignore'}
+      %div{:class => "box caption"} Cycle:
+      %div{:class => "box select"}
+        %select{id:'filter_cycle'}
+          - numeric_filters.each do |query|
+            %option{:value => query}= query
+      %div{:class => "box field", id:'field_cycle'}
+      %i{:class => "question_icon fas fa-question-circle black", :title => "Filter based on a numerical value. For example, if you input only: 3, you will see sections from documents that were only released in the 3rd cycle", :id => 'ignore'}
+    %br
+
+    %div{:class => "sub_grid2"}
+      %div{:class => "add"}
+        = link_to 'Add more filters', '#', id: 'add_search', :class => "btn btn-default"
+      %div{:class => "search"}
+        = submit_tag 'Search documents', :class => "search_button btn btn-success"

@@ -1,13 +1,17 @@
 Rails.application.routes.draw do
   devise_for :users, skip: [:registrations]
+  #removes self registration for users
 
   root 'home#index'
+  ###=> documents#search
 
   resources :user_tickets
 
   resources :users
 
+  #where the magic happens
   resources :documents, except: [:show] do
+    #this code points to sections, a subclass of documents and adds the extra routes to the resource generation
     resources :sections
     member do
       get 'edit_section_separation'
@@ -16,6 +20,7 @@ Rails.application.routes.draw do
   end
 
   get 'search' => 'documents#search'
+  get 'advanced' => 'documents#advanced_search'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

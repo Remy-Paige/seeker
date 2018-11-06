@@ -1,24 +1,26 @@
-- if @search_results.blank?
-  = "There's no results matching your query."
-  %br
-  = link_to 'Please check whether the documents possibly containing your query are already indexed in the system.', documents_path
-  %br
-  = "Contact the administrator if you believe there is a problem."
-- else
-  %table{ border: 1 }
-    - @search_results.each do |section, details|
-      %tr
-        %td= details[:highlight][:section_number]&.html_safe || section.section_number
-        %td{ colspan: 4 }= details[:highlight][:section_name]&.html_safe || section.section_name
-        %td= link_to 'Original', section.document.url, target: '_blank'
-      %tr
-        %td{ colspan: 5, rowspan: 4 }= details[:highlight][:content]&.html_safe || '<i>No search query was given...</i>'.html_safe
-        %td= details[:highlight][:country]&.html_safe || section.document.country
-      %tr
-        %td= Document::DOCUMENT_TYPES[section.document.document_type]
-      %tr
-        %td= details[:highlight][:year]&.html_safe || section.document.year
-      %tr
-        %td= (details[:highlight][:cycle]&.html_safe || section.document.cycle).ordinalize + ' cycle'
+%div{:class => "full"}
+  %center
+    - if @search_results.blank?
+      = "There's no results matching your query."
+      %br
+      = link_to 'Please check whether the documents possibly containing your query are already indexed in the system.', documents_path
+      %br
+      = "Contact the administrator if you believe there is a problem."
+    - else
+      %table{ border: 1 }
+        - @search_results.each do |section, details|
+          %tr
+            %td= details[:highlight][:section_number]&.html_safe || section.section_number
+            %td{ colspan: 4 }= details[:highlight][:section_name]&.html_safe || section.section_name
+            %td= link_to 'Original', section.document.url, target: '_blank'
+          %tr
+            %td{ colspan: 5, rowspan: 4 }= details[:highlight][:content]&.html_safe || '<i>No search query was given...</i>'.html_safe
+            %td= details[:highlight][:country]&.html_safe || section.document.country
+          %tr
+            %td= Document::DOCUMENT_TYPES[section.document.document_type]
+          %tr
+            %td= details[:highlight][:year]&.html_safe || section.document.year
+          %tr
+            %td= (details[:highlight][:cycle]&.html_safe || section.document.cycle).ordinalize + ' cycle'
 
-  = will_paginate(@search_results)
+      = will_paginate(@search_results)

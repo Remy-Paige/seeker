@@ -18,11 +18,16 @@ class Document < ActiveRecord::Base
   validates :cycle, presence: true, numericality: true
 
   # url_local substitution before document is saved
+  # Returns a copy of str with the all occurrences of pattern substituted for the second argument
   def clean_url
     "public/storage/#{self.url.gsub(/https?:\/\//, '')}"
+    #TODO: add check here for if the url has .pdf at the end - test if adding it changes the parsing behaviour
   end
 
   def url_text
+    # & lets you call methods on objects without worrying that the object may be nil
+    # $ matches the position before newline - to make sure you get the end of the string
+    # this function /assumes/ that .pdf is present at the end of files but this is no longer true for some reason
     self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
   end
 

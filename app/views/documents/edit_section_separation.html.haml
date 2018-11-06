@@ -1,27 +1,28 @@
-%h1 Editing document's sections
+%div{:class => "form"}
+  %h1 Editing document's sections
 
-= form_tag update_section_separation_document_path, method: :post do
-  %table#section_table
-    %tr
-      %th Section Number
-      %th Section Name
-      %th Content
-      %th Language Covered
-      %th Options
-    - @sections.each do |section|
+  = form_tag update_section_separation_document_path, method: :post do
+    %table#section_table
       %tr
-        %td
-          = text_field_tag 'section_number[]', section.section_number, size: 8, readonly: section.full_content?
-        %td
-          = text_field_tag 'section_name[]', section.section_name, size: 40, readonly: section.full_content?
-        %td
-          = text_area_tag 'content[]', section.content, rows: 10, cols: 100, readonly: section.full_content?
-        %td{ class: 'language_list' }
-          = select_tag 'language[]', options_from_collection_for_select(@languages, :id, :name, section.language_id), include_blank: true
-        %td
-          - unless section.full_content?
-            = link_to 'Delete Section', '#', class: 'delete_section', data: { confirm: 'Are you sure? All unsaved changes will be lost' }
+        %th Section Number
+        %th Section Name
+        %th Content
+        %th Language Covered
+        %th Options
+      - @sections.each do |section|
+        %tr
+          %td
+            = text_field_tag 'section_number[]', section.section_number, size: 8, readonly: section.full_content?
+          %td
+            = text_field_tag 'section_name[]', section.section_name, size: 40, readonly: section.full_content?
+          %td
+            = text_area_tag 'content[]', section.content, rows: 10, cols: 100, readonly: section.full_content?
+          %td{ class: 'language_list' }
+            = select_tag 'language[]', options_from_collection_for_select(@languages, :id, :name, section.language_id), include_blank: true
+          %td
+            - unless section.full_content?
+              = link_to 'Delete Section', '#', class: 'delete_section', data: { confirm: 'Are you sure? All unsaved changes will be lost' }
 
-  %div= submit_tag 'Save sections'
-  %div= link_to 'Add New Section', '#', id: 'add_section'
-  %div= link_to 'Cancel Editing', documents_path, data: { confirm: 'Are you sure? All unsaved changes will be lost' }
+    %div= submit_tag 'Save sections'
+    %div= link_to 'Add New Section', '#', id: 'add_section'
+    %div= link_to 'Cancel Editing', documents_path, data: { confirm: 'Are you sure? All unsaved changes will be lost' }

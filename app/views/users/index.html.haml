@@ -1,18 +1,19 @@
-%h1 Listing users
+%div{:class => "full"}
+  %h1 Listing users
 
-%table{ border: 1 }
-  %thead
-    %tr
-      %th Email
-      %th Actions
-
-  %tbody
-    - @users.each do |user|
+  %table{ border: 1 }
+    %thead
       %tr
-        %td= user.email
-        %td
-          = link_to 'Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
+        %th Email
+        %th Actions
 
-%br
+    %tbody
+      - @users.each do |user|
+        %tr
+          %td= user.email
+          %td
+            = link_to 'Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
 
-= link_to 'New User', new_user_path
+  %br
+
+  = link_to 'New User', new_user_path

@@ -1,0 +1,182 @@
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+//The fixed navbar will overlay your other content, unless you add padding to the top of the <body>.
+// Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
+
+body {
+  padding-top: 60px;
+}
+
+//page parent
+//avoid using bootstrap 3's inbuilt stuff - grid is much better
+.grid {
+  //border: 2px blue solid;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+}
+//centre parent
+.form {
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  text-align: center;
+}
+.full {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  text-align: center;
+}
+.broken {
+  padding-bottom: 10px;
+}
+
+//form wide rules
+select {
+  //hacky hack
+  height:34px;
+}
+input, select{
+  box-sizing: border-box;
+}
+select{
+  //hackyhack
+  width: 140px;
+}
+.sub_grid {
+  //border: 2px blue solid;
+  display: grid;
+                            //hacky hack
+  grid-template-columns: 1fr 140px 200px 25px 25px 25px 1fr;
+}
+
+
+//div rules
+// remember to escape containing grid if you want it to be in a new column/row
+.caption {
+  grid-column-start: 1;
+  text-align: right;
+  font-size: large;
+  padding-top: 6px;
+  //guard against the boxes moving
+  padding-right: 10px;
+}
+.select {
+  grid-column-start: 2;
+  text-align: left;
+  padding-bottom: 10px;
+}
+.number {
+  width: 80px;
+}
+.field {
+  grid-column-start: 3;
+  text-align: left;
+  padding-left: 5px;
+}
+.question_icon {
+  grid-column-start: 6;
+  font-size: 25px;
+  padding-top: 5px;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  color: #434342;
+}
+
+
+//javascript added rules
+.added_caption {
+  grid-column-start: 1;
+  text-align: right;
+  font-size: large;
+  padding-right: 10px;
+}
+.added_field {
+  grid-column-start: 3;
+  text-align: right;
+  padding-left: 5px;
+}
+[data-number] {
+  padding-bottom: 5px;
+}
+.added_filter_icons {
+  grid-column-start: 4;
+}
+.filter_icon {
+  font-size: 25px;
+  padding-left: 5px;
+  text-align: left;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: #90908f;
+}
+.plus_icon {
+  font-size: 25px;
+  padding-left: 5px;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  color: #90908f;
+}
+.minus_filter_added_field {
+  font-size: 15px;
+  padding-left: 2px;
+  padding-right: 5px;
+  text-align: left;
+  padding-top: 10px;
+  padding-bottom: 9px;
+  color: #90908f;
+}
+
+
+//under buttons
+.sub_grid2 {
+  //border: 2px blue solid;
+  display: grid;
+  //hacky hack
+  grid-template-columns: 1fr 140px 200px 25px 25px 1fr;
+}
+
+.add {
+  grid-column-start: 1;
+}
+.search {
+  grid-row-start: 2;
+  grid-column-start: 3;
+}
+//style
+
+
+//debug
+.box {
+  //background-color: beige;
+  //color: black;
+  //border-radius: 1px;
+  //border: 2px #ff1629 solid;
+}
+
+
+
+.search_bar {
+  width: 100%;
+}
+
+
+
+section {
+  overflow: auto;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.center {
+  text-align: center;
+}
+
+.center h1 {
+  margin-bottom: 10px;
+}
+

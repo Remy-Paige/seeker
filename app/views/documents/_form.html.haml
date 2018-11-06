@@ -5,11 +5,11 @@
       %ul
         - @document.errors.full_messages.each do |msg|
           %li= msg
-  = f.input :url, placeholder: 'URL of document', label: false
-  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries
-  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types
-  = f.input :year, placeholder: 'Year', label: false
-  = f.input :cycle, placeholder: 'Cycle (1, 2, 3, ...)', label: false
+  = f.input :url, placeholder: 'URL of document', label: false, wrapper_html: { class:'broken' }
+  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries, wrapper_html: { style: 'text-align: center' }
+  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types, wrapper_html: { style: 'text-align: center' }
+  = f.input :year, placeholder: 'Year', label: false, wrapper_html: { class:'broken' }
+  = f.input :cycle, placeholder: 'Cycle (1, 2, 3, ...)', label: false, wrapper_html: { class:'broken' }
 
   .actions
     = f.submit 'Save'

@@ -6,11 +6,24 @@ class DocumentParserJob
   def perform(document)
     @doc = document
     @l = Logger.new("#{Rails.root}/log/parser.log")
+    write_to_log('start perform')
     unless Rails.env.test?
+      #check these values to see what the regexes are doing
+      original_url = document.url
+      clean_url = document.clean_url
+      text_url = document.url_text
+
       dir = document.clean_url.split('/')[0...-1].join('/')
       write_to_log('ocr-ing...')
       Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
-      content = File.read(document.url_text)
+
+      ##hacky hack
+      text = document.url_text + '.txt'
+      ##hacky hack
+      content = File.read(text)#document.url_text)
+
+      # ? is backslash escaped to match it literally
+      # the exclamation mark indicated that content itself is being modified
       content.gsub!(/\?/, ' ')
       File.write(document.url_text, content)
       write_to_log('ocr done...')
@@ -64,6 +77,7 @@ class DocumentParserJob
     write_to_log('parsing finished')
     document.finish_parsing!
   rescue StandardError => e
+    write_to_log('what1')
     write_to_log(e.message + "\n" + e.backtrace)
   end
 

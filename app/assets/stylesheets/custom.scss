@@ -32,11 +32,8 @@ body {
 }
 
 //form wide rules
-select {
-  //hacky hack
-  height:34px;
-}
 input, select{
+  height: 34px;
   box-sizing: border-box;
 }
 select{
@@ -86,7 +83,7 @@ select{
 
 
 //javascript added rules
-.added_caption {
+.added_query {
   grid-column-start: 1;
   text-align: right;
   font-size: large;

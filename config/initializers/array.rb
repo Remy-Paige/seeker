@@ -10,4 +10,5 @@ class Array
       [k, { highlight: new_hash }]
     end
   end
+
 end

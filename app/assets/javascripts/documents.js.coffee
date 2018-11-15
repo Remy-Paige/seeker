@@ -4,8 +4,11 @@
 
 #off to only fire event once
 
-counter = 0
+counter = 3
 field_counter = []
+field_counter[0] = 0
+field_counter[1] = 0
+field_counter[2] = 0
 documents_scripts = ->
 
   #section JS - not search form and untouched
@@ -52,96 +55,39 @@ documents_scripts = ->
 
 
   ##### advanced search #####
-  # completed: fix original search form to be like it was
-  # kinda completed: fix all pages to be not all janky
 
-  # completed: field changes for numberic query filter options
-  # completed: add a filter
-  # completed: add the correct select options for a filter
-  # completed: remove a whole filter
-  # completed: add a filter field
-  # completed: change select box lengths
-  # completed: remove a filter field
-  # completed: fix bug - double added plus when change filter twice
-  # completed: fix bug - remove all minus buttons when changing filter type as well as input boxes
-  # completed: fix bug - sometimes the help button isnt correct
-  # completed: change minus signs to be smaller crosses
-  # completed: change icons to be a light grey to be less distracting
-  # completed: fix bug - reset filter and plus button on main filter field change
   # TODO: make icons look more like buttons?
-  # completed: fix the import documents screen
   # TODO: fix basic search text box width
+  # TODO: fix between boxes width
+  # TODO/abandoned: fix padding of added filter field
+  # TODO: fix length of section number word in select box
+  # TODO: add an all box for the 'always there' country and lanague
+  # TODO: go over filter and pop up wording
 
 
-  # TODO/abandoned: fix css of added filter field
-  # TODO: go over filter wording
-  # completed: hint icon popups
-  # completed: make search and add filter button look nicer
 
+  # TODO: change the filter options avalible for section number - it is a text field
 
+  # TODO: add a 'article' feature that gets all sections from one article
+  # TODO: make section number, country and languages be always there
+  # TODO: add everything to the 'add filter' dropdown
   # TODO: figure out how to make it easily parasable for ruby when submitted
+  # TODO: look into need to mark sections as multiple languages
+  # TODO: add report type
+
+  # TODO: all still has an unneccasary X button - and returns 0 keywords
+
+
+
+
   # TODO: get country/language autocomplete / select boxes (aaa?)
   # TODO: sanity/type checking
   # TODO: document some of this shit so I don't forgget my naming conventions
 
   # TODO: look into refresh issues - previous value maintained in select
-  # completed: load in awesome fonts
-  # completed: remake html and css to be more modern
-  # completed: update look of advanced search
-  # completed: added nav bar
 
 
-  #field changes
-  $(document).off 'change', '#filter_section'
-  $(document).on 'change', '#filter_section', (e) ->
-    select_value = this.value
 
-    nothing_row = ''
-    single_row = "<input type='text' class='number'>"
-    between_row = "<input type='text' class='number'>  -  <input type='text' class='number'>"
-
-    new_row = switch
-      when select_value == 'all' then nothing_row
-      when select_value == 'only' then single_row
-      when select_value == 'less than' then single_row
-      when select_value == 'greater than' then single_row
-      when select_value == 'between' then between_row
-
-    $('#field_section').empty().append(new_row)
-  #field changes
-  $(document).off 'change', '#filter_year'
-  $(document).on 'change', '#filter_year', (e) ->
-    select_value = this.value
-
-    nothing_row = ''
-    single_row = "<input type='text' class='number'>"
-    between_row = "<input type='text' class='number'>  -  <input type='text' class='number'>"
-
-    new_row = switch
-      when select_value == 'all' then nothing_row
-      when select_value == 'only' then single_row
-      when select_value == 'less than' then single_row
-      when select_value == 'greater than' then single_row
-      when select_value == 'between' then between_row
-
-    $('#field_year').empty().append(new_row)
-  #field changes
-  $(document).off 'change', '#filter_cycle'
-  $(document).on 'change', '#filter_cycle', (e) ->
-    select_value = this.value
-
-    nothing_row = ''
-    single_row = "<input type='text' class='number'>"
-    between_row = "<input type='text' class='number'>  -  <input type='text' class='number'>"
-
-    new_row = switch
-      when select_value == 'all' then nothing_row
-      when select_value == 'only' then single_row
-      when select_value == 'less than' then single_row
-      when select_value == 'greater than' then single_row
-      when select_value == 'between' then between_row
-
-    $('#field_cycle').empty().append(new_row)
 
   # add a filter
   $(document).off 'click', '#add_search'
@@ -149,33 +95,31 @@ documents_scripts = ->
     e.preventDefault()
     e.stopPropagation()
 
-    queries = $('.queries')
-    logical_filters = ['Only','Not','At least one of']
+    new_row =  "<div class='box added_query' id='added_query_" + counter + "' >"
 
-    new_row =  "<div class='box added_caption' id='added_caption_" + counter + "' >"
-
-    new_row += "<select class='added_query_select' name=\'query[]\' id='added_query_select_" + counter + "' >"
+    new_row += "<select class='added_query_select' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' >"
     new_row += "<option value='select'>Select filter</option>"
-    new_row += "<option value='Country'>Country</option>"
-    new_row += "<option value='Language'>Language</option>"
-    new_row += "<option value='Text Search'>Text Search</option>"
+    new_row += "<option value='section number'>Section number</option>"
+    new_row += "<option value='language'>Language</option>"
+    new_row += "<option value='country'>Country</option>"
+    new_row += "<option value='text search'>Text Search</option>"
+    new_row += "<option value='year'>Year</option>"
+    new_row += "<option value='cycle'>Cycle</option>"
     new_row += "</select>"
+
 
     new_row += "</div>"
     new_row += "<div class='box select' id='added_select_" + counter + "' >"
 
-    new_row += "<select class='added_filter_select' name=\'filter[]\' id='added_filter_select_" + counter + "' >"
+    new_row += "<select class='added_filter_select' name='filter_type[" + counter +  "][]' id='added_filter_select_" + counter + "' >"
     new_row += "</select>"
 
     new_row += "</div>"
     new_row += "<div class='box added_field' id='added_field_" + counter + "' >"
 
-    new_row += "<input type='text' name='keyword[]' id='keyword_'>"
 
     new_row += "</div>"
     new_row += "<div class='box added_filter_icons' id='added_filter_icons_" + counter + "' >"
-
-    new_row += "<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + counter + "' ></i>"
 
     new_row += "</div>"
 
@@ -206,26 +150,64 @@ documents_scripts = ->
     text_options = "<option value='only'>only contains</option>" +
       "<option value='none of'>contains none of</option>" +
       "<option value='one of'>contains at least one of</option>"
+    numeric_options = "<option value='all'>all</option>" +
+      "<option value='only'>only</option>" +
+      "<option value='less than'>less than</option>" +
+      "<option value='greater than'>greater than</option>" +
+      "<option value='between'>between</option>"
+    section_number_options = "<option value='only'>only</option>" +
+      "<option value='none of'>none of</option>" +
+      "<option value='one of'>one of</option>"
+
 
     option = switch
-      when added_query_select_value == 'Country' then country_options
-      when added_query_select_value ==  'Language' then language_options
-      when added_query_select_value == 'Text Search' then text_options
+      when added_query_select_value == 'country' then country_options
+      when added_query_select_value == 'language' then language_options
+      when added_query_select_value == 'text search' then text_options
+      when added_query_select_value == 'section number' then section_number_options
+      when added_query_select_value == 'year' then numeric_options
+      when added_query_select_value == 'cycle' then numeric_options
+
+
+    # preserve filter select value on query select change
+
+    numeric_filters = ['all','only','less than','greater than','between']
+    logical_filters = ['only','none of','one of']
+    numeric_queries = ['Year', 'Cycle']
+    logical_queries = ['Section Number','Country', 'Language', 'Text Search']
 
     filter_select_value = $("#added_filter_select_" + generic_id).val()
 
     $("#added_filter_select_" + generic_id).empty().append(option);
 
-    value = switch
-      when filter_select_value == null then $("#added_filter_select_" + generic_id).val(null)
-      when filter_select_value == 'only' then $("#added_filter_select_" + generic_id).val('only')
-      when filter_select_value == 'one of' then $("#added_filter_select_" + generic_id).val('one of')
-      when filter_select_value == 'none of' then $("#added_filter_select_" + generic_id).val('none of')
+
+    #if the old filter select value is the same type as the new query select value can preserve the option
+    if numeric_filters.includes(filter_select_value) && numeric_queries.includes(added_query_select_value)
+      value = switch
+        when filter_select_value == null then $("#added_filter_select_" + generic_id).val(null)
+        when filter_select_value == 'all' then $("#added_filter_select_" + generic_id).val('all')
+        when filter_select_value == 'only' then $("#added_filter_select_" + generic_id).val('only')
+        when filter_select_value == 'less than' then $("#added_filter_select_" + generic_id).val('less than')
+        when filter_select_value == 'greater than' then $("#added_filter_select_" + generic_id).val('greater than')
+        when filter_select_value == 'between' then $("#added_filter_select_" + generic_id).val('between')
+    if logical_filters.includes(filter_select_value) && logical_queries.includes(added_query_select_value)
+      value = switch
+        when filter_select_value == null then $("#added_filter_select_" + generic_id).val(null)
+        when filter_select_value == 'only' then $("#added_filter_select_" + generic_id).val('only')
+        when filter_select_value == 'one of' then $("#added_filter_select_" + generic_id).val('one of')
+        when filter_select_value == 'none of' then $("#added_filter_select_" + generic_id).val('none of')
+    else
+      #they don't match
+      $("#added_filter_select_" + generic_id).val(null)
+
     $("#added_filter_select_" + generic_id).change()
 
+  # for logical filters
   # add a plus button on filter option select
   # remove plus button on filter option select
   # remove any minus buttons left over
+  # for numeric filters
+  # field changes
   $(document.body).off 'change', '.added_filter_select'
   $(document.body).on 'change', '.added_filter_select', (e) ->
     added_filter_select_id = this.id.split('_')
@@ -233,18 +215,27 @@ documents_scripts = ->
     added_filter_select_value = this.value
     console.log(added_filter_select_value)
 
-    if added_filter_select_value == 'only'
-      # empty the field div and add input
-      $("#added_field_" + generic_id ).empty().append("<input type='text' name='keyword[]' id='keyword_'>")
-      # empty the filter icon div and add big X
-      $("#added_filter_icons_" + generic_id ).empty().append("<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + generic_id + "' ></i>")
+    nothing_row = "<input type='hidden' name='keyword[" + generic_id + "][]' value=''>"
+    between_row = "<input type='text' name='keyword[" + generic_id + "][]' class='number'>  -  <input type='text' name='keyword[" + generic_id + "][]' class='number'>"
+    only_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
+    plus_button_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_'><i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
+    delete_button_row = "<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + generic_id + "' ></i>"
 
-    else if added_filter_select_value == 'none of' || added_filter_select_value == 'one of'
-      #empty field div and add plus button and input
-      new_row = "<input type='text' name='keyword[]' id='keyword_'><i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
-      $("#added_field_" + generic_id ).empty().append(new_row)
-      # empty the filter icon div and add big X
-      $("#added_filter_icons_" + generic_id ).empty().append("<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + generic_id + "' ></i>")
+    field_row = switch
+      when added_filter_select_value == null then nothing_row
+      when added_filter_select_value == 'all' then nothing_row
+      when added_filter_select_value == 'less than' then only_row
+      when added_filter_select_value == 'greater than' then only_row
+      when added_filter_select_value == 'between' then between_row
+      when added_filter_select_value == 'only' then only_row
+      when added_filter_select_value == 'none of' then plus_button_row
+      when added_filter_select_value == 'one of' then plus_button_row
+
+    filter_row = delete_button_row
+
+    $('#added_field_' + generic_id).empty().append(field_row)
+    $("#added_filter_icons_" + generic_id ).empty().append(filter_row)
+
 
   #remove a whole filter
   $(document.body).off 'click', '.delete_filter'
@@ -252,7 +243,7 @@ documents_scripts = ->
     delete_filter_id = this.id.split('_')
     generic_id = delete_filter_id[-1..][0]
 
-    $("#added_caption_" + generic_id).remove()
+    $("#added_query_" + generic_id).remove()
     $("#added_select_" + generic_id).remove()
     $("#added_field_" + generic_id).remove()
     $("#added_filter_icons_" + generic_id).empty()
@@ -269,6 +260,8 @@ documents_scripts = ->
 
     generic_id = plus_filter_field_id[-1..][0]
 
+    console.log(generic_id)
+    console.log(field_counter)
     console.log(field_counter[generic_id])
     #add one to the count of fields here and update array
     number_existing_fields = field_counter[generic_id]
@@ -281,12 +274,12 @@ documents_scripts = ->
     $(this).remove()
 
     #add field and new plus button
-    new_row_added_field =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[]' id='keyword_'>"
+    new_row_added_field =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
     new_row_added_field += "<i data='" + add_field_number + "' class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
     $("#added_field_" + generic_id ).append(new_row_added_field)
 
     #add new minus button
-    new_row = "<i data-number='" + add_field_number + "' class='fas fa-times orange minus_filter_added_field' id='minus_filter_added_field_" + generic_id + "' ></i>"
+    new_row = "<i data-number='" + generic_id + "_" + add_field_number + "' class='fas fa-times orange minus_filter_added_field' id='minus_filter_added_field_" + generic_id + "' ></i>"
     $("#added_filter_icons_" + generic_id).append(new_row)
 
   #remove a filter field
@@ -295,11 +288,12 @@ documents_scripts = ->
     minus_filter_added_field_id = this.id.split('_')
     generic_id = minus_filter_added_field_id[-1..][0]
 
-    field_number = $(this).attr("data-number")
+    data_number = $(this).attr("data-number")
+    field_number = data_number.split("_")[-1..][0]
     console.log("minus")
     console.log(field_number)
     $("input[data-number='" + generic_id + "_" + field_number + "']").remove()
-    $("i[data-number='" + field_number + "']").remove()
+    $("i[data-number='" + generic_id + "_" + field_number + "']").remove()
 
   #display appropriate help hint based on form status
   $(document.body).off 'mouseover', '.question_icon'
@@ -322,15 +316,15 @@ documents_scripts = ->
         console.log(filter_select_value)
 
         option = switch
-          when query_select_value == 'Country' && filter_select_value == 'only' then $(this).attr('title', "This filter will return sections from documents that are released by the country you input")
-          when query_select_value == 'Country' && filter_select_value == 'none of' then $(this).attr('title', "This filter will return sections from documents that are released by all countries except the ones you input")
-          when query_select_value == 'Country' && filter_select_value == 'one of' then $(this).attr('title', "This filter will return sections from documents that are released by the countries you input")
-          when query_select_value == 'Language' && filter_select_value == 'only' then $(this).attr('title', "This filter will return sections that are associated with the language you input. Note that this can be unreliable, you may want to use a text search instead")
-          when query_select_value == 'Language' && filter_select_value == 'none of' then $(this).attr('title', "This filter will return sections that are associated with all languages except the ones you input. Note that this can be unreliable, you may want to use a text search instead")
-          when query_select_value == 'Language' && filter_select_value == 'one of' then $(this).attr('title', "This filter will return sections that are associated with the languages you input. Note that this can be unreliable, you may want to use a text search instead")
-          when query_select_value == 'Text Search' && filter_select_value == 'only' then $(this).attr('title', "This filter will search the content of documents and return sections that contain the input string")
-          when query_select_value == 'Text Search' && filter_select_value == 'none of' then $(this).attr('title', "This filter will search the content of documents and return all sections that do not contain any of the input strings listed")
-          when query_select_value == 'Text Search' && filter_select_value == 'one of' then $(this).attr('title', "This filter will search the content of documents and return all sections that contain any of the input strings")
+          when query_select_value == 'country' && filter_select_value == 'only' then $(this).attr('title', "This filter will return sections from documents that are released by the country you input")
+          when query_select_value == 'country' && filter_select_value == 'none of' then $(this).attr('title', "This filter will return sections from documents that are released by all countries except the ones you input")
+          when query_select_value == 'country' && filter_select_value == 'one of' then $(this).attr('title', "This filter will return sections from documents that are released by the countries you input")
+          when query_select_value == 'language' && filter_select_value == 'only' then $(this).attr('title', "This filter will return sections that are associated with the language you input. Note that this can be unreliable, you may want to use a text search instead")
+          when query_select_value == 'language' && filter_select_value == 'none of' then $(this).attr('title', "This filter will return sections that are associated with all languages except the ones you input. Note that this can be unreliable, you may want to use a text search instead")
+          when query_select_value == 'language' && filter_select_value == 'one of' then $(this).attr('title', "This filter will return sections that are associated with the languages you input. Note that this can be unreliable, you may want to use a text search instead")
+          when query_select_value == 'text search' && filter_select_value == 'only' then $(this).attr('title', "This filter will search the content of documents and return sections that contain the input string")
+          when query_select_value == 'text search' && filter_select_value == 'none of' then $(this).attr('title', "This filter will search the content of documents and return all sections that do not contain any of the input strings listed")
+          when query_select_value == 'text search' && filter_select_value == 'one of' then $(this).attr('title', "This filter will search the content of documents and return all sections that contain any of the input strings")
 
 
 $(document).on "page:change", ->

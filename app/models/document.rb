@@ -21,7 +21,6 @@ class Document < ActiveRecord::Base
   # Returns a copy of str with the all occurrences of pattern substituted for the second argument
   def clean_url
     "public/storage/#{self.url.gsub(/https?:\/\//, '')}"
-    #TODO: add check here for if the url has .pdf at the end - test if adding it changes the parsing behaviour
   end
 
   def url_text

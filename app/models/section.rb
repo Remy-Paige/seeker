@@ -1,5 +1,5 @@
 class Section < ActiveRecord::Base
-  searchkick callbacks: :async, highlight: [:content, :section_number, :section_name, :country], word_start: [:section_number]
+  searchkick callbacks: :async, highlight: [:content, :section_number, :section_name, :country], word_start: [:section_number],  merge_mappings: true
 
   belongs_to :document
   belongs_to :language

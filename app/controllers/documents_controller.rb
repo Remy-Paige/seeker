@@ -164,28 +164,10 @@ class DocumentsController < ApplicationController
 
 
   def advanced_search
-    # parameters
-    # {"utf8"=>"✓",
-    #  "query_type"=>["Section Number", "Section Number", "Section Number", "Text Search", "Text Search"],
-    #  "filter_type"=>["all", "one of", "none of", "one of", "none of"],
-    #  "keyword"=>{"1"=>["11", "12", "13", "14"],
-    #              "2"=>["21", "22"],
-    #              "4"=>["41", "42", "43"],
-    #              "5"=>["51", "52"]},
-    #  "commit"=>"Search documents"}
-    #
-    # Plan of action:
-    #
-    # completed: convert parameters into form that is standard
-    # completed: fix highlight issue when only search for a numeric query
-    # TODO: none of / exclude terms
-    # TODO: check that 'all' actually really does do nothing
-    # TODO: fix text searches go last
-    # TODO: fix the text search intersection problem
-    # TODO: make the logical queries use the DSL to reuce the number of network calls to elasticsearch
-    #
+    #abcdefgh jklmnopq rstuvwxyz
+
     numeric_queries = [:year, :cycle]
-    logical_queries = [:section_number,:country, :language, :text_search]
+    logical_queries = [:section_number,:country, :language]
     numeric_filters = ['all','only','less than','greater than','between']
     logical_filters = ['all','only','none of','one of']
 
@@ -199,6 +181,15 @@ class DocumentsController < ApplicationController
     if params[:keyword]&.any?(&:present?)
       # IMPORTANT - need .with_details to get the individual section hashes
 
+      must_arr = []
+      must_not_text_arr = []
+      # must_arr.push({dis_max:{queries: text_arr}})
+      filter_arr = []
+      must_not_arr = []
+      text_arr = []
+
+      text_search_present = false
+      must_not_text_search_present = false
 
       params[:keyword]&.each_key do |key|
         #these are all arrays (so that the ID is constant) but there is only one element
@@ -207,138 +198,70 @@ class DocumentsController < ApplicationController
         #variable number of elements so keep as an array
         keyword = params[:keyword][key]
 
-        if query_type == :text_search
-          #do these last
-          text_search_keepback.push(key)
+        #first search for none_of filter type because the filter overrides the query in this case
+        if filter_type == :none_of
+
+          if query_type == :text_search
+            #so that we know to append the dismax queries - if we include it in the skeleton with an empty array es compains
+            must_not_text_search_present = true
+            keyword&.each do |word|
+              must_not_text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search"}}})
+              must_not_text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search2"}}})
+              must_not_text_arr.append({match:{"content.analyzed":{query: word,boost:1,operator:"and",analyzer:"searchkick_search",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
+              must_not_text_arr.append({match:{"content.analyzed":{"query": word,boost:1,operator:"and",analyzer:"searchkick_search2",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
+            end
+          #the numerical queries don't have a none_of option
+          elsif logical_queries.include?(query_type)
+            must_not_arr.append(logical_queries(query_type, filter_type, keyword))
+          end
+
+        elsif query_type == :text_search
+          #so that we know to append the dismax queries - if we include it in the skeleton with an empty array es compains
+          text_search_present = true
+          keyword&.each do |word|
+            text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search"}}})
+            text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search2"}}})
+            text_arr.append({match:{"content.analyzed":{query: word,boost:1,operator:"and",analyzer:"searchkick_search",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
+            text_arr.append({match:{"content.analyzed":{"query": word,boost:1,operator:"and",analyzer:"searchkick_search2",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
+          end
 
         elsif logical_queries.include?(query_type)
-          options = {
-              fields: [query_type],
-              highlight: highlight,
-              boost_where: boost_where,
-              misspellings: {
-                  below: 10
-              }
-          }
-          #special options for the section number
-          options.merge!(match: :word_start, misspellings: false) if query_type == :section_number
-
-          #use the terms function in the elastic search DSL because we don't need to worry about the analysis of the text
-          if filter_type == 'all'
-
-          else
-            # only need to concatonate because all logical ones are mut exclusive
-            concatise = []
-            keyword&.each do |word|
-              concatise.push(Section.search(word, options).with_details)
-            end
-            concat = []
-            concatise&.each_index do |i|
-              concat = concat + concatise[i]
-            end
-            search_result_sets.push(concat)
-            #search_result_sets.push(Section.search(body: {query: {terms: {'Country': 'united kingdom', 'austria'}}}).with_details)
-          end
-
+          filter_arr.append(logical_queries(query_type, filter_type, keyword))
         elsif numeric_queries.include?(query_type)
-          if filter_type == :all
-            #do nothing
-          elsif filter_type == :only
-            word = keyword[0]
-            query = Hash.new
-            query[query_type] = word
-            search_result_sets.push(Section.search(where: query).with_details)
-            #doesnt work - search_result_sets.push(Section.search(word, options).with_details)
-            #search_result_sets.push(Section.search(body: {query: {terms: {query_type: keyword}}}).with_details)
-          elsif filter_type == :less_than
-
-            word = keyword[0]
-            first_nest = {lt: word}
-            second_nest = Hash.new
-            second_nest[query_type] = first_nest
-            search_result_sets.push(Section.search(where: second_nest).with_details)
-          elsif filter_type == :greater_than
-
-            word = keyword[0]
-            first_nest = {gt: word}
-            second_nest = Hash.new
-            second_nest[query_type] = first_nest
-            search_result_sets.push(Section.search(where: second_nest).with_details)
-            #search_result_sets.push(Section.search(body: {query: {range: {query_type: {gt: keyword}}}}).with_details)
-          elsif filter_type == :between
-
-            if keyword[0] > keyword[1]
-              big = keyword[0]
-              small = keyword[1]
-            else
-              big = keyword[1]
-              small = keyword[0]
-            end
-
-            lt_first_nest = {lt: big}
-            lt_second_nest = Hash.new
-            lt_second_nest[query_type] = lt_first_nest
-            intersect1 = Section.search(where: lt_second_nest).with_details
-            gt_first_nest = {gt: small}
-            gt_second_nest = Hash.new
-            gt_second_nest[query_type] = gt_first_nest
-            intersect2 = Section.search(where: gt_second_nest).with_details
-
-            intersect = intersect1 & intersect2
-            search_result_sets.push(intersect)
-
-            #search_result_sets.push(Section.search(body: {query: {range: {query_type: {gt: small, lt:big}}}}).with_details)
-          end
-
+          filter_arr.append(numeric_queries(query_type,filter_type,keyword))
         end
-        text_search_keepback.each do |key|
-          query_type = params[:query_type][key][0].parameterize.underscore.to_sym
-          filter_type = params[:filter_type][key][0].parameterize.underscore.to_sym
-          #variable number of elements so keep as an array
-          keyword = params[:keyword][key]
 
-          #get all sections with the keyword inside them
-          if filter_type == :only
-            word = keyword[0]
-            search_result_sets.push(Section.search(word,
-                                                   fields: [:content],
-                                                   highlight: highlight.merge({ fields: { content: { type: 'plain', fragment_size: (word.length || 100) } } }),
-                                                   boost_where: boost_where, debug: true).with_details)
-
-          else
-            #for each keyword, get all sections with the keyword inside them, unionise
-            unionise = []
-            keyword&.each do |word|
-              unionise.push(Section.search(word,
-                                           fields: [:content],
-                                           highlight: highlight.merge({ fields: { content: { type: 'plain', fragment_size: (word.length || 100) } } }),
-                                           boost_where: boost_where, debug: true).with_details)
-            end
-            # this doesnt pick up the same section when the highlighting is entirly different because of the behaviour of the function in array.rb
-            union = []
-            unionise&.each_index do |i|
-              if i == 0
-                union = unionise[0]
-              else
-                exclusive_middle_middle = union + unionise[i]
-                union = exclusive_middle_middle
-              end
-            end
-
-            search_result_sets.push(union)
-          end
-
-        end
+      end
+      if must_not_text_search_present
+        must_not_arr.append(dis_max:{queries: must_not_text_arr})
+      end
+      if text_search_present
+        must_arr.append(dis_max:{queries: text_arr})
       end
 
-      #finally, intersect everything together
-      search_result_sets.each_index do |i|
-        if i == 0
-          @search_results = search_result_sets[i]
-        else
-          @search_results.intersect_nested_search_result!(search_result_sets[i])
-        end
-      end
+      # boost searches that are from a section, not a full document
+      # highlight the query in bold - this will also highlight everything between 2 instances of a query
+      # highlighting doesnt pick up any other filers
+
+      @search_results = Section.search(body: {
+          query:{
+              function_score:{
+                  functions:[{filter:{and:[{term:{full_content:false}}]},boost_factor:1000}],
+                  query:{
+                      bool:{
+                          must: must_arr,
+                          filter:filter_arr,
+                          must_not: must_not_arr
+                      }
+                  },
+                  "score_mode":"sum"
+              }
+          },
+          "size":1000,
+          "from":0,
+          "highlight":{"fields":{"content.analyzed":{"type":"plain","fragment_size":6}},"pre_tags":["\u003cstrong\u003e"],"post_tags":["\u003c/strong\u003e"]},"fields":[]}
+      ).with_details
+
 
       @search_results = @search_results.paginate(page: params[:page], per_page: 10)
       render :search_results
@@ -357,4 +280,64 @@ class DocumentsController < ApplicationController
     def document_params
       params.require(:document).permit(:url, :country_id, :document_type, :year, :cycle)
     end
+
+
+    def logical_queries(query_type, filter_type, keyword)
+      #TODO: fix word_start option for section number
+      #use the terms function in the elastic search DSL because we don't need to worry about the analysis of the text
+      if filter_type == :all
+        {}
+      else
+        search = Hash.new
+        search[query_type] = keyword
+        {terms: search}
+      end
+    end
+
+    def numeric_queries(query_type, filter_type, keyword)
+      if filter_type == :all
+        #do nothing
+        return {}
+      elsif filter_type == :only
+        word = Integer(keyword[0])
+        search_terms = Hash.new
+        search_terms[:lt] = String(word+1)
+        search_terms[:gt] = String(word-1)
+        search = Hash.new
+        search[query_type] = search_terms
+        #{query_type: {"gt" : word-1, "lt" : word+1}}
+        return {range: search}
+      elsif filter_type == :less_than
+        word = keyword[0]
+        search_terms = {lt: word}
+        search = Hash.new
+        search[query_type] = search_terms
+        #{query_type: {lt: word}}
+        return {range: search}
+      elsif filter_type == :greater_than
+        word = keyword[0]
+        search_terms = {gt: word}
+        search = Hash.new
+        search[query_type] = search_terms
+        #{query_type: {gt: word}}
+        return {range: search}
+      elsif filter_type == :between
+
+        if keyword[0] > keyword[1]
+          big = keyword[0]
+          small = keyword[1]
+        else
+          big = keyword[1]
+          small = keyword[0]
+        end
+        search_terms = Hash.new
+        search_terms[:lt] = big
+        search_terms[:gt] = small
+        search = Hash.new
+        search[query_type] = search_terms
+        #{query_type: {"gt" : small, "lt" : big}}
+        return {range: search}
+      end
+    end
+
 end

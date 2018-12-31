@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users, skip: [:registrations]
-  #removes self registration for users
+  devise_for :users, :path_prefix => 'my'
+  #, separates devise and custom admin crud
 
   root 'home#index'
   ###=> documents#search

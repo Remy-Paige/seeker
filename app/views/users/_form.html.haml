@@ -1,4 +1,4 @@
-%div{:class => "full"}
+
 = simple_form_for @user do |f|
   - if @user.errors.any?
     #error_explanation
@@ -6,9 +6,9 @@
       %ul
         - @user.errors.full_messages.each do |msg|
           %li= msg
-  = f.input :email, placeholder: 'Email', label: false
-  = f.input :password, placeholder: 'Password', as: :password, label: false
-  = f.input :password_confirmation, placeholder: 'Password confirmation', as: :password, label: false
+
+  %h2= @user.email
+  = f.input :admin, placeholer: 'Admin', label: 'Admin'
 
   .actions
     = f.submit 'Save'

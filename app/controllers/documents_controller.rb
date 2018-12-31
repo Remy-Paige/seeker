@@ -1,6 +1,6 @@
 class DocumentsController < ApplicationController
   before_action :set_document, only: [:show, :edit, :edit_section_separation, :update, :update_section_separation, :destroy]
-  before_action :authenticate_user!, except: [:index, :search]
+  before_action :authenticate_user!, except: [:index, :search, :advanced_search]
 
   # GET /documents
   # GET /documents.json
@@ -99,6 +99,7 @@ class DocumentsController < ApplicationController
     end
   end
 
+  # this is the old search function - remove?
   def search
     # An object is present if it's not blank.
     #                                               The & calls to_proc on the object, and passes it as a block to the method

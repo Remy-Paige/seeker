@@ -9,19 +9,31 @@
   %body
     %header{:class => "navbar navbar-fixed-top navbar-inverse", :id => "navbar"}
       %div{:class => "container"}
-        = link_to 'search', root_path, {:class => "navbar-brand"}
-        = link_to 'advanced search', advanced_path, {:class => "navbar-brand"}
+        = link_to 'search', root_path, :class => "navbar-brand"
+        = link_to 'advanced search', advanced_path, :class => "navbar-brand"
         %nav{:class => "navbar-right"}
-          - if user_signed_in?
-            = link_to 'Manage Documents', documents_path, {:class => "navbar-brand"}
-            = link_to 'Manage Administrators', users_path, {:class => "navbar-brand"}
-            -#TODO: get this pointing to a user account page
-            = link_to image_tag('icon.png', :alt => "brand"), root_path, {:class => "navbar-brand"}
+          - if user_signed_in? && current_user.admin?
+            = link_to 'Manage Documents', documents_path, :class => "navbar-brand"
+            //users#index
+            = link_to 'Manage Users', users_path, :class => "navbar-brand"
+            = link_to 'Manage Tickets', user_tickets_path, :class => "navbar-brand"
+            //users#show
+            //TODO: fix - this looks gross
+            = link_to image_tag('icon.png', :alt => "brand"), user_path(current_user), :class => "navbar-brand"
+            //devise/sessions#destroy
+            = link_to  'Logout',  destroy_user_session_path, method: :delete, :class => "btn btn-default navbar-btn"
+          - elsif user_signed_in? && !current_user.admin?
+            = link_to 'Saved', root_path, :class => "navbar-brand"
+            //users#show
+            = link_to image_tag('icon.png', :alt => "brand"), user_path(current_user), :class => "navbar-brand"
+            //devise/sessions#destroy
+            = link_to 'Logout',  destroy_user_session_path, method: :delete, :class => "btn btn-default navbar-btn"
           - else
-            = link_to 'indexed documents', documents_path, {:class => "navbar-brand"}
-            = link_to 'Login', new_user_session_path, {:class => "btn btn-default navbar-btn"}
-
-
+            = link_to 'indexed documents', documents_path, :class => "navbar-brand"
+            //devise/sessions#new
+            = link_to 'Login', new_user_session_path, :class => "btn btn-default navbar-btn"
+            //devise/registrations#new
+            = link_to 'Sign Up', new_user_registration_path, :class => "btn btn-default navbar-btn"
 
 
     %div{:class => "grid"}

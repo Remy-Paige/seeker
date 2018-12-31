@@ -1,3 +1,56 @@
 // Place all the styles related to the users controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+//centre parent
+.centre {
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.log_in_centre {
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  position: relative;
+  vertical-align: middle;
+  margin: 5px;
+}
+
+
+
+.user_grid {
+  //border: 2px blue solid;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.email{
+  grid-column-start: 1;
+  grid-column-end: 2;
+}
+.admin_yn{
+  grid-column-start: 3;
+}
+.admin_button{
+  grid-column-start: 4;
+}
+.admin{
+  grid-column-start: 3;
+  grid-column-end: 4;
+}
+.delete{
+  grid-column-start: 5;
+  grid-column-end: 6;
+}

@@ -1,1 +1,8 @@
-= link_to 'Back', users_path
+%div{:class => "centre"}
+
+  %div{:class => "user_grid"}
+    %h1{:class => "email"}= @user.email
+
+    =link_to 'edit email or password', edit_user_registration_path, :class => "btn btn-default email"
+
+    //TODO: links to saved stuff will be here

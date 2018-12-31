@@ -1,19 +1,15 @@
-%div{:class => "full"}
-  %h1 Listing users
-
-  %table{ border: 1 }
-    %thead
-      %tr
-        %th Email
-        %th Actions
-
-    %tbody
-      - @users.each do |user|
-        %tr
-          %td= user.email
-          %td
-            = link_to 'Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
-
+%div{:class => "centre"}
+  %h1{:class => "main_title"} Listing Users
   %br
 
-  = link_to 'New User', new_user_path
+
+  %div{:class => "user_grid"}
+    - @users.each do |user|
+      %div{:class =>"email"}= user.email
+      %div{:class =>"admin_yn"}= user.admin? ? 'Admin' : 'Not Admin'
+      //users#edit
+      %div{:class =>"admin_button"}= link_to('Change Admin Status', edit_user_path(user))
+      //TODO: what happens if you delete yourself?
+      //TODO: when you undesignate yourself admin?
+      //users#destroy
+      %div{:class =>"delete"}= link_to 'Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' }

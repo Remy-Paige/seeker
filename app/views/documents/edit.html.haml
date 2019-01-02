@@ -1,8 +1,18 @@
-%div{:class => "form"}
-    %h1 Editing document
+%div{:class => "centre"}
+  %h1 Editing document
 
-    = render 'form'
-
-    = link_to 'Show', @document
-    \|
-    = link_to 'Back', documents_path
+  = simple_form_for @document, defaults: { input_html: { class: 'documents_form' } } do |f|
+  - if @document.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@document.errors.count, "error")} prohibited this document from being saved:"
+      %ul
+        - @document.errors.full_messages.each do |msg|
+          %li= msg
+  %h3
+    = link_to 'Original document', @document.url, target: '_blank'
+  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries, input_html: { class: 'documents_form' }
+  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types
+  = f.input :year, placeholder: 'Year'
+  = f.input :cycle, placeholder: 'Cycle (1, 2, 3, ...)'
+  .actions
+    = f.submit 'Save'

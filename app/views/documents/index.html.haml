@@ -1,40 +1,63 @@
-%div{:class => "full"}
-  %h1 Listing documents
-  %table{ border: 1 }
-    %thead
-      %tr
-        %th Country
-        %th Type
-        %th Cycle
-        %th Year
-        %th
-          - if user_signed_in?
-            Parsing Status
+%div{:class => "centre"}
+  = link_to 'New Document', new_document_path, {:class => "btn btn-info"} if current_user&.admin?
+  -#users do not see unparsed documents or actions, and may not be signed in
+  %div{:class => current_user&.admin? ? "documents_grid" : "documents_users_grid"}
+    %div{:class => "country"}
+      %h4 Country
+    %div{:class => "type"}
+      %h4 Type
+    %div
+      %h4 Cycle
+    %div
+      %h4 Year
+    %div
+      %h4 View
+    - if current_user&.admin?
+      %div
+        %h4 Parse status
+      %div
+        %h4 Actions
+    - alternating = true
+    - @grouped_documents.each do |country, documents|
+      - country_row = true
+      - documents.sort_by{ |doc| [doc.document_type, doc.cycle, doc.year] }.each do |document|
+        - if current_user&.admin?
+          - if country_row
+            %div{:class => alternating ? 'alternating' : ''}= country
+            - country_row = false
           - else
-            Index status
-        %th Original Document
-        - if user_signed_in?
-          %th Actions
-    %tbody
-      - @grouped_documents.each do |country, documents|
-        - country_row = true
-        - documents.sort_by{ |doc| [doc.document_type, doc.cycle, doc.year] }.each do |document|
-          %tr
-            - if country_row
-              %td{ rowspan: documents.count }= country
-              - country_row = false
-            %td= Document::DOCUMENT_TYPES[document.document_type]
-            %td= document.cycle
-            %td= document.year
+            %div{:class => alternating ? 'alternating' : ''}
+          %div{:class => alternating ? 'alternating type' : 'type'}= Document::DOCUMENT_TYPES[document.document_type]
+          %div{:class => alternating ? 'alternating' : ''}= document.cycle
+          %div{:class => alternating ? 'alternating' : ''}= document.year
+          %div{:class => alternating ? 'alternating' : ''}
+            = link_to 'Original document', document.url, target: '_blank'
+            %br
             - if document.parsing_finished
-              %td{ bgcolor: 'green' }= user_signed_in? ? 'Completed' : 'Ready'
+              = link_to 'View sectioning', document_path(document)
+          - if document.parsing_finished
+            %div{:class => alternating ? 'alternating' : ''}Completed
+          - else
+            %div{:class => alternating ? 'alternating' : ''}In Progress
+          %div{:class => alternating ? 'alternating' : ''}
+            = link_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
+            %br
+            = link_to 'Edit metadata', edit_document_path(document)
+            %br
+            - if document.parsing_finished
+              = link_to 'Edit Sections', edit_section_separation_document_path(document)
+        - else
+          - if document.parsing_finished
+            - if country_row
+              %div{:class => alternating ? 'alternating country' : 'country'}= country
+              - country_row = false
             - else
-              %td{ bgcolor: 'red' }= user_signed_in? ? 'In Progress' : 'Not indexed yet'
-            %td= link_to 'Original document', document.url, target: '_blank'
-            - if user_signed_in?
-              %td
-                = link_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
-                - if document.parsing_finished
-                  = link_to 'Edit Sections', edit_section_separation_document_path(document)
-  %br
-  = link_to 'New Document', new_document_path if user_signed_in?
+              %div{:class => alternating ? 'alternating' : ''}
+            %div{:class => alternating ? 'alternating type' : 'type'}= Document::DOCUMENT_TYPES[document.document_type]
+            %div{:class => alternating ? 'alternating' : ''}= document.cycle
+            %div{:class => alternating ? 'alternating' : ''}= document.year
+            %div{:class => alternating ? 'alternating' : ''}
+              = link_to 'Original document', document.url, target: '_blank'
+              = link_to 'View sectioning', document_path(document)
+      - alternating ? alternating = false : alternating = true
+

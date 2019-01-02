@@ -1,1 +1,41 @@
-= link_to 'Back', documents_path
+%div{:class => "centre"}
+  %h1 Document information
+  -# slight extra divs hacky hack to deal with the grid
+  %div{:class => "document_grid"}
+    %div
+      %h4 URL:
+    %div= @document.url
+    %div= link_to 'Report Problem', new_user_ticket_path, :class => "btn btn-warning"
+    %div
+      %h4 country:
+    %div{:class => "info"}= @document.country
+    %div
+    %div
+      %h4 type:
+    %div{:class => "info"}= @document.document_type
+    %div
+    %div
+      %h4 cycle:
+    %div{:class => "info"}= @document.cycle
+    %div
+    %div
+      %h4 year:
+    %div{:class => "info"}= @document.year
+
+  %h1 Sectioning
+  %div{:class => "document_grid"}
+    - @sections.each do |section|
+      -if section.section_name != 'Full Content'
+        %div
+          %h5
+            = section.section_number
+          %h5
+            = section.section_name
+          %h5
+            page number
+            = section.page_number
+          %h5
+            language
+            = section.language_id
+        %div= section.content
+        %div=link_to 'Report Problem', new_user_ticket_path, :class => "btn btn-warning"

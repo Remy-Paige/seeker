@@ -58,11 +58,11 @@ select{
   //guard against the boxes moving
   padding-right: 10px;
 }
-.select {
-  grid-column-start: 2;
-  text-align: left;
-  padding-bottom: 10px;
-}
+//.select {
+//  grid-column-start: 2;
+//  text-align: left;
+//  padding-bottom: 10px;
+//}
 .number {
   width: 88px;
 }
@@ -176,4 +176,3 @@ textarea {
 .center h1 {
   margin-bottom: 10px;
 }
-

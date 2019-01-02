@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources :users
 
   #where the magic happens
-  resources :documents, except: [:show] do
+  resources :documents do
     #this code points to sections, a subclass of documents and adds the extra routes to the resource generation
     resources :sections
     member do

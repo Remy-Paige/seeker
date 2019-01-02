@@ -9,6 +9,7 @@ class Section < ActiveRecord::Base
   validates :section_number, presence: true
   validates :section_name, presence: true
   validates :content, presence: true
+  validates :page_number, numericality: true
 
   # elasticsearch string length limit is 32766, take caution
   STRING_LEN_LIMIT = 30_000
@@ -22,15 +23,16 @@ class Section < ActiveRecord::Base
       year: document.year,
       cycle: document.cycle,
       language: language&.name,
+      report_type: document.document_type,
       full_content: full_content?
     }
   end
 
-  def self.add_section(section_number:, section_name:, content:, language_id: nil)
+  def self.add_section(section_number:, section_name:, content:, language_id: nil, page_number:)
     ((content.length / STRING_LEN_LIMIT) + 1).times do |section_part|
       section_start = section_part * STRING_LEN_LIMIT
       section_end = (section_part + 1) * STRING_LEN_LIMIT
-      self.create(section_number: section_number, section_name: section_name, content: content[section_start...section_end], section_part: section_part, language_id: language_id)
+      self.create(section_number: section_number, section_name: section_name, content: content[section_start...section_end], section_part: section_part, language_id: language_id, page_number: page_number)
     end
   end
 

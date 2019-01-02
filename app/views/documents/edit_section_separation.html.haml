@@ -1,28 +1,22 @@
-%div{:class => "form"}
-  %h1 Editing document's sections
-
-  = form_tag update_section_separation_document_path, method: :post do
-    %table#section_table
-      %tr
-        %th Section Number
-        %th Section Name
-        %th Content
-        %th Language Covered
-        %th Options
-      - @sections.each do |section|
-        %tr
-          %td
-            = text_field_tag 'section_number[]', section.section_number, size: 8, readonly: section.full_content?
-          %td
-            = text_field_tag 'section_name[]', section.section_name, size: 40, readonly: section.full_content?
-          %td
-            = text_area_tag 'content[]', section.content, rows: 10, cols: 100, readonly: section.full_content?
-          %td{ class: 'language_list' }
-            = select_tag 'language[]', options_from_collection_for_select(@languages, :id, :name, section.language_id), include_blank: true
-          %td
-            - unless section.full_content?
-              = link_to 'Delete Section', '#', class: 'delete_section', data: { confirm: 'Are you sure? All unsaved changes will be lost' }
-
+%div{:class => "centre"}
+  %h1 Editing sections
+  = form_tag update_section_separation_document_path, :style => "  display: grid; grid-template-columns:1fr 3fr 1fr;", method: :post do
+    - @sections.each do |section|
+      %div
+        section number
+        %br
+        = text_field_tag 'section_number[]', section.section_number, size: 8, readonly: section.full_content?
+        %br section name
+        = text_field_tag 'section_name[]', section.section_name, size: 40, readonly: section.full_content?
+        %br page number
+        = text_field_tag 'page_number[]', section.page_number, size: 40, readonly: section.full_content?
+      %div
+        = text_area_tag 'content[]', section.content, rows: 10, cols: 100, readonly: section.full_content?
+      %div
+        language
+        = select_tag 'language[]', options_from_collection_for_select(@languages, :id, :name, section.language_id), include_blank: true
+        - unless section.full_content?
+          = link_to 'Delete Section', '#', class: 'delete_section', data: { confirm: 'Are you sure? All unsaved changes will be lost' }
     %div= submit_tag 'Save sections'
-    %div= link_to 'Add New Section', '#', id: 'add_section'
-    %div= link_to 'Cancel Editing', documents_path, data: { confirm: 'Are you sure? All unsaved changes will be lost' }
+  %div= link_to 'Add New Section', '#', id: 'add_section'
+  %div= link_to 'Cancel Editing', documents_path, data: { confirm: 'Are you sure? All unsaved changes will be lost' }

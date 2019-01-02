@@ -8,9 +8,18 @@ class DocumentsController < ApplicationController
     @grouped_documents = Document.all.sort_by(&:country).group_by(&:country)
   end
 
-  # GET /documents/1
-  # GET /documents/1.json
+  # GET /documents/
+  # GET /documents/.json
   def show
+    # each section is made up of lots of section parts because of elastic search - this coellates the sections parts into a section
+    # honestly I'm not 100% sure how it works
+    @sections = @document.sections.group_by(&:section_number).map do |section_number, sections|
+          section_name = sections.first.section_name
+          language_id = sections.first.language_id
+          page_number = sections.first.page_number
+          content = sections.sort_by(&:section_part).map(&:content).join
+          Section.new(section_number: section_number, page_number: page_number, section_name: section_name, content: content, language_id: language_id)
+        end.sort_by(&:section_number)
   end
 
   # GET /documents/new
@@ -22,16 +31,21 @@ class DocumentsController < ApplicationController
 
   # GET /documenfetch(:document, {})fetch(:document, {})ts/1/edit
   def edit
+    @countries = Country.all
+    @document_types = Document::DOCUMENT_TYPES_ID
   end
 
+  # for each section - create a new section - because each will be deleted and made new on update
+  # these are section PARTS - we are grouping sections together and
   def edit_section_separation
     @languages = @document.country.languages
     @sections =
       @document.sections.group_by(&:section_number).map do |section_number, sections|
         section_name = sections.first.section_name
         language_id = sections.first.language_id
+        page_number = sections.first.page_number
         content = sections.sort_by(&:section_part).map(&:content).join
-        Section.new(section_number: section_number, section_name: section_name, content: content, language_id: language_id)
+        Section.new(section_number: section_number, section_name: section_name, content: content, language_id: language_id, page_number: page_number)
       end.sort_by(&:section_number)
   end
 
@@ -76,13 +90,15 @@ class DocumentsController < ApplicationController
     # destroy previous sections
     @document.sections.map(&:destroy)
 
-    # create new sections
+    # create new sections with custom method
+    # each section created new - split into section parts in the model
     params[:section_number].count.times do |idx|
       @document.sections.add_section(
         section_number: params[:section_number][idx],
         section_name: params[:section_name][idx],
         content: params[:content][idx],
-        language_id: params[:language][idx].presence
+        language_id: params[:language][idx].presence,
+        page_number: params[:page_number][idx]
       )
     end
 

@@ -3,7 +3,6 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 #off to only fire event once
-
 counter = 3
 field_counter = []
 field_counter[0] = 0
@@ -11,27 +10,50 @@ field_counter[1] = 0
 field_counter[2] = 0
 documents_scripts = ->
 
-  #section JS - not search form and untouched
+  #edit_section_separation  JS
   $(document).off 'click', '#add_section'
   $(document).on 'click', '#add_section', (e) ->
     e.preventDefault()
     e.stopPropagation()
-    new_row = '<tr>'
-    new_row += '<td><input type="text" name="section_number[]" size="8"/></td>'
-    new_row += '<td><input type="text" name="section_name[]" size="40"/></td>'
-    new_row += '<td><textarea name="content[]" rows="10" cols="100"/></td>'
-    new_row += '<td>'
-    new_row += $('.language_list').html()
-    new_row += '</td>'
-    new_row += '<td><a href="#" class="delete_section" data-confirm="Are you sure? All unsaved changes will be lost">Delete Section</a></td>'
-    new_row += '</tr>'
-    $('#section_table').append(new_row)
+
+    counte = $('.delete_section').length + 1
+    new_row =  '<div class=' + counte + '>'
+    new_row += 'section number'
+    new_row += '<br>'
+    new_row += '<input type="text" name="section_number[]" id="section_number_" size="8" />'
+    new_row += '<br>'
+    new_row += 'section name'
+    new_row += '</br>'
+    new_row += '<input type="text" name="section_name[]" id="section_name_" size="40" />'
+    new_row += '<br>'
+    new_row += 'page number'
+    new_row += '</br>'
+    new_row += '<input type="text" name="page_number[]" id="page_number_" size="40" />'
+    new_row += '</div>'
+    new_row += '<div class=' + counte + '>'
+    new_row += '<textarea name="content[]" id="content_" rows="10" cols="100"></textarea>'
+    new_row += '</div>'
+    new_row += '<div class=' + counte + '>'
+    new_row += 'language'
+    new_row += '<select name="language[]" id="language_">'
+    new_row += '<option value=""></option>'
+    for language in gon.languages
+      new_row += '<option value=' + language.id + '>' + language.name + '</option>'
+
+    new_row += '</select>'
+    new_row += '<a class="delete_section" id=' + counte + ' data-confirm="Are you sure? All unsaved changes will be lost" href="#">Delete Section</a>'
+    new_row += '</div>'
+#    new_row += '<div class = "remove_submit"><input type="submit" name="commit" value="Save sections" /></div>'
+
+    console.log(new_row)
+    $('#sections_box').append(new_row)
 
   $(document).off 'click', '.delete_section'
   $(document).on 'click', '.delete_section', (e) ->
     e.preventDefault()
     e.stopPropagation()
-    $(this).closest('tr').remove()
+    id = this.id
+    $('.'+id).remove()
 
 
   $(document).off 'click', '#add_old_search'

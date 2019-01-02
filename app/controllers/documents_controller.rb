@@ -38,7 +38,11 @@ class DocumentsController < ApplicationController
   # for each section - create a new section - because each will be deleted and made new on update
   # these are section PARTS - we are grouping sections together and
   def edit_section_separation
+    unless current_user.admin?
+      redirect_to('/404')
+    end
     @languages = @document.country.languages
+    gon.languages = @languages
     @sections =
       @document.sections.group_by(&:section_number).map do |section_number, sections|
         section_name = sections.first.section_name

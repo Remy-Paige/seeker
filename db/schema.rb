@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181230162034) do
+ActiveRecord::Schema.define(version: 20190103165302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,17 @@ ActiveRecord::Schema.define(version: 20181230162034) do
   add_index "sections", ["document_id"], name: "index_sections_on_document_id", using: :btree
   add_index "sections", ["language_id"], name: "index_sections_on_language_id", using: :btree
 
+  create_table "ticket_relations", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "user_ticket_id"
+    t.boolean  "manages"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "ticket_relations", ["user_id"], name: "index_ticket_relations_on_user_id", using: :btree
+  add_index "ticket_relations", ["user_ticket_id"], name: "index_ticket_relations_on_user_ticket_id", using: :btree
+
   create_table "user_tickets", force: :cascade do |t|
     t.string   "name"
     t.string   "email"
@@ -74,6 +85,7 @@ ActiveRecord::Schema.define(version: 20181230162034) do
     t.integer  "admin_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "subject"
   end
 
   create_table "users", force: :cascade do |t|

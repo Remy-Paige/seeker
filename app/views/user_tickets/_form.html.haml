@@ -1,10 +1,12 @@
-= form_for @user_ticket do |f|
+= simple_form_for @user_ticket, defaults: { input_html: { class: 'documents_form' } } do |f|
   - if @user_ticket.errors.any?
     #error_explanation
       %h2= "#{pluralize(@user_ticket.errors.count, "error")} prohibited this user_ticket from being saved:"
       %ul
         - @user_ticket.errors.full_messages.each do |msg|
           %li= msg
-
+  -#        TODO: fix select - requires chaning DB to a integer instead of a string ????
+  = f.input :subject, placeholder: 'Subject', as: :select, include_blank: false, collection: [['meta-data error', 'meta-data error'], ['sectioning error','sectioning error'], ['document request','document request'], ['other','other']]
+  = f.input :comment, placeholder: 'Comment'
   .actions
     = f.submit 'Save'

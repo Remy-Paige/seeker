@@ -1,19 +1,14 @@
-%h1 Listing user_tickets
+%div{:class => "centre"}
+  = link_to 'New ticket', new_user_ticket_path, :class => "btn btn-info"
+  %h3 Listing tickets
+  %div{:class => "user_tickets_grid"}
 
-%table
-  %thead
-    %tr
-      %th
-      %th
-      %th
-
-  %tbody
-    - @user_tickets.each do |user_ticket|
-      %tr
-        %td= link_to 'Show', user_ticket
-        %td= link_to 'Edit', edit_user_ticket_path(user_ticket)
-        %td= link_to 'Destroy', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }
-
-%br
-
-= link_to 'New User ticket', new_user_ticket_path
+  - @user_tickets.each do |user_ticket|
+    %div{:class => "ticket left"}
+      %h4
+        Subject:
+        = user_ticket.subject
+      %h4
+        Status:
+        = user_ticket.status == 0 ? 'UnManaged' : 'Open'
+      = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-default"

@@ -1,3 +1,22 @@
-= link_to 'Edit', edit_user_ticket_path(@user_ticket)
-\|
-= link_to 'Back', user_tickets_path
+%div{:class => "centre"}
+  %h3 Displaying Ticket
+
+  %h4
+    Subject:
+    = @user_ticket.subject
+  %h4
+    email:
+    = @user_ticket.email
+  %h4
+    created at:
+    = @user_ticket.created_at
+  %h4
+    Status:
+    = @user_ticket.status == 0 ? 'UnManaged' : 'Open'
+  %h4
+    link:
+    = @user_ticket.link
+  %h4
+    comments:
+  = @user_ticket.comment
+

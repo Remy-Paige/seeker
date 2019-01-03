@@ -3,4 +3,8 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable ,
   #          :recoverable
   devise :database_authenticatable, :registerable, :rememberable, :trackable, :validatable
+
+  has_many :ticket_relations
+  has_many :user_tickets, through: :ticket_relations
+
 end

@@ -1,0 +1,28 @@
+%div{:class => "centre"}
+  %div{:class => "user_tickets_grid"}
+    %h1{:class => "left"} Unmanaged Tickets
+    %h1{:class => "right"} My Claimed Tickets
+
+    - @unmanaged_user_tickets.each do |user_ticket|
+      %div{:class => "ticket left"}
+        %h4
+          Subject:
+          = user_ticket.subject
+        %h5
+          User:
+          = user_ticket.email
+        %h5
+          Created at:
+          = user_ticket.created_at
+        = link_to 'Claim Ticket', claim_user_ticket_path(user_ticket), :class => "btn btn-default"
+        = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-default"
+
+    - @open_user_tickets.each do |user_ticket|
+      %div{:class => "ticket right"}
+        %h4
+          Subject:
+          = user_ticket.subject
+        %h5
+          User:
+          = user_ticket.email
+        = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-default"

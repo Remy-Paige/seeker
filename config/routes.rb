@@ -5,8 +5,11 @@ Rails.application.routes.draw do
   root 'home#index'
   ###=> documents#search
 
-  resources :user_tickets
-
+  resources :user_tickets do
+    member do
+      get 'claim'
+    end
+  end
   resources :users
 
   #where the magic happens

@@ -5,7 +5,13 @@ class UserTicketsController < ApplicationController
   # GET /user_tickets
   # GET /user_tickets.json
   def index
-    @user_tickets = UserTicket.all
+    if current_user.admin?
+      @unmanaged_user_tickets = UserTicket.where('status = 0')
+      @open_user_tickets = current_user.user_tickets
+      render 'user_tickets/index_admin'
+    else
+      @user_tickets = current_user.user_tickets
+    end
   end
 
   # GET /user_tickets/1
@@ -20,12 +26,33 @@ class UserTicketsController < ApplicationController
 
   # GET /user_tickets/1/edit
   def edit
+    @subject_types = Document::SUBJECT_TYPES
+  end
+
+  # GET /user_tickets/1/claim
+  def claim
+    @user_ticket = UserTicket.find(params[:id])
+
+    if @user_ticket.status == 0
+      @user_ticket.status = 1
+      current_user.user_tickets << @user_ticket
+      @user_ticket.save
+
+      ticket_relation = current_user.ticket_relations.where(':user_tickets_id =' + params[:id])[0]
+      ticket_relation.manages = true
+      ticket_relation.save
+    end
+
+    # TODO: json check?
+    # TODO: improve the error/redirect
+
+    redirect_to user_tickets_path
   end
 
   # POST /user_tickets
   # POST /user_tickets.json
   def create
-    @user_ticket = UserTicket.new(user_ticket_params)
+    @user_ticket = UserTicket.new(:name => current_user.name, :email => current_user.email, :comment => user_ticket_params[:comment], :subject => user_ticket_params[:subject], :status => 0)
 
     respond_to do |format|
       if @user_ticket.save
@@ -36,6 +63,8 @@ class UserTicketsController < ApplicationController
         format.json { render json: @user_ticket.errors, status: :unprocessable_entity }
       end
     end
+
+    current_user.user_tickets << @user_ticket
   end
 
   # PATCH/PUT /user_tickets/1
@@ -70,6 +99,6 @@ class UserTicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_ticket_params
-      params.fetch(:user_ticket, {})
+      params.require(:user_ticket).permit(:comment, :subject)
     end
 end

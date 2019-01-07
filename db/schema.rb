@@ -11,10 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190103165302) do
+ActiveRecord::Schema.define(version: 20190107002912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "collection_documents", force: :cascade do |t|
+    t.integer  "collection_id"
+    t.integer  "document_id"
+    t.string   "section_number"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "collection_documents", ["collection_id"], name: "index_collection_documents_on_collection_id", using: :btree
+  add_index "collection_documents", ["document_id"], name: "index_collection_documents_on_document_id", using: :btree
+
+  create_table "collections", force: :cascade do |t|
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "collections", ["user_id"], name: "index_collections_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
     t.string   "name"
@@ -50,6 +69,15 @@ ActiveRecord::Schema.define(version: 20190103165302) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "queries", force: :cascade do |t|
+    t.integer  "collection_id"
+    t.text     "query"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "queries", ["collection_id"], name: "index_queries_on_collection_id", using: :btree
+
   create_table "sections", force: :cascade do |t|
     t.integer  "document_id"
     t.text     "section_name"
@@ -83,10 +111,14 @@ ActiveRecord::Schema.define(version: 20190103165302) do
     t.text     "comment"
     t.integer  "status"
     t.integer  "admin_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
     t.string   "subject"
+    t.string   "section_number"
+    t.integer  "document_id"
   end
+
+  add_index "user_tickets", ["document_id"], name: "index_user_tickets_on_document_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.integer  "role"

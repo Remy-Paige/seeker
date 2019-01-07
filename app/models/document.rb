@@ -5,6 +5,11 @@ class Document < ActiveRecord::Base
   has_many :sections, dependent: :destroy
   belongs_to :country
 
+  has_many :user_tickets
+
+  has_many :collection_documents
+  has_many :collections, through: :collection_documents
+
   after_create :download_and_set_url_local
   before_destroy :delete_local_documents
 

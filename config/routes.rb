@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :collections
+
   devise_for :users, :path_prefix => 'my'
   #, separates devise and custom admin crud
 

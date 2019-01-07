@@ -7,7 +7,10 @@ class UserTicketsController < ApplicationController
   def index
     if current_user.admin?
       @unmanaged_user_tickets = UserTicket.where('status = 0')
-      @open_user_tickets = current_user.user_tickets
+      # should admins be able to make tickets? the where defends against admins unmanaged tickets
+      # appearing in their list of open tickets in any case
+      # todo: do over terminology
+      @open_user_tickets = current_user.user_tickets.where('status = 1')
       render 'user_tickets/index_admin'
     else
       @user_tickets = current_user.user_tickets
@@ -35,10 +38,10 @@ class UserTicketsController < ApplicationController
 
     if @user_ticket.status == 0
       @user_ticket.status = 1
-      current_user.user_tickets << @user_ticket
       @user_ticket.save
+      current_user.user_tickets << @user_ticket
 
-      ticket_relation = current_user.ticket_relations.where(':user_tickets_id =' + params[:id])[0]
+      ticket_relation = current_user.ticket_relations.where('user_ticket_id =' + params[:id]).first
       ticket_relation.manages = true
       ticket_relation.save
     end

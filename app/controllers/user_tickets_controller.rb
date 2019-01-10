@@ -25,6 +25,10 @@ class UserTicketsController < ApplicationController
   # GET /user_tickets/new
   def new
     @user_ticket = UserTicket.new
+
+    # can be nil
+    @document_id = params[:document_id]
+    @section_number = params[:section_number]
   end
 
   # GET /user_tickets/1/edit
@@ -55,7 +59,9 @@ class UserTicketsController < ApplicationController
   # POST /user_tickets
   # POST /user_tickets.json
   def create
-    @user_ticket = UserTicket.new(:name => current_user.name, :email => current_user.email, :comment => user_ticket_params[:comment], :subject => user_ticket_params[:subject], :status => 0)
+    @user_ticket = UserTicket.new(:name => current_user.name, :email => current_user.email,:link => user_ticket_params[:link],
+                                  :comment => user_ticket_params[:comment], :subject => user_ticket_params[:subject], :status => 0,
+                                  :section_number => user_ticket_params[:section_number], :document_id => user_ticket_params[:document_id])
 
     respond_to do |format|
       if @user_ticket.save
@@ -102,6 +108,7 @@ class UserTicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_ticket_params
-      params.require(:user_ticket).permit(:comment, :subject)
+      params.require(:user_ticket).permit(:comment, :subject, :link, :section_number, :document_id)
     end
+
 end

@@ -12,6 +12,7 @@ class Document < ActiveRecord::Base
 
   after_create :download_and_set_url_local
   before_destroy :delete_local_documents
+  before_destroy {collections.clear}
 
   DOCUMENT_TYPES = ['State Report', 'Committee of Experts Report', 'Committee of Ministers Recommendation']
   DOCUMENT_TYPES_ID = DOCUMENT_TYPES.zip(0...DOCUMENT_TYPES.length).to_h

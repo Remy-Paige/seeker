@@ -5,8 +5,33 @@
       %ul
         - @user_ticket.errors.full_messages.each do |msg|
           %li= msg
-  -#        TODO: fix select - requires chaning DB to a integer instead of a string ????
+  %h4= current_user.email
+  -#something about if statements doesnt work here
+  - if @document_id == nil
+    = f.input :link, placeholder: 'Link'
+  - if @document_id != nil
+    %h4
+      Document reference number:
+      = @document_id
+  - if @section_number != nil
+    %h4
+      Section Number:
+      = @section_number
+  = f.hidden_field :document_id, :value => @document_id
+  = f.hidden_field :section_number, :value => @section_number
   = f.input :subject, placeholder: 'Subject', as: :select, include_blank: false, collection: [['meta-data error', 'meta-data error'], ['sectioning error','sectioning error'], ['document request','document request'], ['other','other']]
   = f.input :comment, placeholder: 'Comment'
   .actions
     = f.submit 'Save'
+
+    -# t.string   "name"
+    -# t.string   "email"
+    -# t.string   "link"
+    -## t.text     "comment"
+    -## t.integer  "status"
+    -## t.integer  "admin_id"
+    -## t.datetime "created_at",     null: false
+    -## t.datetime "updated_at",     null: false
+    -## t.string   "subject"
+    -## t.string   "section_number"
+    -## t.integer  "document_id"

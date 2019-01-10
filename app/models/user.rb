@@ -7,6 +7,6 @@ class User < ActiveRecord::Base
   has_many :ticket_relations
   has_many :user_tickets, through: :ticket_relations
 
-  has_many :collections
+  has_many :collections, dependent: :destroy
 
 end

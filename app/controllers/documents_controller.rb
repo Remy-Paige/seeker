@@ -280,9 +280,8 @@ class DocumentsController < ApplicationController
           },
           "size":1000,
           "from":0,
-          "highlight":{"fields":{"content.analyzed":{"type":"plain","fragment_size":6}},"pre_tags":["\u003cstrong\u003e"],"post_tags":["\u003c/strong\u003e"]},"fields":[]}
+          "highlight":{"fields":{"content.analyzed":{"type":"plain","fragment_size":1250}},"pre_tags":["\u003cstrong\u003e"],"post_tags":["\u003c/strong\u003e"]},"fields":[]}
       ).with_details
-
 
       @search_results = @search_results.paginate(page: params[:page], per_page: 10)
       render :search_results

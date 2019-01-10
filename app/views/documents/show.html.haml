@@ -5,7 +5,7 @@
     %div
       %h4 URL:
     %div= @document.url
-    %div= link_to 'Report Problem', new_user_ticket_path, :class => "btn btn-warning"
+    %div= link_to 'Report Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning"
     %div
       %h4 country:
     %div{:class => "info"}= @document.country
@@ -38,4 +38,4 @@
             language
             = section.language_id
         %div= section.content
-        %div=link_to 'Report Problem', new_user_ticket_path, :class => "btn btn-warning"
+        %div=link_to 'Report Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-warning"

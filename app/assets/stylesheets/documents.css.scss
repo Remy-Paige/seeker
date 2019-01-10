@@ -31,6 +31,13 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
+.results_grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+.result{
+  grid-column-start: 1;
+}
 //having just these two seems to force it to do what i want - giving grid start of other columns messes it up
 .country{
   grid-column-start: 1;

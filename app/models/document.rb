@@ -33,7 +33,16 @@ class Document < ActiveRecord::Base
     # & lets you call methods on objects without worrying that the object may be nil
     # $ matches the position before newline - to make sure you get the end of the string
     # this function /assumes/ that .pdf is present at the end of files but this is no longer true for some reason
-    self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
+    #
+    if self.url.include?('.pdf')
+      self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
+    else
+      first = self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
+      second = first + '.txt'
+      return second
+    end
+
+
   end
 
   def finish_parsing!

@@ -16,13 +16,9 @@ class DocumentParserJob
       dir = document.clean_url.split('/')[0...-1].join('/')
       write_to_log('ocr-ing...')
       Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
+      write_to_log('finished ocr-ing...')
 
 
-      if document.url_text.include?('.txt')
-      else
-        document.url_text = document.url_text + '.txt'
-        document.save
-      end
       content = File.read(document.url_text)
 
       # ? is backslash escaped to match it literally

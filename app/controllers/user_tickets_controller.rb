@@ -45,6 +45,7 @@ class UserTicketsController < ApplicationController
       @user_ticket.save
       current_user.user_tickets << @user_ticket
 
+      #TODO: BUG BUG - may be multiple ones - first one may already have managed = true
       ticket_relation = current_user.ticket_relations.where('user_ticket_id =' + params[:id]).first
       ticket_relation.manages = true
       ticket_relation.save

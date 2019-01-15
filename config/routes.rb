@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
-  resources :collections
+  resources :collections do
+    member do
+      get 'remove'
+    end
+  end
+
+  post 'save' => 'collections#save'
 
   devise_for :users, :path_prefix => 'my'
   #, separates devise and custom admin crud

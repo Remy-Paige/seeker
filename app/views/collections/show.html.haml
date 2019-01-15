@@ -1,6 +1,28 @@
-%p#notice= notice
+%div{:class => "centre"}
+  = link_to 'export collection', root_path, :class => "btn btn-default"
+  -#queries
+  -@queries.each do |query|
+    %div
+      -query.query
 
-
-= link_to 'Edit', edit_collection_path(@collection)
-\|
-= link_to 'Back', collections_path
+  %div{:class => "results_grid"}
+    -#sections
+    - @sections.each do |section|
+      %div{:class => 'result'}
+        %h5= section.section_number
+        %h5= section.section_name
+        %br
+        = section.content[0..1500].html_safe
+      %div{:class => 'details'}
+        = section.document.country
+        %br
+        = section.document.year
+        %br
+        = section.document.cycle.ordinalize + ' cycle'
+        %br
+        = Document::DOCUMENT_TYPES[section.document.document_type]
+        %br
+        = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default"
+        - section.page_number == nil ? number = 0 : number = section.page_number
+        = link_to 'Jump To Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default"
+        = link_to 'remove from collection', remove_collection_path(section_number: section.section_number,document_id: section.document.id , id: @collection.id), :class => "btn btn-warning"

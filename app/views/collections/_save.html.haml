@@ -1,0 +1,8 @@
+%div
+  = form_tag(save_path, method: :post, :remote => true) do
+    = hidden_field_tag :document_id, locals[:document_id]
+    = hidden_field_tag :section_number, locals[:section_number]
+    = hidden_field_tag :query, locals[:query]
+    = hidden_field_tag :save_type, locals[:save_type]
+    = select_tag :collection, options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
+    = submit_tag(value = "Save "+ locals[:save_type], class: "btn btn-default")

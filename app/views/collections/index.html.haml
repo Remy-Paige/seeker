@@ -1,19 +1,10 @@
-%h1 Listing collections
+%div{:class => "centre"}
+  = link_to 'New collection', new_collection_path, :class => "btn btn-info"
+  %h4 Listing your collections
+  - @collections.each do |collection|
+    %div
+      %h4=collection.name
 
-%table
-  %thead
-    %tr
-      %th
-      %th
-      %th
-
-  %tbody
-    - @collections.each do |collection|
-      %tr
-        %td= link_to 'Show', collection
-        %td= link_to 'Edit', edit_collection_path(collection)
-        %td= link_to 'Destroy', collection, :method => :delete, :data => { :confirm => 'Are you sure?' }
-
-%br
-
-= link_to 'New Collection', new_collection_path
+    = link_to 'Show', collection, :class => "btn btn-default"
+    = link_to 'Edit', edit_collection_path(collection), :class => "btn btn-default"
+    = link_to 'Destroy', collection, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"

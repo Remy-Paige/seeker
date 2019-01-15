@@ -29,7 +29,7 @@ class Section < ActiveRecord::Base
     }
   end
 
-  def self.add_section(section_number:, section_name:, content:, language_id: nil, page_number: nil)
+  def self.add_section(section_number:, section_name:, content:, language_id: nil, page_number:)
     ((content.length / STRING_LEN_LIMIT) + 1).times do |section_part|
       section_start = section_part * STRING_LEN_LIMIT
       section_end = (section_part + 1) * STRING_LEN_LIMIT

@@ -29,7 +29,7 @@
           - section.page_number == nil ? number = 0 : number = section.page_number
           = link_to 'Jump To Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default"
           = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_number => section.section_number), :class => "btn btn-warning"
-          = link_to 'export', root_path, :class => "btn btn-default"
+          = link_to 'export', export_path(section_number: section.section_number ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default"
           %br
           %br
           - if section.section_name != 'Full Content'

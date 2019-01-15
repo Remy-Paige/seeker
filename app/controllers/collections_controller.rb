@@ -4,6 +4,9 @@ class CollectionsController < ApplicationController
   respond_to :html, :js
 
 
+
+
+
   # GET /collections
   # GET /collections.json
   def index
@@ -66,6 +69,46 @@ class CollectionsController < ApplicationController
     relation = @collection.collection_documents.where("document_id =" + params[:document_id] + "AND section_number = '" + params[:section_number] + "'").first
     relation.destroy
     redirect_to(:back)
+  end
+
+  def export
+
+    if params[:export_type] == 'collection'
+      collection = Collection.find(params[:id])
+
+      # cant delete the file - so create new at beginning every time
+
+      File.open('export.txt', 'a') {
+          |file|
+      }
+
+      # cant each or map over a active record association
+
+      for index in 0..collection.collection_documents.length - 1
+        relation = collection.collection_documents[index]
+        document = Document.find(relation.document_id)
+        section = document.sections.where("section_number = '" + relation.section_number.to_s + "'").first
+
+        File.open('export.txt', 'a') {
+            |file| file.write(document.url.to_s + "\n" + section.section_name.to_s + "\n")
+        }
+      end
+
+      send_file('export.txt')
+
+    else
+      document = Document.find(params[:document_id])
+      section = document.sections.where("section_number = '" + params[:section_number].to_s + "'").first
+
+      File.open('export.txt', 'w') {
+          |file| file.write(document.url.to_s + "\n" + section.section_name.to_s + "\n")
+      }
+
+      send_file('export.txt')
+
+    end
+
+
   end
 
   # GET /collections/1
@@ -145,4 +188,6 @@ class CollectionsController < ApplicationController
     def collection_params
       params.require(:collection).permit(:name, :collection, :document_id, :section_number, :save_type, :query)
     end
+
+
 end

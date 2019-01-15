@@ -1,5 +1,5 @@
 %div{:class => "centre"}
-  = link_to 'export collection', root_path, :class => "btn btn-default"
+  = link_to 'export collection', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
   -#queries
   -@queries.each do |query|
     %div

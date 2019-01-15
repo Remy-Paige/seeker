@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   end
 
   post 'save' => 'collections#save'
+  get 'export' => 'collections#export'
 
   devise_for :users, :path_prefix => 'my'
   #, separates devise and custom admin crud

@@ -116,6 +116,11 @@ class CollectionsController < ApplicationController
   def show
     @collection = Collection.find(params[:id])
     @queries = @collection.queries
+
+
+
+
+
     sections = []
 
     @collection.collection_documents.each do |relation|

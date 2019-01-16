@@ -13,6 +13,7 @@ class DocumentsController < ApplicationController
   def show
     # each section is made up of lots of section parts because of elastic search - this coellates the sections parts into a section
     # honestly I'm not 100% sure how it works
+    @languages = Language.all
     @sections = @document.sections.group_by(&:section_number).map do |section_number, sections|
           section_name = sections.first.section_name
           language_id = sections.first.language_id

@@ -1,6 +1,7 @@
 %div{:class => "centre"}
   - @collections = current_user.collections
-  = render 'collections/save',  locals: {save_type: 'query', section_number: nil, document_id: nil, query: params , collections: @collections}
+  -#TODO: change this to use the queries controller
+  = render 'collections/save',  locals: {save_type: 'query', section_number: nil, document_id: nil, query: ActiveSupport::JSON.encode(params) , collections: @collections}
   %div{:class => "results_grid"}
     - if @search_results.blank?
       %div{:class => 'result'}

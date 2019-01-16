@@ -7,7 +7,7 @@ class UserTicket < ActiveRecord::Base
 
   before_destroy { users.clear }
 
-  STATUS_TYPES = ['Unmanaged', 'Open']
+  STATUS_TYPES = ['Unmanaged', 'Open', 'Resolved']
   STATUS_TYPES_ID = STATUS_TYPES.zip(0...STATUS_TYPES.length).to_h
 
   SUBJECT_TYPES = ['meta-data error', 'sectioning error', 'document request', 'other']

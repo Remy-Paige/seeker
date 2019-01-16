@@ -10,5 +10,6 @@
         = user_ticket.subject
       %h4
         Status:
-        = user_ticket.status == 0 ? 'UnManaged' : 'Open'
+        = UserTicket::STATUS_TYPES[user_ticket.status]
       = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-default"
+      = link_to 'Delete', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"

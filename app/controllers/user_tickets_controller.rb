@@ -45,7 +45,6 @@ class UserTicketsController < ApplicationController
       @user_ticket.save
       current_user.user_tickets << @user_ticket
 
-      #TODO: BUG BUG - may be multiple ones - first one may already have managed = true
       ticket_relation = current_user.ticket_relations.where('user_ticket_id =' + params[:id]).first
       ticket_relation.manages = true
       ticket_relation.save
@@ -55,6 +54,16 @@ class UserTicketsController < ApplicationController
     # TODO: improve the error/redirect
 
     redirect_to user_tickets_path
+  end
+
+  def resolve
+    @user_ticket = UserTicket.find(params[:id])
+
+    @user_ticket.status = 2
+    @user_ticket.save
+
+    redirect_to user_tickets_path
+
   end
 
   # POST /user_tickets

@@ -1,9 +1,16 @@
 %div{:class => "centre"}
-  = link_to 'export collection', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
-  -#queries
+  %h4= @collection.name
+
   -@queries.each do |query|
     %div
-      -query.query
+      - params = ActiveSupport::JSON.decode(query.query)
+      = params.to_s
+      %br
+      = link_to 'Run Query', advanced_path(params), :class => "btn btn-default"
+      = link_to 'Delete', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"
+  %br
+  %br
+  = link_to 'export collection', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
 
   %div{:class => "results_grid"}
     -#sections

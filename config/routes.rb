@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :queries
+
   resources :collections do
     member do
       get 'remove'
@@ -17,6 +19,7 @@ Rails.application.routes.draw do
   resources :user_tickets do
     member do
       get 'claim'
+      get 'resolve'
     end
   end
   resources :users

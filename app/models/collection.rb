@@ -9,4 +9,6 @@ class Collection < ActiveRecord::Base
 
   before_destroy {documents.clear}
 
+  validates :name, presence: true
+
 end

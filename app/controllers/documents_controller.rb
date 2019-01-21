@@ -42,7 +42,8 @@ class DocumentsController < ApplicationController
     unless current_user.admin?
       redirect_to('/404')
     end
-    @languages = @document.country.languages
+    # TODO: fix this so its not all, and no duplicates
+    @languages = Language.all
     gon.languages = @languages
     @sections =
       @document.sections.group_by(&:section_number).map do |section_number, sections|
@@ -287,6 +288,12 @@ class DocumentsController < ApplicationController
       @search_results = @search_results.paginate(page: params[:page], per_page: 10)
       render :search_results
     else
+
+      @languages = Language.all
+      gon.languages = @languages
+      @countries = Country.all
+      gon.countries = @countries
+
       render 'home/advanced_search'
     end
   end

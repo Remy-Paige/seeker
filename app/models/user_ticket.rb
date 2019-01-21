@@ -12,5 +12,6 @@ class UserTicket < ActiveRecord::Base
 
   SUBJECT_TYPES = ['meta-data error', 'sectioning error', 'document request', 'other']
 
+  validates :comment, presence: true
 
 end

@@ -181,7 +181,7 @@ documents_scripts = ->
       "<option value='none of'>none of</option>" +
       "<option value='one of'>one of</option>"
 
-
+#    which set of options to add to the select
     option = switch
       when added_query_select_value == 'country' then country_options
       when added_query_select_value == 'language' then language_options
@@ -230,6 +230,7 @@ documents_scripts = ->
   # remove any minus buttons left over
   # for numeric filters
   # field changes
+  # when the filter type is selected, trigger this and add the initial input
   $(document.body).off 'change', '.added_filter_select'
   $(document.body).on 'change', '.added_filter_select', (e) ->
     added_filter_select_id = this.id.split('_')
@@ -295,11 +296,28 @@ documents_scripts = ->
     #remove the exisitng plus button
     $(this).remove()
 
-    #add field and new plus button
-    new_row_added_field =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
-    new_row_added_field += "<i data='" + add_field_number + "' class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
-    $("#added_field_" + generic_id ).append(new_row_added_field)
+#    TODO: this is where to put the new filters
+#    use the value of
+#    #added_query_select_ID
+    added_query_select_value = $('#added_query_select_' + generic_id).val()
+    console.log(added_query_select_value)
 
+    generic_input =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
+
+    input = switch
+      when added_query_select_value == 'country' then generic_input
+      when added_query_select_value == 'language' then generic_input
+      when added_query_select_value == 'text search' then generic_input
+      when added_query_select_value == 'section number' then generic_input
+      when added_query_select_value == 'year' then generic_input
+      when added_query_select_value == 'cycle' then generic_input
+
+    #add field
+    $("#added_field_" + generic_id ).append(input)
+
+    #add new plus button
+    new_row_added_plus_button = "<i data='" + add_field_number + "' class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
+    $("#added_field_" + generic_id ).append(new_row_added_plus_button)
     #add new minus button
     new_row = "<i data-number='" + generic_id + "_" + add_field_number + "' class='fas fa-times orange minus_filter_added_field' id='minus_filter_added_field_" + generic_id + "' ></i>"
     $("#added_filter_icons_" + generic_id).append(new_row)

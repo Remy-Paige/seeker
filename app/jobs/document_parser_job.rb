@@ -16,8 +16,14 @@ class DocumentParserJob
       dir = document.clean_url.split('/')[0...-1].join('/')
       write_to_log('ocr-ing...')
       logger.info 'Start OCR'
-      Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
-      write_to_log('finished ocr-ing...')
+      logger.info 'clean' + document.clean_url
+      logger.info 'text' + document.url_text
+      begin
+        Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
+      rescue StandardError => e
+        logger.info 'DocsplitError' + e.message
+      end
+        write_to_log('finished ocr-ing...')
       logger.info 'Finish OCR'
 
 

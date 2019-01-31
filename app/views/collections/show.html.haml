@@ -10,7 +10,7 @@
       = link_to 'Delete', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"
   %br
   %br
-  = link_to 'export collection', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
+  = link_to 'Export Collection', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
 
   %div{:class => "results_grid"}
     -#sections
@@ -31,5 +31,5 @@
         %br
         = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default"
         - section.page_number == nil ? number = 0 : number = section.page_number
-        = link_to 'Jump To Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default"
-        = link_to 'remove from collection', remove_collection_path(section_number: section.section_number,document_id: section.document.id , id: @collection.id), :class => "btn btn-warning"
+        = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default"
+        = link_to 'Remove from Collection', remove_collection_path(section_number: section.section_number,document_id: section.document.id , id: @collection.id), :class => "btn btn-warning"

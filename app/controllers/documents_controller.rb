@@ -188,18 +188,15 @@ class DocumentsController < ApplicationController
 
   def advanced_search
     #abcdefgh jklmnopq rstuvwxyz
+    # this skeleton copies the format of the queries that searchkick runs if you use it as a wrapper, with a few edits
 
     numeric_queries = [:year, :cycle]
-    logical_queries = [:section_number,:country, :language]
-    numeric_filters = ['all','only','less than','greater than','between']
-    logical_filters = ['all','only','none of','one of']
+    logical_queries = [:country, :language]
+    # text_search, section_number are the other two
+    # numeric_filters ['all','only','less than','greater than','between']
+    # logical_filters ['all','only','none of','one of']
 
-    highlight = { tag: "<strong>" }
-    boost_where = { full_content: false }
 
-    #the keys to do last because they're text search
-    text_search_keepback = []
-    search_result_sets = []
     #check post, otherwise get
     if params[:keyword]&.any?(&:present?)
       # IMPORTANT - need .with_details to get the individual section hashes
@@ -222,10 +219,12 @@ class DocumentsController < ApplicationController
         keyword = params[:keyword][key]
 
         #first search for none_of filter type because the filter overrides the query in this case
+        # both text_search and section_number do text searches - but section number has the word start option and has to be treated separatle
+        # text searches need the dis_max skeleton - this is added only if its needed
         if filter_type == :none_of
 
           if query_type == :text_search
-            #so that we know to append the dismax queries - if we include it in the skeleton with an empty array es compains
+            #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array es complains
             must_not_text_search_present = true
             keyword&.each do |word|
               must_not_text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search"}}})
@@ -233,13 +232,19 @@ class DocumentsController < ApplicationController
               must_not_text_arr.append({match:{"content.analyzed":{query: word,boost:1,operator:"and",analyzer:"searchkick_search",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
               must_not_text_arr.append({match:{"content.analyzed":{"query": word,boost:1,operator:"and",analyzer:"searchkick_search2",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
             end
+          elsif query_type == :section_number
+
+            must_not_text_search_present = true
+            keyword&.each do |word|
+              must_not_text_arr.append({match:{"section_number.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
+            end
           #the numerical queries don't have a none_of option
           elsif logical_queries.include?(query_type)
             must_not_arr.append(logical_queries(query_type, filter_type, keyword))
           end
 
         elsif query_type == :text_search
-          #so that we know to append the dismax queries - if we include it in the skeleton with an empty array es compains
+          #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array es complains
           text_search_present = true
           keyword&.each do |word|
             text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search"}}})
@@ -247,7 +252,14 @@ class DocumentsController < ApplicationController
             text_arr.append({match:{"content.analyzed":{query: word,boost:1,operator:"and",analyzer:"searchkick_search",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
             text_arr.append({match:{"content.analyzed":{"query": word,boost:1,operator:"and",analyzer:"searchkick_search2",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
           end
-
+        elsif query_type == :section_number
+          keyword&.each do |word|
+            if word != ""
+              text_search_present = true
+            text_arr.append({match:{"section_number.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
+            end
+          end
+        # dont need to loop over words for these - keyword array just gets dumped into es
         elsif logical_queries.include?(query_type)
           filter_arr.append(logical_queries(query_type, filter_type, keyword))
         elsif numeric_queries.include?(query_type)
@@ -285,6 +297,10 @@ class DocumentsController < ApplicationController
           "highlight":{"fields":{"content.analyzed":{"type":"plain","fragment_size":1250}},"pre_tags":["\u003cstrong\u003e"],"post_tags":["\u003c/strong\u003e"]},"fields":[]}
       ).with_details
 
+
+
+
+      @collections = current_user&.collections
       @search_results = @search_results.paginate(page: params[:page], per_page: 10)
       render :search_results
     else
@@ -311,11 +327,17 @@ class DocumentsController < ApplicationController
 
 
     def logical_queries(query_type, filter_type, keyword)
-      #TODO: fix word_start option for section number
       #use the terms function in the elastic search DSL because we don't need to worry about the analysis of the text
       if filter_type == :all
         {}
       else
+        # check for the multi word countries - only the first word gets passed into the params
+        # TODO: fix this on front end
+        if keyword.include? "Bosnia"
+          keyword[keyword.index("Bosnia")] = "Bosnia and Herzegovina"
+        elsif keyword.include? "United"
+          keyword[keyword.index("United")] = "United Kingdom"
+        end
         search = Hash.new
         search[query_type] = keyword
         {terms: search}

@@ -2,12 +2,7 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.centre {
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-row-start: 1;
-  text-align: left;
-}
+
 
 .documents_form {
   padding-bottom: 0px;
@@ -48,11 +43,35 @@
 .alternating{
   background: #fff6b3;
 }
+
+//show
+.section_info {
+  padding-right: 10px;
+}
 .info{
   align-self: center;
 }
 
+//edit_section_separation
 .edit_section form {
   display: grid;
   grid-template-columns:1fr 3fr 1fr;
+}
+
+//show and search_results
+.right_button {
+  position: relative;
+  float: right;
+  margin-bottom: 5px;
+  display: block;
+  justify-self: right;
+}
+.right_box {
+  justify-self: right;
+  position: relative;
+  float: right;
+  display: block;
+}
+.export {
+  margin-top: 10px;
 }

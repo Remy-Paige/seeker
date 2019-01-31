@@ -9,7 +9,7 @@
           - @document.errors.full_messages.each do |msg|
             %li= msg
     %h3
-      = link_to 'Original document', @document.url, target: '_blank'
+      = link_to 'Original Document', @document.url, target: '_blank'
     = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries, input_html: { class: 'documents_form' }
     = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types
     = f.input :year, placeholder: 'Year'

@@ -78,37 +78,6 @@ documents_scripts = ->
 
   ##### advanced search #####
 
-  # TODO: make icons look more like buttons?
-  # TODO: fix basic search text box width
-  # TODO: fix between boxes width
-  # TODO/abandoned: fix padding of added filter field
-  # TODO: fix length of section number word in select box
-  # TODO: add an all box for the 'always there' country and lanague
-  # TODO: go over filter and pop up wording
-
-
-
-  # TODO: change the filter options avalible for section number - it is a text field
-
-  # TODO: add a 'article' feature that gets all sections from one article
-  # TODO: make section number, country and languages be always there
-  # TODO: add everything to the 'add filter' dropdown
-  # TODO: figure out how to make it easily parasable for ruby when submitted
-  # TODO: look into need to mark sections as multiple languages
-  # TODO: add report type
-
-  # TODO: all still has an unneccasary X button - and returns 0 keywords
-
-
-
-
-  # TODO: get country/language autocomplete / select boxes (aaa?)
-  # TODO: sanity/type checking
-  # TODO: document some of this shit so I don't forgget my naming conventions
-
-  # TODO: look into refresh issues - previous value maintained in select
-
-
 
 
   # add a filter
@@ -116,6 +85,13 @@ documents_scripts = ->
   $(document).on 'click', '#add_search', (e) ->
     e.preventDefault()
     e.stopPropagation()
+
+#   | .box .added_query | .box .select         | .box .added_field | .box .added_filter_icons | "<i class='question_icon fas fa-question-circle black' id='question_icon_" + counter + "' ></i>"
+#   | #added_query_ID   | #added_select_ID     | #added_field_ID   | #added_filter_icons_ID   |
+#   |.added_query_select| .added_filter_select |                   | delete button            |
+
+#    selecting .added_query_select fills values in .added_filter_select
+#    selecting .added_filter_select adds a box in .added_field and filter icons
 
     new_row =  "<div class='box added_query' id='added_query_" + counter + "' >"
 
@@ -143,6 +119,8 @@ documents_scripts = ->
     new_row += "</div>"
     new_row += "<div class='box added_filter_icons' id='added_filter_icons_" + counter + "' >"
 
+    new_row += "<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + counter + "' ></i>"
+
     new_row += "</div>"
 
     new_row += "<i class='question_icon fas fa-question-circle black' id='question_icon_" + counter + "' ></i>"
@@ -153,31 +131,37 @@ documents_scripts = ->
     console.log(new_row)
     $('.sub_grid').append(new_row)
 
-# use this not simply  $('select').change (e) -> to get the dynamically added content
-# http://api.jquery.com/on/#direct-and-delegated-events
+  # selecting .added_query_select fills values in .added_filter_select
   # add the correct select options for a filter
   # preserve filter select value on query select change
   $(document.body).off 'change', '.added_query_select'
   $(document.body).on 'change', '.added_query_select', (e) ->
+
+
     added_query_select_id = this.id.split('_')
     generic_id = added_query_select_id[-1..][0]
     added_query_select_value = this.value
 
-    country_options = "<option value='only'>only from</option>" +
+    country_options =
+      "<option value='only'>only from</option>" +
       "<option value='none of'>from none of</option>" +
       "<option value='one of'>from one of</option>"
-    language_options = "<option value='only'>only mentions</option>" +
+    language_options =
+      "<option value='only'>only mentions</option>" +
       "<option value='none of'>mentions none of</option>" +
       "<option value='one of'>mentions one of</option>"
-    text_options = "<option value='only'>only contains</option>" +
+    text_options =
+      "<option value='only'>only contains</option>" +
       "<option value='none of'>contains none of</option>" +
       "<option value='one of'>contains at least one of</option>"
-    numeric_options = "<option value='all'>all</option>" +
+    numeric_options =
+      "<option value='all'>all</option>" +
       "<option value='only'>only</option>" +
       "<option value='less than'>less than</option>" +
       "<option value='greater than'>greater than</option>" +
       "<option value='between'>between</option>"
-    section_number_options = "<option value='only'>only</option>" +
+    section_number_options =
+      "<option value='only'>only</option>" +
       "<option value='none of'>none of</option>" +
       "<option value='one of'>one of</option>"
 
@@ -202,7 +186,6 @@ documents_scripts = ->
 
     $("#added_filter_select_" + generic_id).empty().append(option);
 
-
     #if the old filter select value is the same type as the new query select value can preserve the option
     if numeric_filters.includes(filter_select_value) && numeric_queries.includes(added_query_select_value)
       value = switch
@@ -221,7 +204,7 @@ documents_scripts = ->
     else
       #they don't match
       $("#added_filter_select_" + generic_id).val(null)
-
+    #update the values
     $("#added_filter_select_" + generic_id).change()
 
   # for logical filters
@@ -230,51 +213,93 @@ documents_scripts = ->
   # remove any minus buttons left over
   # for numeric filters
   # field changes
-  # when the filter type is selected, trigger this and add the initial input
+  # when the filter type is selected/changed, add the proper input type
+  # this also gets triggered on added_query_select change because it calls change on filter to preserve the filter
   $(document.body).off 'change', '.added_filter_select'
   $(document.body).on 'change', '.added_filter_select', (e) ->
     added_filter_select_id = this.id.split('_')
     generic_id = added_filter_select_id[-1..][0]
     added_filter_select_value = this.value
-    console.log(added_filter_select_value)
+    if generic_id < 3
+      added_query_select_value = $('#added_query_'+ generic_id).text().trim()
+      added_query_select_value = added_query_select_value.substr(0,1).toLowerCase()+added_query_select_value.substr(1);
+    else
+      added_query_select_value = $('#added_query_select_' + generic_id).val()
+    console.log(added_query_select_value)
+
+
+#    apart from text - just #added_query_ID
+#    text value cant be grabbed with val, has to be grabbed with the snippet above
+
+    #   | .box .added_query        | .box .select         | .box .added_field | .box .added_filter_icons | "<i class='question_icon fas fa-question-circle black' id='question_icon_" + counter + "' ></i>"
+    #   | #added_query_select_ID   | #added_select_ID     | #added_field_ID   | #added_filter_icons_ID   |
+    #   |.added_query_select       | .added_filter_select | box! + add buttons| delete button            |
+
+    #    selecting .added_query_select fills values in .added_filter_select
+    #    selecting .added_filter_select adds a box in .added_field and filter icons
+
+
+    #define the input types
+    plus_button = "<i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
+
+    country_select_row = "<select name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    for country in gon.countries
+      country_select_row += '<option value=' + country.name + '>' + country.name + '</option>'
+    country_select_row += "</select>"
+
+    plus_country_select_row = country_select_row + plus_button
+
+    language_select_row = "<select name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    for language in gon.languages
+      language_select_row += '<option value=' + language.name + '>' + language.name + '</option>'
+    language_select_row += "</select>"
+
+    plus_language_select_row = language_select_row + plus_button
 
     nothing_row = "<input type='hidden' name='keyword[" + generic_id + "][]' value=''>"
     between_row = "<input type='text' name='keyword[" + generic_id + "][]' class='number'>  -  <input type='text' name='keyword[" + generic_id + "][]' class='number'>"
     only_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
     plus_button_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_'><i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
+
+    if added_query_select_value == 'country'
+      field_row = switch
+        when added_filter_select_value == null then nothing_row
+        when added_filter_select_value == 'all' then nothing_row
+        when added_filter_select_value == 'less than' then only_row
+        when added_filter_select_value == 'greater than' then only_row
+        when added_filter_select_value == 'between' then between_row
+        when added_filter_select_value == 'only' then country_select_row
+        when added_filter_select_value == 'none of' then plus_country_select_row
+        when added_filter_select_value == 'one of' then plus_country_select_row
+    else if added_query_select_value == 'language'
+      field_row = switch
+        when added_filter_select_value == null then nothing_row
+        when added_filter_select_value == 'all' then nothing_row
+        when added_filter_select_value == 'less than' then only_row
+        when added_filter_select_value == 'greater than' then only_row
+        when added_filter_select_value == 'between' then between_row
+        when added_filter_select_value == 'only' then language_select_row
+        when added_filter_select_value == 'none of' then plus_language_select_row
+        when added_filter_select_value == 'one of' then plus_language_select_row
+
+    else
+    #      #year, cycle, text search, section number
+      field_row = switch
+        when added_filter_select_value == null then nothing_row
+        when added_filter_select_value == 'all' then nothing_row
+        when added_filter_select_value == 'less than' then only_row
+        when added_filter_select_value == 'greater than' then only_row
+        when added_filter_select_value == 'between' then between_row
+        when added_filter_select_value == 'only' then only_row
+        when added_filter_select_value == 'none of' then plus_button_row
+        when added_filter_select_value == 'one of' then plus_button_row
+
     delete_button_row = "<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + generic_id + "' ></i>"
-
-    field_row = switch
-      when added_filter_select_value == null then nothing_row
-      when added_filter_select_value == 'all' then nothing_row
-      when added_filter_select_value == 'less than' then only_row
-      when added_filter_select_value == 'greater than' then only_row
-      when added_filter_select_value == 'between' then between_row
-      when added_filter_select_value == 'only' then only_row
-      when added_filter_select_value == 'none of' then plus_button_row
-      when added_filter_select_value == 'one of' then plus_button_row
-
     filter_row = delete_button_row
 
     $('#added_field_' + generic_id).empty().append(field_row)
     $("#added_filter_icons_" + generic_id ).empty().append(filter_row)
 
-
-  #remove a whole filter
-  $(document.body).off 'click', '.delete_filter'
-  $(document.body).on 'click', '.delete_filter', (e) ->
-    delete_filter_id = this.id.split('_')
-    generic_id = delete_filter_id[-1..][0]
-
-    $("#added_query_" + generic_id).remove()
-    $("#added_select_" + generic_id).remove()
-    $("#added_field_" + generic_id).remove()
-    $("#added_filter_icons_" + generic_id).empty()
-    $("#delete_filter_" + generic_id).remove()
-    $("#added_filter_icons_" + generic_id).remove()
-    $("#question_icon_" + generic_id).remove()
-    #dont do this because of removing an element before the last one
-    #counter = counter - 1
 
   #add a filter field
   $(document.body).off 'click', '.plus_filter_field'
@@ -296,19 +321,36 @@ documents_scripts = ->
     #remove the exisitng plus button
     $(this).remove()
 
-#    TODO: this is where to put the new filters
 #    use the value of
 #    #added_query_select_ID
-    added_query_select_value = $('#added_query_select_' + generic_id).val()
+
+    if generic_id < 3
+      added_query_select_value = $('#added_query_'+ generic_id).text().trim()
+      added_query_select_value = added_query_select_value.substr(0,1).toLowerCase()+added_query_select_value.substr(1);
+    else
+      added_query_select_value = $('#added_query_select_' + generic_id).val()
     console.log(added_query_select_value)
 
     generic_input =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
 
+    country_select_row = "<select data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    for country in gon.countries
+      country_select_row += '<option value=' + country.name + '>' + country.name + '</option>'
+    country_select_row += "</select>"
+
+    language_select_row = "<select data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    for language in gon.languages
+      language_select_row += '<option value=' + language.name + '>' + language.name + '</option>'
+    language_select_row += "</select>"
+
+
+#   capitalisation bugf
     input = switch
-      when added_query_select_value == 'country' then generic_input
-      when added_query_select_value == 'language' then generic_input
+      when added_query_select_value == 'country' then country_select_row
+      when added_query_select_value == 'language' then language_select_row
       when added_query_select_value == 'text search' then generic_input
       when added_query_select_value == 'section number' then generic_input
+      when added_query_select_value == 'section Number' then generic_input
       when added_query_select_value == 'year' then generic_input
       when added_query_select_value == 'cycle' then generic_input
 
@@ -333,7 +375,26 @@ documents_scripts = ->
     console.log("minus")
     console.log(field_number)
     $("input[data-number='" + generic_id + "_" + field_number + "']").remove()
+    $("select[data-number='" + generic_id + "_" + field_number + "']").remove()
     $("i[data-number='" + generic_id + "_" + field_number + "']").remove()
+
+  #remove a whole filter
+  $(document.body).off 'click', '.delete_filter'
+  $(document.body).on 'click', '.delete_filter', (e) ->
+    delete_filter_id = this.id.split('_')
+    generic_id = delete_filter_id[-1..][0]
+
+    $("#added_query_" + generic_id).remove()
+    $("#added_select_" + generic_id).remove()
+    $("#added_field_" + generic_id).remove()
+    $("#added_filter_icons_" + generic_id).empty()
+    $("#delete_filter_" + generic_id).remove()
+    $("#added_filter_icons_" + generic_id).remove()
+    $("#question_icon_" + generic_id).remove()
+  #dont do this because of removing an element before the last one
+  #counter = counter - 1
+
+
 
   #display appropriate help hint based on form status
   $(document.body).off 'mouseover', '.question_icon'

@@ -34,7 +34,7 @@
             = link_to 'Original document', document.url, target: '_blank'
             %br
             - if document.parsing_finished
-              = link_to 'View sectioning', document_path(document)
+              = link_to 'View Sectioning', document_path(document)
           - if document.parsing_finished
             %div{:class => alternating ? 'alternating' : ''}Completed
           - else
@@ -42,7 +42,7 @@
           %div{:class => alternating ? 'alternating' : ''}
             = link_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
             %br
-            = link_to 'Edit metadata', edit_document_path(document)
+            = link_to 'Edit Metadata', edit_document_path(document)
             %br
             - if document.parsing_finished
               = link_to 'Edit Sections', edit_section_separation_document_path(document)
@@ -57,7 +57,7 @@
             %div{:class => alternating ? 'alternating' : ''}= document.cycle
             %div{:class => alternating ? 'alternating' : ''}= document.year
             %div{:class => alternating ? 'alternating' : ''}
-              = link_to 'Original document', document.url, target: '_blank'
-              = link_to 'View sectioning', document_path(document)
+              = link_to 'Original Document', document.url, target: '_blank'
+              = link_to 'View Sectioning', document_path(document)
       - alternating ? alternating = false : alternating = true
 

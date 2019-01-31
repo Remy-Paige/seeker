@@ -1,7 +1,9 @@
 %div{:class => "centre"}
-  - @collections = current_user.collections
+
   -#TODO: change this to use the queries controller
-  = render 'collections/save',  locals: {save_type: 'query', section_number: nil, document_id: nil, query: ActiveSupport::JSON.encode(params) , collections: @collections}
+  - if user_signed_in?
+    = render 'collections/save',  locals: {save_type: 'query', section_number: nil, document_id: nil, query: ActiveSupport::JSON.encode(params) , collections: @collections}
+
   %div{:class => "results_grid"}
     - if @search_results.blank?
       %div{:class => 'result'}
@@ -26,14 +28,17 @@
           %br
           = Document::DOCUMENT_TYPES[section.document.document_type]
           %br
-          = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default"
-          - section.page_number == nil ? number = 0 : number = section.page_number
-          = link_to 'Jump To Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default"
-          = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_number => section.section_number), :class => "btn btn-warning"
-          = link_to 'export', export_path(section_number: section.section_number ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default"
-          %br
-          %br
-          - if section.section_name != 'Full Content'
+          %div{:class => "right_box"}
+            = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default right_button"
+            %br
+            - section.page_number == nil ? number = 0 : number = section.page_number
+            = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
+            %br
+            = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_number => section.section_number), :class => "btn btn-default right_button"
+            %br
+            = link_to 'Export', export_path(section_number: section.section_number ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default right_button export"
+
+          - if section.section_name != 'Full Content' && user_signed_in?
             = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: section.document.id, query: nil , collections: @collections}
 
       = will_paginate(@search_results)

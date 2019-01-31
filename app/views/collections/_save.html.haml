@@ -5,4 +5,5 @@
     = hidden_field_tag :query, locals[:query]
     = hidden_field_tag :save_type, locals[:save_type]
     = select_tag :collection, options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
-    = submit_tag(value = "Save "+ locals[:save_type], class: "btn btn-default")
+    - locals[:save_type] == 'query' ? cstr = "btn btn-default" :  cstr = "btn btn-default right_button"
+    = submit_tag(value = 'Add ' + locals[:save_type].titleize + ' to Collection', class: cstr)

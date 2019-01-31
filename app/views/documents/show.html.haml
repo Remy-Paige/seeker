@@ -5,7 +5,7 @@
     %div
       %h4 URL:
     %div= @document.url
-    %div= link_to 'Report Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning"
+    %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-default"
     %div
       %h4 country:
     %div{:class => "info"}= @document.country
@@ -26,24 +26,24 @@
   %div{:class => "document_grid"}
     - @sections.each do |section|
       -if section.section_name != 'Full Content'
-        %div
+        %div{:class => "section_info"}
           %h5
             = section.section_number
           %h5
             = section.section_name
           %h5
-            page number
+            Page Number:
             = section.page_number
           %h5
             -# TODO: fix this travesty
             = section.language_id != nil ? @languages[section.language_id].name : 'No Language'
         %div= section.content
-        %div
+        %div{:class => "section_buttons"}
           - section.page_number == nil ? number = 0 : number = section.page_number
-          = link_to 'Jump To Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default"
-          = link_to 'export', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default"
-          = link_to 'Report Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-warning"
+          = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
+          = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-default right_button"
           %br
           %br
+          = link_to 'Export', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button export"
           - @collections = current_user.collections
           = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: @document.id , collections: @collections}

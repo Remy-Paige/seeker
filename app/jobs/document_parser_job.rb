@@ -19,12 +19,48 @@ class DocumentParserJob
       logger.info 'clean' + document.clean_url
       logger.info 'text' + document.url_text
       begin
-        Docsplit.extract_text(document.clean_url, output: dir, ocr: true)
+        Docsplit.extract_text(document.clean_url, output: dir, ocr: true, pages: 'all')
       rescue StandardError => e
         logger.info 'DocsplitError' + e.message
       end
         write_to_log('finished ocr-ing...')
       logger.info 'Finish OCR'
+
+      #clean_url can have .pdf at the end sometimes. url_text is stable
+      # 'path.txt'
+      file_name = document.url_text
+      #a+ - Read-write, each write call appends data at end of file.
+      # Creates a new file for reading and writing if file does not exist.
+      document_file = File.new(file_name, "a+")
+
+      # 'path'
+      document_name = file_name[0, file_name.rindex('.txt')]
+      page_number = 1
+      # 'path_1.txt'
+      # docsplit starts page file creation at 1
+      document_page_file_name = document_name + "_" + page_number.to_s + ".txt"
+
+      while File.exists?(document_page_file_name) do
+
+        # File.open(document_file, 'a') { |file| file.write("your text") }
+
+        File.open(document_page_file_name, 'rb') do |input_stream|
+          File.open(document_file, 'ab') do |output_stream|
+            IO.copy_stream(input_stream, output_stream)
+          end
+        end
+
+        File.delete(document_page_file_name)
+
+        page_number = page_number + 1
+        document_page_file_name = document_name + "_" + page_number.to_s + ".txt"
+      end
+
+      # while file_xx.txt exists
+      #
+      #   append file_xx.txt to file.txt
+      #   erase file_xx.txt
+      #   increment XX
 
 
       content = File.read(document.url_text)

@@ -35,16 +35,27 @@ class CollectionsController < ApplicationController
 
       section_list = collection.collection_documents.where("section_number = '" + params[:section_number].to_s + "'")
 
+      #if the section is not already in the collection
       if section_list.length == 0
+        # add a new relation
         collection.documents << document
 
+        # edit the new relation to include the section number
         relation = collection.collection_documents.where("section_number IS ?", nil).first
         relation.section_number = params[:section_number]
         relation.save
-        #TODO: display notice
+        respond_to do |format|
+          format.js { flash.now[:notice] = "Successfully Added to Collection" }
+          format.json { flash.now[:notice] = "Successfully Added to Collection" }
+        end
       else
-        #TODO: display notice
+        #would put a failure notice here but the click happens twice and idk how to stop that
+        respond_to do |format|
+          format.js { flash.now[:notice] = "Successfully Added to Collection" }
+          format.json { flash.now[:notice] = "Successfully Added to Collection" }
+        end
       end
+
     else
     #   save query
     # class => string
@@ -60,7 +71,12 @@ class CollectionsController < ApplicationController
 
       end
 
+      respond_to do |format|
+        format.js { flash.now[:notice] = "Successfully Added to Collection" }
+        format.json { flash.now[:notice] = "Successfully Added to Collection" }
+      end
     end
+
 
   end
 

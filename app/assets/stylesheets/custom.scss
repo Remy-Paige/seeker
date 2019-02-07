@@ -7,6 +7,11 @@
 body {
   padding-top: 60px;
 }
+#flash {
+  position: fixed;
+  top: 60px;
+  left: 0;
+}
 
 //page parent
 //avoid using bootstrap 3's inbuilt stuff - grid is much better

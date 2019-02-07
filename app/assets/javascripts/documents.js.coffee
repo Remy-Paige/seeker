@@ -95,8 +95,8 @@ documents_scripts = ->
 
     new_row =  "<div class='box added_query' id='added_query_" + counter + "' >"
 
-    new_row += "<select class='added_query_select' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' >"
-    new_row += "<option value='select'>Select filter</option>"
+    new_row += "<select class='added_query_select' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' required >"
+    new_row += "<option disabled selected value>Select filter</option>"
     new_row += "<option value='section number'>Section number</option>"
     new_row += "<option value='language'>Language</option>"
     new_row += "<option value='country'>Country</option>"
@@ -109,7 +109,7 @@ documents_scripts = ->
     new_row += "</div>"
     new_row += "<div class='box select' id='added_select_" + counter + "' >"
 
-    new_row += "<select class='added_filter_select' name='filter_type[" + counter +  "][]' id='added_filter_select_" + counter + "' >"
+    new_row += "<select class='added_filter_select' name='filter_type[" + counter +  "][]' id='added_filter_select_" + counter + "' required>"
     new_row += "</select>"
 
     new_row += "</div>"
@@ -186,6 +186,7 @@ documents_scripts = ->
 
     $("#added_filter_select_" + generic_id).empty().append(option);
 
+    #I'm not sure what this does or if its broken. Removing it give undesirable behaviour, and doesnt affect the first values presisting on reload
     #if the old filter select value is the same type as the new query select value can preserve the option
     if numeric_filters.includes(filter_select_value) && numeric_queries.includes(added_query_select_value)
       value = switch
@@ -241,25 +242,26 @@ documents_scripts = ->
 
     #define the input types
     plus_button = "<i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
-
     country_select_row = "<select name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for country in gon.countries
-      country_select_row += '<option value=' + country.name + '>' + country.name + '</option>'
+      country_select_row += '<option value=' + country.name.replace(' ', '_').replace(' ', '_') + '>' + country.name + '</option>'
     country_select_row += "</select>"
 
     plus_country_select_row = country_select_row + plus_button
 
     language_select_row = "<select name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for language in gon.languages
-      language_select_row += '<option value=' + language.name + '>' + language.name + '</option>'
+#      max three words in language - so replace 2 spaces. change if more words
+      language_select_row += '<option value=' + language.name.replace(' ', '_').replace(' ', '_') + '>' + language.name + '</option>'
     language_select_row += "</select>"
 
     plus_language_select_row = language_select_row + plus_button
 
-    nothing_row = "<input type='hidden' name='keyword[" + generic_id + "][]' value=''>"
-    between_row = "<input type='text' name='keyword[" + generic_id + "][]' class='number'>  -  <input type='text' name='keyword[" + generic_id + "][]' class='number'>"
-    only_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
-    plus_button_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_'><i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
+    nothing_row = "<input type='hidden' name='keyword[" + generic_id + "][]' value='' required>"
+    between_row = "<input type='number' name='keyword[" + generic_id + "][]' class='number' required>  -  <input type='number' name='keyword[" + generic_id + "][]' class='number' required>"
+    only_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_' required>"
+    only_number_row = "<input type='number' name='keyword[" + generic_id + "][]' id='keyword_' required>"
+    plus_button_row = "<input type='text' name='keyword[" + generic_id + "][]' id='keyword_' required><i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
 
     if added_query_select_value == 'country'
       field_row = switch
@@ -282,8 +284,16 @@ documents_scripts = ->
         when added_filter_select_value == 'none of' then plus_language_select_row
         when added_filter_select_value == 'one of' then plus_language_select_row
 
+    else if added_query_select_value == 'year' or added_query_select_value == 'cycle'
+      field_row = switch
+        when added_filter_select_value == null then nothing_row
+        when added_filter_select_value == 'all' then nothing_row
+        when added_filter_select_value == 'less than' then only_number_row
+        when added_filter_select_value == 'greater than' then only_number_row
+        when added_filter_select_value == 'between' then between_row
+        when added_filter_select_value == 'only' then only_number_row
     else
-    #      #year, cycle, text search, section number
+    #  text search, section number
       field_row = switch
         when added_filter_select_value == null then nothing_row
         when added_filter_select_value == 'all' then nothing_row
@@ -331,16 +341,17 @@ documents_scripts = ->
       added_query_select_value = $('#added_query_select_' + generic_id).val()
     console.log(added_query_select_value)
 
-    generic_input =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_'>"
+    generic_input =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_' required>"
+    number_input = "<input data-number='" + generic_id + "_" + add_field_number + "' type='number' name='keyword[" + generic_id + "][]' id='keyword_' required>"
 
     country_select_row = "<select data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for country in gon.countries
-      country_select_row += '<option value=' + country.name + '>' + country.name + '</option>'
+      country_select_row += '<option value=' + country.name.replace(' ', '_').replace(' ', '_') + '>' + country.name + '</option>'
     country_select_row += "</select>"
 
     language_select_row = "<select data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for language in gon.languages
-      language_select_row += '<option value=' + language.name + '>' + language.name + '</option>'
+      language_select_row += '<option value=' + language.name.replace(' ', '_').replace(' ', '_') + '>' + language.name + '</option>'
     language_select_row += "</select>"
 
 
@@ -351,8 +362,8 @@ documents_scripts = ->
       when added_query_select_value == 'text search' then generic_input
       when added_query_select_value == 'section number' then generic_input
       when added_query_select_value == 'section Number' then generic_input
-      when added_query_select_value == 'year' then generic_input
-      when added_query_select_value == 'cycle' then generic_input
+      when added_query_select_value == 'year' then number_input
+      when added_query_select_value == 'cycle' then number_input
 
     #add field
     $("#added_field_" + generic_id ).append(input)

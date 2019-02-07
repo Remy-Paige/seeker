@@ -55,7 +55,11 @@ class Document < ActiveRecord::Base
     return if Rails.env.test?
     dir = self.clean_url.split('/')[0...-1].join('/')
     FileUtils.mkdir_p(dir)
-    IO.copy_stream(open(self.url), self.clean_url)
+    begin
+      IO.copy_stream(open(self.url), self.clean_url)
+    rescue StandardError => e
+      raise "There is nothing at the supplied URL"
+    end
     self.update_attributes(url_local: self.clean_url)
   end
 

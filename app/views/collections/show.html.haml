@@ -1,16 +1,28 @@
 %div{:class => "centre"}
-  %h4= @collection.name
+  %h3
+    Collection:
+    = @collection.name
 
+  %h4 Queries:
   -@queries.each do |query|
     %div
       - params = ActiveSupport::JSON.decode(query.query)
-      = params.to_s
-      %br
+      - params['keyword'].each_key do |key|
+        %span{:class => 'title'}=params['query_type'][key][0] +':'
+        =params['filter_type'][key][0] + ':'
+        -params['keyword'][key].each do |word|
+          =word
+        %br
+
       = link_to 'Run Query', advanced_path(params), :class => "btn btn-default"
-      = link_to 'Delete', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"
+      = link_to 'Delete', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-default"
+      %br
+      %br
   %br
   %br
-  = link_to 'Export Collection', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
+
+  %h4 Sections:
+  = link_to 'Export Sections', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
 
   %div{:class => "results_grid"}
     -#sections
@@ -28,8 +40,13 @@
         = section.document.cycle.ordinalize + ' cycle'
         %br
         = Document::DOCUMENT_TYPES[section.document.document_type]
-        %br
-        = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default"
-        - section.page_number == nil ? number = 0 : number = section.page_number
-        = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default"
-        = link_to 'Remove from Collection', remove_collection_path(section_number: section.section_number,document_id: section.document.id , id: @collection.id), :class => "btn btn-warning"
+        %div{:class => "right_box"}
+          = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default right_button"
+          %br
+          - section.page_number == nil ? number = 0 : number = section.page_number
+          = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
+          %br
+          %br
+          %br
+          %br
+          = link_to 'Remove from Collection', remove_collection_path(section_number: section.section_number,document_id: section.document.id , id: @collection.id), :class => "btn btn-default right_button"

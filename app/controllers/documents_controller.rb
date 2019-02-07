@@ -58,24 +58,48 @@ class DocumentsController < ApplicationController
   # POST /documents
   # POST /documents.json
   def create
-    @document = Document.create(document_params)
 
-    # parse document asynchronously
-    begin
-      DocumentParserJob.perform_async(@document)
-    rescue OpenURI::HTTPError => e
-      # TODO check 404 and respond accordingly
-    end
-
-    respond_to do |format|
-      if @document.save
-        format.html { redirect_to :documents, notice: 'Document was successfully added to processing queue.' }
+    if Document.where("url = '" + document_params[:url] + "'").first != nil
+      respond_to do |format|
+        format.html { redirect_to :documents, notice: 'Document already exists' }
         format.json { render :show, status: :created, location: @document }
-      else
-        format.html { render :new }
-        format.json { render json: @document.errors, status: :unprocessable_entity }
       end
+    else
+      begin
+        @document = Document.create(document_params)
+
+        # parse document asynchronously
+        begin
+          DocumentParserJob.perform_async(@document)
+        rescue OpenURI::HTTPError => e
+          # TODO check 404 and respond accordingly
+          # todo: check 'restriced access'
+          respond_to do |format|
+            format.html { redirect_to :documents, notice: '404 at the supplied URL' }
+            format.json { render :show, status: :created, location: @document }
+          end
+        end
+
+        respond_to do |format|
+          if @document.save
+            format.html { redirect_to :documents, notice: 'Document was successfully added to processing queue.' }
+            format.json { render :show, status: :created, location: @document }
+          else
+            format.html { render :new }
+            format.json { render json: @document.errors, status: :unprocessable_entity }
+          end
+        end
+
+      rescue StandardError => e
+        respond_to do |format|
+          format.html { redirect_to :documents, notice: 'There was nothing at the supplied URL' }
+          format.json { render :show, status: :created, location: @document }
+        end
+      end
+
+
     end
+
   end
 
   # PATCH/PUT /documents/1
@@ -331,13 +355,15 @@ class DocumentsController < ApplicationController
       if filter_type == :all
         {}
       else
-        # check for the multi word countries - only the first word gets passed into the params
-        # TODO: fix this on front end
-        if keyword.include? "Bosnia"
-          keyword[keyword.index("Bosnia")] = "Bosnia and Herzegovina"
-        elsif keyword.include? "United"
-          keyword[keyword.index("United")] = "United Kingdom"
+        # map! edits the og array
+        keyword.map! do |word|
+          if word.include? "_"
+            word.gsub!('_', ' ')
+          else
+            word
+          end
         end
+
         search = Hash.new
         search[query_type] = keyword
         {terms: search}

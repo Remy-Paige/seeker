@@ -40,5 +40,4 @@
 
           - if section.section_name != 'Full Content' && user_signed_in?
             = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: section.document.id, query: nil , collections: @collections}
-
       = will_paginate(@search_results)

@@ -1,13 +1,14 @@
 !!!
 %html
   %head
-    = include_gon(:init => true)
+
     %title Seeker
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = stylesheet_link_tag    'https://use.fontawesome.com/releases/v5.5.0/css/all.css', integrity:'sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU', crossorigin:'anonymous'
     = csrf_meta_tags
   %body
+    = include_gon(:init => true)
     %header{:class => "navbar navbar-fixed-top navbar-inverse", :id => "navbar"}
       %div{:class => "container"}
         //= link_to 'search', root_path, :class => "navbar-brand"

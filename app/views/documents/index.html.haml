@@ -37,6 +37,8 @@
               = link_to 'View Sectioning', document_path(document)
           - if document.parsing_finished
             %div{:class => alternating ? 'alternating' : ''}Completed
+          - elsif document.status == 1
+            %div{:class => alternating ? 'alternating' : ''}Failed. Contact Administrator
           - else
             %div{:class => alternating ? 'alternating' : ''}In Progress
           %div{:class => alternating ? 'alternating' : ''}

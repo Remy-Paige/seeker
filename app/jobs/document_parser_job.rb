@@ -22,6 +22,7 @@ class DocumentParserJob
         Docsplit.extract_text(document.clean_url, output: dir, ocr: true, pages: 'all')
       rescue StandardError => e
         logger.info 'DocsplitError' + e.message
+        raise 'Something went wrong with DocSplit'
       end
         write_to_log('finished ocr-ing...')
       logger.info 'Finish OCR'
@@ -135,8 +136,9 @@ class DocumentParserJob
   rescue StandardError => e
     write_to_log('what1')
     logger.info 'Failure'
-    logger.info e.message + "\n" + e.backtrace
-    write_to_log(e.message + "\n" + e.backtrace)
+    document.status = 1
+    document.save
+    raise e
   end
 
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190110033048) do
+ActiveRecord::Schema.define(version: 20190208162531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20190110033048) do
     t.string   "url_local"
     t.boolean  "parsing_finished", default: false
     t.integer  "document_type"
+    t.integer  "status"
   end
 
   add_index "documents", ["country_id"], name: "index_documents_on_country_id", using: :btree

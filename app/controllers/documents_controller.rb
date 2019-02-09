@@ -90,12 +90,14 @@ class DocumentsController < ApplicationController
           end
         end
 
+
       rescue StandardError => e
         respond_to do |format|
-          format.html { redirect_to :documents, notice: 'There was nothing at the supplied URL' }
+          format.html { redirect_to :documents, notice: e.to_s }
           format.json { render :show, status: :created, location: @document }
         end
       end
+
 
 
     end

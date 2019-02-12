@@ -1,4 +1,4 @@
-= simple_form_for @document, defaults: { input_html: { class: 'documents_form' } } do |f|
+= simple_form_for @document, defaults: { input_html: { class: 'block' } } do |f|
   - if @document.errors.any?
     #error_explanation
       %h2= "#{pluralize(@document.errors.count, "error")} prohibited this document from being saved:"
@@ -6,9 +6,9 @@
         - @document.errors.full_messages.each do |msg|
           %li= msg
   = f.input :url, placeholder: 'URL of document', as: :url, input_html: { :pattern => "https?://.+" }
-  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries, input_html: { class: 'documents_form' }
-  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types
+  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries, input_html: { class: 'form-control ', style: "width: auto;" }
+  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types, input_html: { class: 'form-control ', style: "width: auto;" }
   = f.input :year, placeholder: 'Year'
   = f.input :cycle, placeholder: 'Cycle (1, 2, 3, ...)'
-  .actions
+  %div{:class => "actions form-action-padding"}
     = f.submit 'Save'

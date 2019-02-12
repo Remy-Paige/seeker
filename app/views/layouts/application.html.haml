@@ -9,7 +9,7 @@
     = csrf_meta_tags
   %body
     = include_gon(:init => true)
-
+    -#inline style to override bootstrap
     %nav{:class=>"navbar navbar-fixed-top navbar-inverse"}
       %div{:class=>"container-fluid"}
         %div{:class=>"navbar-header"}
@@ -41,10 +41,10 @@
               = link_to 'Tickets', user_tickets_path, :class => "navbar-brand"
               = link_to 'Saved', collections_path, :class => "navbar-brand"
               %li{:class=>"dropdown"}
-                %a{:href=>"#", :class=>"dropdown-toggle", 'data-toggle'=>"dropdown", :role=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"}
+                %a{:href=>"#", :class=>"dropdown-toggle", :style => "width: 70px;padding-left: 30px;",'data-toggle'=>"dropdown", :role=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"}
                   %span{:class => "fas fa-user-circle navbar-brand", :style=>"font-size: x-large;padding: 0px;color: white;height: 17px;"}
                   %span{:class=>"caret"}
-                %ul{:class=>"dropdown-menu"}
+                %ul{:class=>"dropdown-menu inverse-dropdown"}
                   %li
                     = link_to 'Profile', user_path(current_user), :class => "navbar-brand"
                   %li
@@ -52,9 +52,9 @@
             - else
               = link_to 'Documents', documents_path, :class => "navbar-brand"
               //devise/sessions#new
-              = link_to 'Login', new_user_session_path, :class => "btn btn-default navbar-btn"
+              = link_to 'Login', new_user_session_path, :class => "navbar-brand", :style => "color: white;"
               //devise/registrations#new
-              = link_to 'Sign Up', new_user_registration_path, :class => "btn btn-default navbar-btn"
+              = link_to 'Sign Up', new_user_registration_path, :class => "navbar-brand", :style => "color: white;"
 
 
     %div{:id => "flash"}

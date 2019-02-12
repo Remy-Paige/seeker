@@ -15,9 +15,32 @@ documents_scripts = ->
     $('.dropdown-toggle').dropdown()
     console.log 'jfwejf'
     return
+  #show
   $(document).off 'click', '#sticky'
   $(document).on 'click', '#sticky', (e) ->
     $('html,body').scrollTop(0);
+  #search results
+
+  $(document).off 'click', '.more'
+  $(document).on 'click', '.more', (e) ->
+    more_id = this.id.split('_')
+
+    generic_id = more_id[-1..][0]
+    console.log(more_id)
+    console.log('#more_'+ generic_id)
+    $('#less_'+ generic_id).hide()
+    $('#more_'+ generic_id).show()
+    return false
+
+  $(document).off 'click', '.less'
+  $(document).on 'click', '.less', (e) ->
+    less_id = this.id.split('_')
+    generic_id = less_id[-1..][0]
+
+    console.log(generic_id)
+    $('#more_'+ generic_id).hide()
+    $('#less_'+ generic_id).css( "display", "block")
+    return false
 
   #edit_section_separation  JS
   $(document).off 'click', '#add_section'

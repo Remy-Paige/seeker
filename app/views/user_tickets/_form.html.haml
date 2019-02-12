@@ -1,4 +1,4 @@
-= simple_form_for @user_ticket, defaults: { input_html: { class: 'documents_form' } } do |f|
+= simple_form_for @user_ticket, defaults: { input_html: { class: 'block' } } do |f|
   - if @user_ticket.errors.any?
     #error_explanation
       %h2= "#{pluralize(@user_ticket.errors.count, "error")} prohibited this user_ticket from being saved:"
@@ -19,9 +19,9 @@
       = @section_number
   = f.hidden_field :document_id, :value => @document_id
   = f.hidden_field :section_number, :value => @section_number
-  = f.input :subject, placeholder: 'Subject', as: :select, include_blank: false, collection: [['meta-data error', 'meta-data error'], ['sectioning error','sectioning error'], ['document request','document request'], ['other','other']]
-  = f.input :comment, placeholder: 'Comment'
-  .actions
+  = f.input :subject, placeholder: 'Subject', as: :select, include_blank: false, collection: [['meta-data error', 'meta-data error'], ['sectioning error','sectioning error'], ['document request','document request'], ['other','other']], input_html: { class: 'form-control ', style: "width: auto;" }
+  = f.input :comment, placeholder: 'Comment', input_html: { class: 'comment_box block' }
+  %div{:class => "actions form-action-padding"}
     = f.submit 'Save'
 
     -# t.string   "name"

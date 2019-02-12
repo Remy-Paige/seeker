@@ -5,11 +5,11 @@
     %div
       %h4 URL:
     %div= link_to @document.url.to_s, @document.url
-    %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-default"
+    %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning", :style => "color: #000000d4"
     %div
       %h4 country:
     %div{:class => "info"}= @document.country
-    %div
+    %div= link_to 'Delete Document', @document, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-danger", :style => "color: #000000d4"
     %div
       %h4 type:
     %div{:class => "info"}= Document::DOCUMENT_TYPES[@document.document_type]
@@ -23,13 +23,13 @@
     %div{:class => "info"}= @document.year
 
   %h1 Sectioning
-  = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-default"
+  = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info"
   %div{:class => "results_grid"}
     - @sections.each do |section|
       -if section.section_name != 'Full Content'
-        %div
-          %h5= section.section_number
-          %h5= section.section_name
+        %div{:class => 'section_content'}
+          %h4= section.section_number
+          %h4= section.section_name
           %br
           = section.content
         %div{:class => 'details'}
@@ -40,15 +40,18 @@
             -# TODO: fix this travesty
             = section.language_id != nil ? @languages[section.language_id].name : 'No Language'
           %div{:class => "right_box"}
-            = link_to 'Original', @document.url, target: '_blank', :class => "btn btn-default right_button"
-            %br
             - section.page_number == nil ? number = 0 : number = section.page_number
-            = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
+            = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
             %br
-            = link_to 'Report Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-default right_button"
+            = link_to 'Export XML', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
             %br
-            = link_to 'Export', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button export"
+            = link_to 'Jump to First Page', @document.url, target: '_blank', :class => "btn btn-default right_button btn-xs", target: :_blank
+            %br
+            = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
+            %br
+
             - @collections = current_user.collections
+          %div{:class => "save_form"}
             = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: @document.id , collections: @collections}
 
 %div{:id => 'sticky', :class => "btn btn-primary"}

@@ -13,12 +13,19 @@
         %br
         = "Contact the administrator if you believe there is a problem."
     - else
+      - counter = 0
       - @search_results.each do |section, details|
-        %div
-          %h5= details != {} ? details[:highlight][:section_number]&.html_safe || section.section_number : section.section_number
-          %h5= details != {} ? details[:highlight][:section_name]&.html_safe || section.section_name : section.section_name
+        -counter = counter + 1
+        %div{:class => 'section_content'}
+          %h4= details != {} ? details[:highlight][:section_number]&.html_safe || section.section_number : section.section_number
+          %h4= details != {} ? details[:highlight][:section_name]&.html_safe || section.section_name : section.section_name
           %br
-          = details != {} ? details[:highlight]['content.analyzed'.to_sym]&.html_safe || section.content[0..1500].html_safe : section.content[0..1500].html_safe
+          %div{:id => 'less_' + counter.to_s}
+            = details != {} ? details[:highlight]['content.analyzed'.to_sym]&.html_safe || section.content[0..1500].html_safe : section.content[0..1500].html_safe
+            = link_to 'Show More...', '#', :class => 'more', :id => 'click_' + counter.to_s
+          %div{:id => 'more_'  + counter.to_s, :style => "display: none;"}
+            = section.content.html_safe
+            = link_to 'Show Less...', '#', :class => 'less', :id => 'click_' + counter.to_s
         %div{:class => 'details'}
           %div{:class => 'section_information'}
             = details != {} ? details[:highlight][:country]&.html_safe || section.document.country : section.document.country
@@ -29,15 +36,16 @@
             %br
             = Document::DOCUMENT_TYPES[section.document.document_type]
           %div{:class => "right_box"}
-            = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default right_button"
-            %br
             - section.page_number == nil ? number = 0 : number = section.page_number
-            = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
+            = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
             %br
-            = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_number => section.section_number), :class => "btn btn-default right_button"
+            = link_to 'Export XML', export_path(section_number: section.section_number ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
             %br
-            = link_to 'Export', export_path(section_number: section.section_number ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default right_button export"
-
-          - if section.section_name != 'Full Content' && user_signed_in?
-            = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: section.document.id, query: nil , collections: @collections}
+            = link_to 'Jump to First Page', section.document.url, target: '_blank', :class => "btn btn-default btn-xs right_button", target: :_blank
+            %br
+            = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_number => section.section_number), :class => "btn btn-default btn-xs right_button button_spacing", target: :_blank
+            %br
+            %div{:class => "save_form"}
+            - if section.section_name != 'Full Content' && user_signed_in?
+              = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: section.document.id, query: nil , collections: @collections}
       = will_paginate(@search_results)

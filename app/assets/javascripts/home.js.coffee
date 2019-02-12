@@ -2,6 +2,11 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+#fix dropdown not working right away
+$(document).ready ->
+  $('.dropdown-toggle').dropdown()
+  console.log 'jfwejf'
+  return
 
 $(document).off 'click', '.close'
 $(document).on 'click', '.close', (e) ->

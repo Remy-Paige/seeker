@@ -4,7 +4,7 @@
   %div{:class => "document_grid"}
     %div
       %h4 URL:
-    %div= @document.url
+    %div= link_to @document.url.to_s, @document.url
     %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-default"
     %div
       %h4 country:
@@ -23,27 +23,33 @@
     %div{:class => "info"}= @document.year
 
   %h1 Sectioning
-  %div{:class => "document_grid"}
+  = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-default"
+  %div{:class => "results_grid"}
     - @sections.each do |section|
       -if section.section_name != 'Full Content'
-        %div{:class => "section_info"}
-          %h5
-            = section.section_number
-          %h5
-            = section.section_name
-          %h5
+        %div
+          %h5= section.section_number
+          %h5= section.section_name
+          %br
+          = section.content
+        %div{:class => 'details'}
+          %div{:class => 'section_information'}
             Page Number:
             = section.page_number
-          %h5
+            %br
             -# TODO: fix this travesty
             = section.language_id != nil ? @languages[section.language_id].name : 'No Language'
-        %div= section.content
-        %div{:class => "section_buttons"}
-          - section.page_number == nil ? number = 0 : number = section.page_number
-          = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
-          = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-default right_button"
-          %br
-          %br
-          = link_to 'Export', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button export"
-          - @collections = current_user.collections
-          = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: @document.id , collections: @collections}
+          %div{:class => "right_box"}
+            = link_to 'Original', @document.url, target: '_blank', :class => "btn btn-default right_button"
+            %br
+            - section.page_number == nil ? number = 0 : number = section.page_number
+            = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
+            %br
+            = link_to 'Report Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-default right_button"
+            %br
+            = link_to 'Export', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button export"
+            - @collections = current_user.collections
+            = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: @document.id , collections: @collections}
+
+%div{:id => 'sticky', :class => "btn btn-primary"}
+  Jump to Top

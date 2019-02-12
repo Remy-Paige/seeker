@@ -13,4 +13,11 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require bootstrap-sprockets
 //= require_tree .
+
+//fix dropdown not working right away
+$(document).ready( function() {
+    $('.dropdown-toggle').dropdown();
+    console.log('jfwejf')
+});

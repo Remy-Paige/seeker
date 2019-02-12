@@ -7,10 +7,10 @@
     -#= hidden_field_tag logical_filters = ['Only','none of','one of'], class: 'logical_filters', disabled: true
 
     %div{:class => "sub_grid"}
-      %div{:class =>"box added_query", :id=>"added_query_0"}
+      %div{:class =>"box added_query", :id=>"added_query_0", :style=>"padding-top: 7px;"}
         %input{:type=>"hidden", :name=>"query_type[0][]", :value=>"section number"} Section Number
       %div{:class=>"box select", :id=>"added_select_0"}
-        %select{:class=>"added_filter_select", :name=>"filter_type[0][]", :id=>"added_filter_select_0"}
+        %select{:class=>"added_filter_select form-control", :name=>"filter_type[0][]", :id=>"added_filter_select_0"}
           %option{:value=>'all', :selected=>"selected"}='all'
           %option{:value=>'only'}='only'
           %option{:value=>'none of'}='none of'
@@ -21,10 +21,10 @@
         %i{:class=>"fas fa-times red filter_icon delete_filter", :id=>"delete_filter_0"}
       %i{:class=>"question_icon fas fa-question-circle black", :id=>"question_icon_0"}
 
-      %div{:class =>"box added_query", :id => "added_query_1"}
+      %div{:class =>"box added_query", :id => "added_query_1", :style=>"padding-top: 7px;"}
         %input{:type=>"hidden", :name=>"query_type[1][]", :value=>"language"} Language
       %div{:class=>"box select", :id=>"added_select_1"}
-        %select{:class=>"added_filter_select", :name=>"filter_type[1][]", :id=>"added_filter_select_1"}
+        %select{:class=>"added_filter_select form-control", :name=>"filter_type[1][]", :id=>"added_filter_select_1"}
           %option{:value=>'all', :selected=>"selected"}='all'
           %option{:value=>'only'}='only'
           %option{:value=>'none of'}='mentions none of'
@@ -35,10 +35,10 @@
         %i{:class=>"fas fa-times red filter_icon delete_filter", :id=>"delete_filter_1"}
       %i{:class=>"question_icon fas fa-question-circle black", :id=>"question_icon_1"}
 
-      %div{:class =>"box added_query", :id => "added_query_2"}
+      %div{:class =>"box added_query", :id => "added_query_2", :style=>"padding-top: 7px;"}
         %input{:type=>"hidden", :name=>"query_type[2][]", :value=>"country"} Country
       %div{:class=>"box select", :id=>"added_select_2"}
-        %select{:class=>"added_filter_select", :name=>"filter_type[2][]", :id=>"added_filter_select_2"}
+        %select{:class=>"added_filter_select form-control", :name=>"filter_type[2][]", :id=>"added_filter_select_2"}
           %option{:value=>'all', :selected=>"selected"}='all'
           %option{:value=>'only'}='only'
           %option{:value=>'none of'}='mentions none of'

@@ -17,9 +17,10 @@
   display: grid;
   grid-template-columns:1fr 2fr 1fr 1fr 2fr;
 }
+//show
 .document_grid {
   display: grid;
-  grid-template-columns:1fr 3fr 1fr;
+  grid-template-columns:100px 3fr 1fr;
 }
 .user_grid {
   //border: 2px blue solid;
@@ -71,6 +72,9 @@
   position: relative;
   float: right;
   display: block;
+}
+.section_information {
+  height: 82px;
 }
 .export {
   margin-top: 10px;

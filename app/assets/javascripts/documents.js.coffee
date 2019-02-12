@@ -10,6 +10,15 @@ field_counter[1] = 0
 field_counter[2] = 0
 documents_scripts = ->
 
+#fix dropdown not working right away
+  $(document).ready ->
+    $('.dropdown-toggle').dropdown()
+    console.log 'jfwejf'
+    return
+  $(document).off 'click', '#sticky'
+  $(document).on 'click', '#sticky', (e) ->
+    $('html,body').scrollTop(0);
+
   #edit_section_separation  JS
   $(document).off 'click', '#add_section'
   $(document).on 'click', '#add_section', (e) ->
@@ -95,7 +104,7 @@ documents_scripts = ->
 
     new_row =  "<div class='box added_query' id='added_query_" + counter + "' >"
 
-    new_row += "<select class='added_query_select' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' required >"
+    new_row += "<select class='added_query_select form-control' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' required >"
     new_row += "<option disabled selected value>Select filter</option>"
     new_row += "<option value='section number'>Section number</option>"
     new_row += "<option value='language'>Language</option>"
@@ -109,7 +118,7 @@ documents_scripts = ->
     new_row += "</div>"
     new_row += "<div class='box select' id='added_select_" + counter + "' >"
 
-    new_row += "<select class='added_filter_select' name='filter_type[" + counter +  "][]' id='added_filter_select_" + counter + "' required>"
+    new_row += "<select class='added_filter_select form-control' name='filter_type[" + counter +  "][]' id='added_filter_select_" + counter + "' required>"
     new_row += "</select>"
 
     new_row += "</div>"
@@ -242,14 +251,14 @@ documents_scripts = ->
 
     #define the input types
     plus_button = "<i class='fas fa-plus blue plus_icon plus_filter_field' id='plus_filter_field_" + generic_id + "' ></i>"
-    country_select_row = "<select name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    country_select_row = "<select class='form-control' name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for country in gon.countries
       country_select_row += '<option value=' + country.name.replace(' ', '_').replace(' ', '_') + '>' + country.name + '</option>'
     country_select_row += "</select>"
 
     plus_country_select_row = country_select_row + plus_button
 
-    language_select_row = "<select name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    language_select_row = "<select class='form-control' name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for language in gon.languages
 #      max three words in language - so replace 2 spaces. change if more words
       language_select_row += '<option value=' + language.name.replace(' ', '_').replace(' ', '_') + '>' + language.name + '</option>'
@@ -344,12 +353,12 @@ documents_scripts = ->
     generic_input =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_' required>"
     number_input = "<input data-number='" + generic_id + "_" + add_field_number + "' type='number' name='keyword[" + generic_id + "][]' id='keyword_' required>"
 
-    country_select_row = "<select data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    country_select_row = "<select class='form-control' data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for country in gon.countries
       country_select_row += '<option value=' + country.name.replace(' ', '_').replace(' ', '_') + '>' + country.name + '</option>'
     country_select_row += "</select>"
 
-    language_select_row = "<select data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    language_select_row = "<select class='form-control' data-number='" + generic_id + "_" + add_field_number + "' name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for language in gon.languages
       language_select_row += '<option value=' + language.name.replace(' ', '_').replace(' ', '_') + '>' + language.name + '</option>'
     language_select_row += "</select>"

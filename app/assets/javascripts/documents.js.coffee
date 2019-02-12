@@ -155,7 +155,7 @@ documents_scripts = ->
 
     new_row += "</div>"
 
-    new_row += "<i class='question_icon fas fa-question-circle black' id='question_icon_" + counter + "' ></i>"
+    new_row += "<i class='question_icon fas fa--circle black' id='question_icon_" + counter + "' ></i>"
     counter = counter + 1
     field_counter.push(0)
     console.log(field_counter)

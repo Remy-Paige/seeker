@@ -25,6 +25,7 @@
   %h1 Sectioning
   = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info"
   %div{:class => "results_grid"}
+    - full_section = nil
     - @sections.each do |section|
       -if section.section_name != 'Full Content'
         %div{:class => 'section_content'}
@@ -53,6 +54,25 @@
             - @collections = current_user.collections
           %div{:class => "save_form"}
             = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: @document.id , collections: @collections}
+      - else
+        - full_section = section
+    %div{:class => 'section_content'}
+      %h4= '-'
+      %h4= "Full Content"
+      %br
+      = full_section.content
+    %div{:class => 'details'}
+      %div{:class => 'section_information'}
+        Page Number: 1
+        %br
+        No Language
+      %div{:class => "right_box"}
+        = link_to 'Jump to First Page', @document.url , :class => "btn btn-default right_button", target: :_blank
+        %br
+        = link_to 'Export XML', export_path(section_number: full_section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
+        %br
+        = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => full_section.section_number), :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
+        %br
 
 %div{:id => 'sticky', :class => "btn btn-primary"}
   Jump to Top

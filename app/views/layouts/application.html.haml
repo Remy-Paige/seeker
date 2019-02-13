@@ -58,8 +58,9 @@
 
 
     %div{:id => "flash"}
-    - if notice.present?
-      = render partial: "shared/notice_banner"
+      - if notice.present?
+        = render partial: "shared/notice_banner"
+
     %div{:class => "grid"}
-      %p#alert= alert
+
       = yield

@@ -29,6 +29,14 @@ class CollectionsController < ApplicationController
     # can only save sections and queries, not whole documents
     collection = current_user.collections.where("name = '" + params[:collection].to_s + "'").first
 
+    if collection == nil
+      respond_to do |format|
+        format.js { flash.now[:notice] = "Please Select or Create a Collection" }
+        format.json { flash.now[:notice] = "Please Select or Create a Collection" }
+      end
+      return
+    end
+
     if params[:save_type] == 'section'
 
       document = Document.find(params[:document_id])
@@ -70,11 +78,11 @@ class CollectionsController < ApplicationController
       else
 
       end
-
       respond_to do |format|
         format.js { flash.now[:notice] = "Successfully Added to Collection" }
         format.json { flash.now[:notice] = "Successfully Added to Collection" }
       end
+
     end
 
 

@@ -58,7 +58,17 @@
   display: grid;
   grid-template-columns:1fr 3fr 1fr;
 }
+.fixed_height_scroll {
+  height:250px;
+  overflow:auto;
+  margin-bottom: 20px;
+}
+.edit_section_box {
+  height: 175px;
+  width: 100%;
+  margin-bottom: 15px;
 
+}
 //show and search_results
 .right_button {
   position: relative;
@@ -85,4 +95,9 @@
 }
 .button_spacing {
   margin-bottom: 15px;
+}
+
+//SEARCH
+#keyword_ {
+  float: right;
 }

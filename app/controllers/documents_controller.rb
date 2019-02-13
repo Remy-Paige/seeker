@@ -120,7 +120,16 @@ class DocumentsController < ApplicationController
 
   def update_section_separation
     # destroy previous sections
-    @document.sections.map(&:destroy)
+    # If foo is an object with a to_proc method,
+    # then you can pass it to a method as &foo,
+    # which will call foo.to_proc and use that as the method's block.
+
+
+    @document.sections.group_by(&:section_number).map do |section_number, sections|
+      unless section_number == "-"
+        sections.map(&:destroy)
+      end
+    end
 
     # create new sections with custom method
     # each section created new - split into section parts in the model

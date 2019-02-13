@@ -8,8 +8,8 @@ $(document).ready ->
   console.log 'jfwejf'
   return
 
-$(document).off 'click', '.close'
-$(document).on 'click', '.close', (e) ->
+$(document).off 'click', '.closer'
+$(document).on 'click', '.closer', (e) ->
   e.preventDefault()
   e.stopPropagation()
   $('#flash').empty()

@@ -87,17 +87,19 @@ class DocumentParserJob
         prev_content = ''
         prev_section_number = ''
         prev_section_name = ''
-        current_page = 2
-        prev_page = 2
+        current_page = 1
+        prev_page = 1
         content.each_line do |line|
           next if line =~ /^Chapter \d\./i || line.blank?
 
           processed_line = line.downcase.gsub(/\s/, '')
 
           #my code
-          # the page numbers turn up as this special character
-          if line.include?("\f")
-            current_page = current_page + 1
+          # match start line, digits, end line
+          page_number = line[/^\d+$/].to_i
+
+          if page_number != nil && page_number > current_page
+            current_page = page_number
           end
           #end my code
 
@@ -110,7 +112,7 @@ class DocumentParserJob
 
           section_number_regex = /^\d(\.\d)+\.?/
           if processed_line =~ section_number_regex
-            save_section(document, prev_section_number, prev_section_name, prev_content, prev_page)
+            save_section(document, prev_section_number, prev_section_name, prev_content, prev_page + 1)
             prev_content = ''
             prev_section_number = processed_line.match(section_number_regex)[0]
             prev_section_name = line.slice(line.index(/[A-Za-z]/)..-1)
@@ -119,9 +121,9 @@ class DocumentParserJob
             prev_content += line
           end
         end
-
+        # prev page + 1 because of a tick over problem TODO: fix the hack
         # process last section after reading last line
-        save_section(document, prev_section_number, prev_section_name, prev_content, prev_page)
+        save_section(document, prev_section_number, prev_section_name, prev_content, prev_page + 1)
       end
 
       begin

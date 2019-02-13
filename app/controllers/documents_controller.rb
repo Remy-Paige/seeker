@@ -133,7 +133,7 @@ class DocumentsController < ApplicationController
 
     # create new sections with custom method
     # each section created new - split into section parts in the model
-    params[:section_number].count.times do |idx|
+    params[:section_number]&.count&.times do |idx|
       @document.sections.add_section(
         section_number: params[:section_number][idx],
         section_name: params[:section_name][idx],

@@ -142,16 +142,22 @@ class CollectionsController < ApplicationController
     @queries = @collection.queries
 
 
-
-
-
-    sections = []
+    section_list = []
 
     @collection.collection_documents.each do |relation|
       document = Document.find(relation.document_id)
-      sections.push(document.sections.where("section_number = '" + relation.section_number.to_s + "'").first)
+      document.sections.group_by(&:section_number).map do |section_number, sections|
+        section_name = sections.first.section_name
+        language_id = sections.first.language_id
+        page_number = sections.first.page_number
+        content = sections.sort_by(&:section_part).map(&:content).join
+        if relation.section_number == section_number
+          section_list.push(Section.new(section_number: section_number, section_name: section_name, content: content, language_id: language_id, page_number: page_number, document_id: relation.document_id))
+        end
+      end
+
     end
-    @sections = sections
+    @sections = section_list
   end
 
 

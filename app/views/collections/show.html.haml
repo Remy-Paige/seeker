@@ -22,31 +22,42 @@
   %br
 
   %h4 Sections:
-  = link_to 'Export Sections', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-default"
+  = link_to 'Export Sections', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-info"
 
   %div{:class => "results_grid"}
     -#sections
     - @sections.each do |section|
-      %div{:class => 'result'}
-        %h5= section.section_number
-        %h5= section.section_name
+      %div{:class => 'section_content'}
+        %h4= section.section_number
+        %h4= section.section_name
         %br
-        = section.content[0..1500].html_safe
+        %br
+        = section.content
       %div{:class => 'details'}
-        = section.document.country
-        %br
-        = section.document.year
-        %br
-        = section.document.cycle.ordinalize + ' cycle'
-        %br
-        = Document::DOCUMENT_TYPES[section.document.document_type]
+        %div{:class => 'section_information', :style => 'height: 110px;'}
+          = section.document.country
+          %br
+          = section.document.year
+          %br
+          = section.document.cycle.ordinalize + ' cycle'
+          %br
+          = Document::DOCUMENT_TYPES[section.document.document_type]
+          %br
+          Page Number:
+          = section.page_number
+          %br
+          -# TODO: fix this travesty
+          = section.language_id != nil ? @languages[section.language_id].name : 'No Language'
         %div{:class => "right_box"}
-          = link_to 'Original', section.document.url, target: '_blank', :class => "btn btn-default right_button"
-          %br
           - section.page_number == nil ? number = 0 : number = section.page_number
-          = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button"
+          = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
           %br
+          = link_to 'Remove from Collection', remove_collection_path(section_number: section.section_number,document_id: section.document.id , id: @collection.id), :class => "btn btn-default right_button button_spacing"
           %br
+          = link_to 'Jump to First Page', section.document.url, target: '_blank', :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
+          - @collections = current_user.collections
           %br
-          %br
-          = link_to 'Remove from Collection', remove_collection_path(section_number: section.section_number,document_id: section.document.id , id: @collection.id), :class => "btn btn-default right_button"
+        %div{:class => "save_form"}
+          = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: section.document.id , collections: @collections}
+%div{:id => 'sticky', :class => "btn btn-primary"}
+  Jump to Top

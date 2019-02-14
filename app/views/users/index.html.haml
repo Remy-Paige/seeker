@@ -4,12 +4,11 @@
 
 
   %div{:class => "user_grid"}
+    - alternating = true
     - @users.each do |user|
-      %div{:class =>"email"}= user.email
-      %div{:class =>"admin_yn"}= user.admin? ? 'Admin' : 'Not Admin'
-      //users#edit
-      %div{:class =>"admin_button"}= link_to('Change Admin Status', edit_user_path(user))
-      //TODO: what happens if you delete yourself?
-      //TODO: when you undesignate yourself admin?
-      //users#destroy
-      %div{:class =>"delete"}= link_to 'Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %div{:class => alternating ? 'alternating email' : 'email'}= user.email
+      %div{:class => alternating ? 'alternating' : '', :style => "grid-column-start: 2;"}
+      %div{:class => alternating ? 'alternating admin_yn' : 'admin_yn'}= user.admin? ? 'Admin' : 'Not Admin'
+      %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to('Change Admin Status', edit_user_path(user))
+      %div{:class => alternating ? 'alternating delete' : 'delete'}= link_to 'Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      - alternating ? alternating = false : alternating = true

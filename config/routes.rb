@@ -26,6 +26,9 @@ Rails.application.routes.draw do
 
   #where the magic happens
   resources :documents do
+    member do
+      get 'temptesting'
+    end
     #this code points to sections, a subclass of documents and adds the extra routes to the resource generation
     resources :sections
     member do

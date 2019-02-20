@@ -48,37 +48,97 @@ documents_scripts = ->
     e.preventDefault()
     e.stopPropagation()
 
-    counte = $('.delete_section').length + 1
+    counte = $('.delete_section').length
     new_row =  '<div class=' + counte + '>'
     new_row += 'section number'
     new_row += '<br>'
-    new_row += '<input type="text" name="section_number[]" id="section_number_" />'
+    new_row += '<input type="text" name="section_number[' + counte + '][]" id="section_number_" />'
     new_row += '<br>'
     new_row += 'section name'
     new_row += '</br>'
-    new_row += '<input type="text" name="section_name[]" id="section_name_" />'
+    new_row += '<input type="text" name="section_name[' + counte + '][]" id="section_name_" />'
     new_row += '<br>'
     new_row += 'page number'
     new_row += '</br>'
-    new_row += '<input type="text" name="page_number[]" id="page_number_"/>'
+    new_row += '<input type="text" name="page_number[' + counte + '][]" id="page_number_"/>'
     new_row += '</div>'
+
     new_row += '<div class=' + counte + '>'
-    new_row += '<textarea name="content[]" id="content_" class ="edit_section_box"></textarea>'
+    new_row += '<textarea name="content[' + counte + '][]" id="content_" class ="edit_section_box"></textarea>'
     new_row += '</div>'
+
     new_row += '<div class=' + counte + '>'
-    new_row += 'language'
-    new_row += '<select name="language[]" id="language_" class = "form-control">'
+    new_row += '<div class="languages" id="langauges_' + counte + '">'
+
+
+    new_row += '</div>'
+    new_row += 'Add Language'
+    new_row += '<select id="language_' + counte + '" class = "form-control language">'
     new_row += '<option value=""></option>'
     for language in gon.languages
       new_row += '<option value=' + language.id + '>' + language.name + '</option>'
-
     new_row += '</select>'
     new_row += '<a class="delete_section" id=' + counte + ' data-confirm="Are you sure? All unsaved changes will be lost" href="#">Delete Section</a>'
     new_row += '</div>'
-#    new_row += '<div class = "remove_submit"><input type="submit" name="commit" value="Save sections" /></div>'
 
     console.log(new_row)
     $('#sections_box').append(new_row)
+    return false;
+
+  $(document.body).off 'change', '.language'
+  $(document.body).on 'change', '.language', (e) ->
+#  add a language box to the languages div
+
+    language_select_id = this.id.split('_')
+    generic_id = language_select_id[-1..][0]
+    language_select_value = this.value
+
+    console.log('id' + generic_id)
+    console.log('value' + language_select_value)
+    console.log('language' + gon.languages[language_select_value])
+
+
+    count2 = $('#languages_' + generic_id).find('.language_box').length
+
+    newrow = '<div class="language_box strength_0" id="language_box_' +  generic_id + '_' + count2  + '">'
+    newrow += gon.languages[language_select_value-1].name
+    newrow += '<input type="hidden" name="language_id[' + generic_id + '][]" id="language_id_' +  generic_id + '_' + count2  + '" value="' + language_select_value + '">'
+    newrow += '<input type="hidden" name="strength[' + generic_id + '][]" id="strength_' +  generic_id + '_' + count2  + '" value="0">'
+    newrow += '<a class="language_remove fas fa-times" href="#" id="language_remove_' +  generic_id + '_' + count2  + '"title="Confirm that this section does not mention this language"></a>'
+    newrow += '</div>'
+    $('#languages_' + generic_id).append(newrow)
+    return false;
+
+
+  $(document).off 'click', '.language_confirm_human'
+  $(document).on 'click', '.language_confirm_human', (e) ->
+    dummy = ''
+    language_select_id = this.id.split('_')
+    box_id_index = language_select_id.length
+
+    generic_id = language_select_id[box_id_index-2]
+    box_id = language_select_id[-1..][0]
+    console.log('#language_box_' + generic_id + '_' + box_id)
+
+
+  #  change the value of the associated strength hidden field and update background colour and remove this element
+    $('#strength_' + generic_id + '_' + box_id).attr('value', '0')
+    $('#language_box_' + generic_id + '_' + box_id).css("background-color", "#449d44")
+    $(this).remove()
+    return false
+
+  $(document).off 'click', '.language_remove'
+  $(document).on 'click', '.language_remove', (e) ->
+#  remove the associated language box
+    language_select_id = this.id.split('_')
+    console.log(language_select_id)
+    box_id_index = language_select_id.length
+    generic_id = language_select_id[box_id_index-2]
+    box_id = language_select_id[-1..][0]
+    console.log('#language_box_' + generic_id + '_' + box_id)
+
+    $('#language_box_' + generic_id + '_' + box_id).remove()
+    return false;
 
   $(document).off 'click', '.delete_section'
   $(document).on 'click', '.delete_section', (e) ->
@@ -86,8 +146,12 @@ documents_scripts = ->
     e.stopPropagation()
     id = this.id
     $('.'+id).remove()
+    return false;
 
 
+
+
+#    old search
   $(document).off 'click', '#add_old_search'
   $(document).on 'click', '#add_old_search', (e) ->
     e.preventDefault()
@@ -130,7 +194,9 @@ documents_scripts = ->
     new_row += "<select class='added_query_select form-control' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' required >"
     new_row += "<option disabled selected value>Select filter</option>"
     new_row += "<option value='section number'>Section number</option>"
-    new_row += "<option value='language'>Language</option>"
+    new_row += "<option value='strong_language'>Langauge - Strong Matching</option>"
+    new_row += "<option value='medium_language'>Language - Medium Matching</option>"
+    new_row += "<option value='weak_language'>Language - Weak Matching</option>"
     new_row += "<option value='country'>Country</option>"
     new_row += "<option value='text search'>Text Search</option>"
     new_row += "<option value='year'>Year</option>"
@@ -150,6 +216,7 @@ documents_scripts = ->
 
     new_row += "</div>"
     new_row += "<div class='box added_filter_icons' id='added_filter_icons_" + counter + "' >"
+
 
     new_row += "<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + counter + "' ></i>"
 
@@ -200,7 +267,9 @@ documents_scripts = ->
 #    which set of options to add to the select
     option = switch
       when added_query_select_value == 'country' then country_options
-      when added_query_select_value == 'language' then language_options
+      when added_query_select_value == 'strong_language' then language_options
+      when added_query_select_value == 'medium_language' then language_options
+      when added_query_select_value == 'weak_language' then language_options
       when added_query_select_value == 'text search' then text_options
       when added_query_select_value == 'section number' then section_number_options
       when added_query_select_value == 'year' then numeric_options
@@ -212,7 +281,7 @@ documents_scripts = ->
     numeric_filters = ['all','only','less than','greater than','between']
     logical_filters = ['only','none of','one of']
     numeric_queries = ['Year', 'Cycle']
-    logical_queries = ['Section Number','Country', 'Language', 'Text Search']
+    logical_queries = ['Section Number','Country','strong_language', 'medium_language','weak_language', 'Text Search']
 
     filter_select_value = $("#added_filter_select_" + generic_id).val()
 
@@ -253,14 +322,21 @@ documents_scripts = ->
     added_filter_select_id = this.id.split('_')
     generic_id = added_filter_select_id[-1..][0]
     added_filter_select_value = this.value
+    console.log(generic_id)
+    console.log(added_filter_select_value)
     if generic_id < 3
       added_query_select_value = $('#added_query_'+ generic_id).text().trim()
+      console.log(added_query_select_value)
       added_query_select_value = added_query_select_value.substr(0,1).toLowerCase()+added_query_select_value.substr(1);
     else
       added_query_select_value = $('#added_query_select_' + generic_id).val()
+
+    if generic_id == "1"
+      added_query_select_value = $('#added_query_select_' + generic_id).val()
+      console.log('TYPE ERROR fiusfeiojfwoijf')
+      console.log(added_query_select_value)
+    else
     console.log(added_query_select_value)
-
-
 #    apart from text - just #added_query_ID
 #    text value cant be grabbed with val, has to be grabbed with the snippet above
 
@@ -305,7 +381,7 @@ documents_scripts = ->
         when added_filter_select_value == 'only' then country_select_row
         when added_filter_select_value == 'none of' then plus_country_select_row
         when added_filter_select_value == 'one of' then plus_country_select_row
-    else if added_query_select_value == 'language'
+    else if added_query_select_value == 'weak_language' or added_query_select_value == 'medium_language' or added_query_select_value == 'strong_language'
       field_row = switch
         when added_filter_select_value == null then nothing_row
         when added_filter_select_value == 'all' then nothing_row
@@ -337,10 +413,14 @@ documents_scripts = ->
         when added_filter_select_value == 'one of' then plus_button_row
 
     delete_button_row = "<i class='fas fa-times red filter_icon delete_filter' id='delete_filter_" + generic_id + "' ></i>"
-    filter_row = delete_button_row
+    invisible_delete_button_row =  "<i class='fas fa-times filter_icon' style='opacity: 0;' id='delete_filter_" + generic_id + "' ></i>"
 
     $('#added_field_' + generic_id).empty().append(field_row)
-    $("#added_filter_icons_" + generic_id ).empty().append(filter_row)
+
+    if generic_id >= 3
+      $("#added_filter_icons_" + generic_id ).empty().append(delete_button_row)
+    else
+      $("#added_filter_icons_" + generic_id ).empty().append(invisible_delete_button_row)
 
 
   #add a filter field
@@ -366,7 +446,7 @@ documents_scripts = ->
 #    use the value of
 #    #added_query_select_ID
 
-    if generic_id < 3
+    if generic_id == 0 or generic_id == 2
       added_query_select_value = $('#added_query_'+ generic_id).text().trim()
       added_query_select_value = added_query_select_value.substr(0,1).toLowerCase()+added_query_select_value.substr(1);
     else
@@ -390,7 +470,9 @@ documents_scripts = ->
 #   capitalisation bugf
     input = switch
       when added_query_select_value == 'country' then country_select_row
-      when added_query_select_value == 'language' then language_select_row
+      when added_query_select_value == 'strong_language' then language_select_row
+      when added_query_select_value == 'medium_language' then language_select_row
+      when added_query_select_value == 'weak_language' then language_select_row
       when added_query_select_value == 'text search' then generic_input
       when added_query_select_value == 'section number' then generic_input
       when added_query_select_value == 'section Number' then generic_input

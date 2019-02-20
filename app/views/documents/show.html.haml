@@ -31,27 +31,28 @@
         %div{:class => 'section_content'}
           %h4= section.section_number
           %h4= section.section_name
-          %br
-          = section.content
-        %div{:class => 'details'}
-          %div{:class => 'section_information'}
-            Page Number:
-            = section.page_number
-            %br
-            -# TODO: fix this travesty
-            = section.language_id != nil ? @languages[section.language_id].name : 'No Language'
-          %div{:class => "right_box"}
-            - section.page_number == nil ? number = 0 : number = section.page_number
-            = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
-            %br
-            = link_to 'Export XML', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
-            %br
-            = link_to 'Jump to First Page', @document.url, target: '_blank', :class => "btn btn-default right_button btn-xs", target: :_blank
-            %br
-            = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
-            %br
 
-            - @collections = current_user.collections
+        %div{:class => 'section_information'}
+          Page Number:
+          = section.page_number
+        %div{:class => 'language_span'}
+          - section.language_sections&.sort_by(&:strength)&.each do |relation|
+            %div{:class => 'language_box strength_' + relation.strength.to_s, }
+              = @languages[relation.language_id-1]
+        %div
+          = section.content
+        %div{:class => "right_box"}
+          - section.page_number == nil ? number = 0 : number = section.page_number
+          = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
+          %br
+          = link_to 'Export XML', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
+          %br
+          = link_to 'Jump to First Page', @document.url, target: '_blank', :class => "btn btn-default right_button btn-xs", target: :_blank
+          %br
+          = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => section.section_number), :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
+          %br
+
+          - @collections = current_user.collections
           %div{:class => "save_form"}
             = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: @document.id , collections: @collections}
       - else
@@ -59,20 +60,23 @@
     %div{:class => 'section_content'}
       %h4= '-'
       %h4= "Full Content"
+    %div{:class => 'section_information'}
+      Page Number: 1
       %br
+      No Language
+    %div{:class => 'language_span'}
+      - full_section.language_sections&.sort_by(&:strength)&.each do |relation|
+        %div{:class => 'language_box strength_' + relation.strength.to_s, }
+          = @languages[relation.language_id-1]
+    %div
       = full_section.content
-    %div{:class => 'details'}
-      %div{:class => 'section_information'}
-        Page Number: 1
-        %br
-        No Language
-      %div{:class => "right_box"}
-        = link_to 'Jump to First Page', @document.url , :class => "btn btn-default right_button", target: :_blank
-        %br
-        = link_to 'Export XML', export_path(section_number: full_section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
-        %br
-        = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => full_section.section_number), :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
-        %br
+    %div{:class => "right_box"}
+      = link_to 'Jump to First Page', @document.url , :class => "btn btn-default right_button", target: :_blank
+      %br
+      = link_to 'Export XML', export_path(section_number: full_section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
+      %br
+      = link_to 'Report Section Problem', new_user_ticket_path(:document_id =>@document.id, :section_number => full_section.section_number), :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
+      %br
 
 %div{:id => 'sticky', :class => "btn btn-primary"}
   Jump to Top

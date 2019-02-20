@@ -19,6 +19,24 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+.queries_grid {
+  display: grid;
+  grid-template-columns: 220px 50px 1fr;
+}
+.query {
+  grid-column-start: 1;
+  grid-column-end: 2;
+}
+
+.filter {
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+.field {
+  grid-column-start: 3;
+  grid-column-end: 4;
+}
 
 .left {
   grid-column-start: 1;

@@ -132,9 +132,8 @@ class DocumentParserJob
         write_to_log("too long, not indexed")
       end
     end
+    LanguageParserJob.perform_async(@document)
 
-    write_to_log('parsing finished')
-    document.finish_parsing!
   rescue StandardError => e
     write_to_log('what1')
     logger.info 'Failure'

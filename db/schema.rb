@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190208162531) do
+ActiveRecord::Schema.define(version: 20190216174651) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,17 @@ ActiveRecord::Schema.define(version: 20190208162531) do
 
   add_index "documents", ["country_id"], name: "index_documents_on_country_id", using: :btree
 
+  create_table "language_sections", force: :cascade do |t|
+    t.integer  "section_id"
+    t.integer  "language_id"
+    t.integer  "strength"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "language_sections", ["language_id"], name: "index_language_sections_on_language_id", using: :btree
+  add_index "language_sections", ["section_id"], name: "index_language_sections_on_section_id", using: :btree
+
   create_table "languages", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
@@ -84,7 +95,6 @@ ActiveRecord::Schema.define(version: 20190208162531) do
     t.integer  "document_id"
     t.text     "section_name"
     t.text     "content"
-    t.integer  "language_id"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.string   "section_number"
@@ -93,7 +103,6 @@ ActiveRecord::Schema.define(version: 20190208162531) do
   end
 
   add_index "sections", ["document_id"], name: "index_sections_on_document_id", using: :btree
-  add_index "sections", ["language_id"], name: "index_sections_on_language_id", using: :btree
 
   create_table "ticket_relations", force: :cascade do |t|
     t.integer  "user_id"

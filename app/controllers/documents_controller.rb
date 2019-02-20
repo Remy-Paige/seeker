@@ -11,15 +11,20 @@ class DocumentsController < ApplicationController
   # GET /documents/
   # GET /documents/.json
   def show
-    # each section is made up of lots of section parts because of elastic search - this coellates the sections parts into a section
-    # honestly I'm not 100% sure how it works
+    # reconstruct a temporary section from parts
     @languages = Language.all
-    @sections = @document.sections.group_by(&:section_number).map do |section_number, sections|
+    @sections =
+        @document.sections.group_by(&:section_number).map do |section_number, sections|
           section_name = sections.first.section_name
-          language_id = sections.first.language_id
           page_number = sections.first.page_number
+          language_sections = sections.first.language_sections
           content = sections.sort_by(&:section_part).map(&:content).join
-          Section.new(section_number: section_number, page_number: page_number, section_name: section_name, content: content, language_id: language_id)
+          sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number)
+          language_sections&.each do |relation|
+            sec.language_sections << relation
+          end
+          # this line avoids an undefined method for [] array error
+          sec
         end.sort_by(&:section_number)
   end
 
@@ -42,16 +47,22 @@ class DocumentsController < ApplicationController
     unless current_user.admin?
       redirect_to('/404')
     end
-    # TODO: fix this so its not all, and no duplicates
+
     @languages = Language.all
     gon.languages = @languages
+    # reconstruct a temporary section from parts
     @sections =
       @document.sections.group_by(&:section_number).map do |section_number, sections|
         section_name = sections.first.section_name
-        language_id = sections.first.language_id
         page_number = sections.first.page_number
+        language_sections = sections.first.language_sections
         content = sections.sort_by(&:section_part).map(&:content).join
-        Section.new(section_number: section_number, section_name: section_name, content: content, language_id: language_id, page_number: page_number)
+        sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number)
+        language_sections&.each do |relation|
+          sec.language_sections << relation
+        end
+        # this line avoids an undefined method for [] array error
+        sec
       end.sort_by(&:section_number)
   end
 
@@ -133,16 +144,32 @@ class DocumentsController < ApplicationController
 
     # create new sections with custom method
     # each section created new - split into section parts in the model
-    params[:section_number]&.count&.times do |idx|
-      @document.sections.add_section(
-        section_number: params[:section_number][idx],
-        section_name: params[:section_name][idx],
-        content: params[:content][idx],
-        language_id: params[:language][idx].presence,
-        page_number: params[:page_number][idx]
-      )
+    #
+    params[:section_number]&.each_key do |key|
+      if params[:language_id].present?
+        @document.sections.add_section(
+            section_number: params[:section_number][key][0],
+            section_name: params[:section_name][key][0],
+            content: params[:content][key][0],
+            languages: params[:language_id][key],
+            strengths: params[:strength][key],
+            page_number: params[:page_number][key][0]
+        )
+      else
+        @document.sections.add_section(
+            section_number: params[:section_number][key][0],
+            section_name: params[:section_name][key][0],
+            content: params[:content][key][0],
+            languages: nil,
+            strengths: nil,
+            page_number: params[:page_number][key][0]
+        )
+      end
+
+
     end
 
+    SectionReindexJob.perform_async
     redirect_to documents_path, notice: 'Sections Updated!'
   end
 
@@ -154,6 +181,16 @@ class DocumentsController < ApplicationController
       format.html { redirect_to documents_url, notice: 'Document was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def temptesting
+
+
+    document = Document.find(params[:id])
+    LanguageParserJob.perform_async(document)
+    logger.info 'language parsing'
+
+    redirect_to document_path(document)
   end
 
   # this is the old search function - remove?
@@ -226,7 +263,7 @@ class DocumentsController < ApplicationController
     # this skeleton copies the format of the queries that searchkick runs if you use it as a wrapper, with a few edits
 
     numeric_queries = [:year, :cycle]
-    logical_queries = [:country, :language]
+    logical_queries = [:country, :strong_language, :medium_language, :weak_language]
     # text_search, section_number are the other two
     # numeric_filters ['all','only','less than','greater than','between']
     # logical_filters ['all','only','none of','one of']
@@ -279,10 +316,14 @@ class DocumentsController < ApplicationController
           end
 
         elsif query_type == :text_search
-          #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array es complains
+          #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array elastic search complains
           text_search_present = true
           keyword&.each do |word|
+            # not good results
+            text_arr.append({match:{"content":{query: word,boost:10,operator:"and"}}})
+            # Manx Gaelic : Manx Gaelic, Scottish-Gaelic: Scottish Gaelic Socttish-Gaelic
             text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search"}}})
+            # Scottish-Gaelic: Gaelic Scottish Socttish, Manx Gaelic: Gaelic scottish-gaelic socttish gaelic Manx
             text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search2"}}})
             text_arr.append({match:{"content.analyzed":{query: word,boost:1,operator:"and",analyzer:"searchkick_search",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
             text_arr.append({match:{"content.analyzed":{"query": word,boost:1,operator:"and",analyzer:"searchkick_search2",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
@@ -334,7 +375,7 @@ class DocumentsController < ApplicationController
 
 
 
-
+      @languages = Language.all
       @collections = current_user&.collections
       @search_results = @search_results.paginate(page: params[:page], per_page: 10)
       render :search_results

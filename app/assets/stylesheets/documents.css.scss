@@ -96,6 +96,28 @@
 .button_spacing {
   margin-bottom: 15px;
 }
+.language_span {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+.language_box {
+  display: inline-block;
+  padding: 5px;
+  border-radius: 7px;
+  margin: 5px;
+}
+.strength_0 {
+  background-color: #449d44;
+}
+.strength_1 {
+  background-color: #337ab7;
+}
+.strength_2 {
+  background-color: #5bc0de;
+}
+.strength_3 {
+  background-color: #d3eeff;
+}
 
 //SEARCH
 #keyword_ {

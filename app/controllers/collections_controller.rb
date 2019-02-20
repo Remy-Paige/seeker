@@ -148,15 +148,20 @@ class CollectionsController < ApplicationController
       document = Document.find(relation.document_id)
       document.sections.group_by(&:section_number).map do |section_number, sections|
         section_name = sections.first.section_name
-        language_id = sections.first.language_id
+        language_sections = sections.first.language_sections
         page_number = sections.first.page_number
         content = sections.sort_by(&:section_part).map(&:content).join
+        sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number, document_id: relation.document_id)
         if relation.section_number == section_number
-          section_list.push(Section.new(section_number: section_number, section_name: section_name, content: content, language_id: language_id, page_number: page_number, document_id: relation.document_id))
+          language_sections&.each do |relation2|
+            sec.language_sections << relation2
+          end
+          section_list.push(sec)
         end
       end
 
     end
+    @languages = Language.all
     @sections = section_list
   end
 

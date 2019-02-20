@@ -24,57 +24,63 @@ class LanguageParserJob
     document.sections.each do |section|
       if section.section_name != 'Full Content'
         languages.each do |language|
-
+          logger.info language.name
           strengths.each do |strength|
-
+            logger.info strength
             if strength == 1
               search_results = strong_search(document, language, section)
-
+              logger.info search_results.length
               if search_results.length > 0
 
                 if section.languages.include? language
                   relation = section.language_sections.where('language_id =' + language.id.to_s).first
                   relation.strength = 1
                   relation.save
+                  logger.info 'save'
                 else
                   section.languages << language
                   relation = section.language_sections.where('language_id =' + language.id.to_s).first
                   relation.strength = 1
                   relation.save
+                  logger.info 'save'
                 end
               end
 
             elsif strength == 2
               search_results = medium_search(document, language, section)
-
+              logger.info search_results.length
               if search_results.length > 0
 
                 if section.languages.include? language
                   relation = section.language_sections.where('language_id =' + language.id.to_s).first
                   relation.strength = 2
                   relation.save
+                  logger.info 'save'
                 else
                   section.languages << language
                   relation = section.language_sections.where('language_id =' + language.id.to_s).first
                   relation.strength = 2
                   relation.save
+                  logger.info 'save'
                 end
               end
 
             elsif strength == 3
               search_results = weak_search(document, language, section)
-
+              logger.info search_results.length
               if search_results.length > 0
 
                 if section.languages.include? language
                     relation = section.language_sections.where('language_id =' + language.id.to_s).first
                     relation.strength = 3
                     relation.save
+                    logger.info 'save'
                 else
                     section.languages << language
                     relation = section.language_sections.where('language_id =' + language.id.to_s).first
                     relation.strength = 3
                     relation.save
+                    logger.info 'save'
                  end
               end
 

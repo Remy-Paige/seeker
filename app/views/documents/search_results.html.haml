@@ -33,10 +33,10 @@
               = @languages[relation.language_id-1]
         %div
           %div{:id => 'less_' + counter.to_s}
-            = details != {} ? details[:highlight]['content.analyzed'.to_sym]&.html_safe || section.content[0..1500].html_safe : section.content[0..1500].html_safe
+            = details != {} ? simple_format(details[:highlight]['content.analyzed'.to_sym]&.html_safe) || simple_format(section.content[0..1500].html_safe) : simple_format(section.content[0..1500].html_safe)
             = link_to 'Show More...', '#', :class => 'more', :id => 'click_' + counter.to_s
           %div{:id => 'more_'  + counter.to_s, :style => "display: none;"}
-            = section.content.html_safe
+            = simple_format(section.content)
             = link_to 'Show Less...', '#', :class => 'less', :id => 'click_' + counter.to_s
 
 

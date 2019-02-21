@@ -1,7 +1,7 @@
 class LanguageParserJob 
   include SuckerPunch::Job
   
-  def perform(document)
+  def perform(id)
     # Jobs interacting with ActiveRecord should take special precaution not to exhaust connections in the pool
     # .connection_pool.with_connection ensures the connection is returned back to the pool when completed.
     # ActiveRecord::Base.connection_pool.with_connection do
@@ -9,6 +9,7 @@ class LanguageParserJob
     #   user.update(is_awesome: true)
     # end
     #
+    document = Document.find(id)
 
     languages = Language.all
 
@@ -22,14 +23,14 @@ class LanguageParserJob
     # associating it with only one of the sections wont work
     # but itll turn up for every part because of the above so itll all work out
     document.sections.each do |section|
-
+      logger.info section.section_number.to_s
       languages.each do |language|
-
+      logger.info '  ' + language.name.to_s
         strengths.each do |strength|
-
+        logger.info '    strength' + strength.to_s
           if strength == 1
             search_results = strong_search(document, language, section)
-
+            logger.info '      length' + search_results.length.to_s
             if search_results.length > 0
 
               if section.languages.include? language
@@ -46,7 +47,7 @@ class LanguageParserJob
 
           elsif strength == 2
             search_results = medium_search(document, language, section)
-
+            logger.info '      length' + search_results.length.to_s
             if search_results.length > 0
 
               if section.languages.include? language
@@ -63,7 +64,7 @@ class LanguageParserJob
 
           elsif strength == 3
             search_results = weak_search(document, language, section)
-
+            logger.info '      length' + search_results.length.to_s
             if search_results.length > 0
 
               if section.languages.include? language

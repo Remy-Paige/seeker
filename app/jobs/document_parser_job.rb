@@ -74,65 +74,13 @@ class DocumentParserJob
 
       # fix new lines after numbering
       content.gsub!(/^((\d|\w)\.)+[\n\r]+/mi, '\1 ')
-
-
-
+      logger.info 'start sectioning'
+      SectionDocumentJob.perform_async(document, content)
       # separate committee of experts report sections automatically
       # documents not following the rules may not be parsed correctly
-      if Document::DOCUMENT_TYPES[document.document_type] == 'Committee of Experts Report'
-        prefix_section = 'report of the committee of experts on the application of the charter'.gsub(/\s/, '')
-        content_page = false
-        contents_passed = false
-        prev_line = nil
-        prev_content = ''
-        prev_section_number = ''
-        prev_section_name = ''
-        current_page = 1
-        prev_page = 1
-        content.each_line do |line|
-          next if line =~ /^Chapter \d\./i || line.blank?
 
-          processed_line = line.downcase.gsub(/\s/, '')
-
-          #my code
-          # match start line, digits, end line
-          page_number = line[/^\d+$/].to_i
-
-          if page_number != nil && page_number > current_page
-            current_page = page_number
-          end
-          #end my code
-
-          if processed_line.include?(prefix_section)
-            content_page = contents_passed
-            contents_passed = true
-          end
-
-          next unless content_page
-
-          section_number_regex = /^\d(\.\d)+\.?/
-          if processed_line =~ section_number_regex
-            save_section(document, prev_section_number, prev_section_name, prev_content, prev_page + 1)
-            prev_content = ''
-            prev_section_number = processed_line.match(section_number_regex)[0]
-            prev_section_name = line.slice(line.index(/[A-Za-z]/)..-1)
-            prev_page = current_page
-          else
-            prev_content += line
-          end
-        end
-        # prev page + 1 because of a tick over problem TODO: fix the hack
-        # process last section after reading last line
-        save_section(document, prev_section_number, prev_section_name, prev_content, prev_page + 1)
-      end
-
-      begin
-        document.sections.add_section(section_number: '-', section_name: 'Full Content', content: content, page_number: 0)
-      rescue Searchkick::ImportError
-        write_to_log("too long, not indexed")
-      end
     end
-    LanguageParserJob.perform_async(@document)
+
 
   rescue StandardError => e
     write_to_log('what1')

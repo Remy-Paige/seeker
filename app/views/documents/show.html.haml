@@ -65,11 +65,11 @@
       %br
       No Language
     %div{:class => 'language_span'}
-      - full_section.language_sections&.sort_by(&:strength)&.each do |relation|
+      - full_section&.language_sections&.sort_by(&:strength)&.each do |relation|
         %div{:class => 'language_box strength_' + relation.strength.to_s, }
           = @languages[relation.language_id-1]
     %div
-      = simple_format(full_section.content)
+      = simple_format(full_section&.content)
     %div{:class => "right_box"}
       = link_to 'Jump to First Page', @document.url , :class => "btn btn-default right_button", target: :_blank
       %br

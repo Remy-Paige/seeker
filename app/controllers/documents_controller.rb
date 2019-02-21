@@ -183,13 +183,24 @@ class DocumentsController < ApplicationController
     end
   end
 
-  def temptesting
-
-
+  def language_parse
     document = Document.find(params[:id])
     LanguageParserJob.perform_async(document)
     logger.info 'language parsing'
+    redirect_to document_path(document)
+  end
 
+  def resection_document
+    document = Document.find(params[:id])
+    content = nil
+    document.sections.group_by(&:section_number).map do |section_number, sections|
+      if section_number == "-"
+        content = sections.sort_by(&:section_part).map(&:content).join
+      end
+    end
+    logger.info 'hahaha'
+    SectionDocumentJob.perform_async(document, content)
+    logger.info 'resectioning'
     redirect_to document_path(document)
   end
 

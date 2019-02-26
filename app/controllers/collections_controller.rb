@@ -179,19 +179,37 @@ class CollectionsController < ApplicationController
   # POST /collections
   # POST /collections.json
   def create
-    @collection = Collection.new(collection_params)
 
-    current_user.collections << @collection
-
-    respond_to do |format|
-      if @collection.save
-        format.html { redirect_to @collection, notice: 'Collection was successfully created.' }
-        format.json { render :show, status: :created, location: @collection }
-      else
-        format.html { render :new }
-        format.json { render json: @collection.errors, status: :unprocessable_entity }
+    collections = current_user.collections
+    present = false
+    collections.each do |collect|
+      if collection_params[:name] == collect.name
+        present = true
       end
     end
+    if present
+      respond_to do |format|
+        format.html { redirect_to collections_path, notice: 'Collection already present' }
+        format.json { render :show, status: :created, location: @collection }
+      end
+    else
+      @collection = Collection.new(collection_params)
+
+      current_user.collections << @collection
+
+      respond_to do |format|
+        if @collection.save
+          format.html { redirect_to @collection, notice: 'Collection was successfully created.' }
+          format.json { render :show, status: :created, location: @collection }
+        else
+          format.html { render :new }
+          format.json { render json: @collection.errors, status: :unprocessable_entity }
+        end
+      end
+    end
+
+
+
   end
 
   # PATCH/PUT /collections/1

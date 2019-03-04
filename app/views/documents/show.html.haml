@@ -23,7 +23,8 @@
     %div{:class => "info"}= @document.year
 
   %h1 Sectioning
-  = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info"
+  - if current_user.admin?
+    = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info"
   %div{:class => "results_grid"}
     - full_section = nil
     - @sections.each do |section|

@@ -10,7 +10,7 @@ class UserTicketsController < ApplicationController
       # should admins be able to make tickets? the where defends against admins unmanaged tickets
       # appearing in their list of open tickets in any case
       # todo: do over terminology
-      @open_user_tickets = current_user.user_tickets.where('status = 1')
+      @open_user_tickets = current_user.user_tickets.where('status = 1').uniq
       render 'user_tickets/index_admin'
     else
       @user_tickets = current_user.user_tickets

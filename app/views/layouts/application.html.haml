@@ -26,7 +26,7 @@
               = link_to 'Documents', documents_path, :class => "navbar-brand"
               = link_to 'Users', users_path, :class => "navbar-brand"
               = link_to 'Tickets', user_tickets_path, :class => "navbar-brand"
-              = link_to 'Saved', collections_path, :class => "navbar-brand"
+              = link_to 'Collections', collections_path, :class => "navbar-brand"
               %li{:class=>"dropdown"}
                 %a{:href=>"#", :class=>"dropdown-toggle",:style => "width: 70px;padding-left: 30px;", 'data-toggle'=>"dropdown", :role=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"}
                   %span{:class => "fas fa-user-circle navbar-brand", :style=>"font-size: x-large;padding: 0px;color: white;height: 17px;"}
@@ -39,7 +39,7 @@
             - elsif user_signed_in? && !current_user.admin?
               = link_to 'Documents', documents_path, :class => "navbar-brand"
               = link_to 'Tickets', user_tickets_path, :class => "navbar-brand"
-              = link_to 'Saved', collections_path, :class => "navbar-brand"
+              = link_to 'Collections', collections_path, :class => "navbar-brand"
               %li{:class=>"dropdown"}
                 %a{:href=>"#", :class=>"dropdown-toggle", :style => "width: 70px;padding-left: 30px;",'data-toggle'=>"dropdown", :role=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"}
                   %span{:class => "fas fa-user-circle navbar-brand", :style=>"font-size: x-large;padding: 0px;color: white;height: 17px;"}

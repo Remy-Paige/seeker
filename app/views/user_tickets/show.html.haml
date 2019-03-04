@@ -5,18 +5,39 @@
     Subject:
     = @user_ticket.subject
   %h4
-    email:
+    Email:
     = @user_ticket.email
   %h4
-    created at:
+    Created at:
     = @user_ticket.created_at
   %h4
     Status:
     = @user_ticket.status == 0 ? 'UnManaged' : 'Open'
   %h4
-    link:
-    = @user_ticket.link
+    - if @user_ticket.link != nil
+      Link:
+      = @user_ticket.link
+  %h4
+    - if @user_ticket.document_id != nil
+      Document Reference Number:
+      = @user_ticket.document_id
+  %h4
+    - if @user_ticket.document_id != nil
+      Section Number:
+      = @user_ticket.section_number
   %h4
     comments:
   = @user_ticket.comment
-
+  %br
+  %br
+  %br
+  - if @user_ticket.status == 0 && current_user.admin?
+    = link_to 'Claim Ticket', claim_user_ticket_path(@user_ticket), :class => "btn btn-default"
+  - if @user_ticket.status == 1 && current_user.admin?
+    = link_to 'Mark Resolved', resolve_user_ticket_path(@user_ticket), :class => "btn btn-default"
+  - if @user_ticket.link != nil && current_user.admin?
+    = link_to 'Create New Document', new_document_path, :class => "btn btn-info", target: :_blank
+  - if @user_ticket.document_id != nil
+    = link_to 'View Sectioning', document_path(@user_ticket.document_id), :class => "btn btn-default", target: :_blank
+  - if @user_ticket.document_id != nil && current_user.admin?
+    = link_to 'Edit Sections', edit_section_separation_document_path(@user_ticket.document_id), :class => "btn btn-default", target: :_blank

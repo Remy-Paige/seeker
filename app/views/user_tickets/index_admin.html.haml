@@ -15,8 +15,8 @@
           %h5
             Created on:
             = user_ticket.created_at.strftime("%d/%m/%Y")
-          = link_to 'Claim Ticket', claim_user_ticket_path(user_ticket), :class => "btn btn-default"
           = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-default"
+          = link_to 'Claim Ticket', claim_user_ticket_path(user_ticket), :class => "btn btn-default"
     %div{:class => "right"}
       - @open_user_tickets.each do |user_ticket|
         %div{:class => "ticket"}

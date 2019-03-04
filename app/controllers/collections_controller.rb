@@ -102,26 +102,19 @@ class CollectionsController < ApplicationController
 
       # cant delete the file - so create new at beginning every time
 
-      File.open('export.txt', 'a') {
+      File.open('export.txt', 'w') {
           |file|
       }
 
       # cant each or map over a active record association
-
+      # section name has a \n at the end of it
       for index in 0..collection.collection_documents.length - 1
         relation = collection.collection_documents[index]
         document = Document.find(relation.document_id)
         country = Country.find(document.country_id)
         section = document.sections.where("section_number = '" + relation.section_number.to_s + "'").first
-
         File.open('export.txt', 'a') {
-            |file| file.write('URL: ' + document.url.to_s + "\n" +
-                                  'type: ' + Document::DOCUMENT_TYPES[document.document_type].to_s + "\n" +
-                                  'year: ' + document.year.to_s + "\n" +
-                                  'cycle: ' + document.cycle.to_s + "\n" +
-                                  'country: ' + country.name.to_s + "\n" +
-                                  'section name: ' + section.section_name.to_s + "\n" +
-                                  'section number: ' + section.section_number.to_s + "\n")
+            |file| file.write('URL: ' + document.url.to_s + "\n" + 'type: ' + Document::DOCUMENT_TYPES[document.document_type].to_s + "\n" + 'year: ' + document.year.to_s + "\n" + 'cycle: ' + document.cycle.to_s + "\n" + 'country: ' + country.name.to_s + "\n" + 'section name: ' + section.section_name.to_s + 'section number: ' + section.section_number.to_s + "\n" + "\n")
         }
       end
 

@@ -16,7 +16,7 @@
   %h4
     - if @user_ticket.link != nil
       Link:
-      = @user_ticket.link
+      = link_to @user_ticket.link.to_s, @user_ticket.link, target: :_blank
   %h4
     - if @user_ticket.document_id != nil
       Document Reference Number:

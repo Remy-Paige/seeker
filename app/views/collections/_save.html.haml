@@ -9,6 +9,6 @@
       = select_tag :collection, content_tag(:option,'no collections',:value=>"")+options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
       = link_to 'Create Collection', new_collection_path, :class => "btn btn-default right_button"
     - else
-      = select_tag :collection, content_tag(:option,'select one...',:value=>"")+options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
+      = select_tag :collection, options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
       - locals[:save_type] == 'query' ? cstr = "btn btn-default" :  cstr = "btn btn-default right_button"
       = submit_tag(value = 'Add ' + locals[:save_type].titleize + ' to Collection', class: cstr)

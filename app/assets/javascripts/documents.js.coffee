@@ -194,7 +194,7 @@ documents_scripts = ->
     new_row += "<select class='added_query_select form-control' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' required >"
     new_row += "<option disabled selected value>Select filter</option>"
     new_row += "<option value='section number'>Section number</option>"
-    new_row += "<option value='strong_language'>Langauge - Strong Matching</option>"
+    new_row += "<option value='strong_language'>Language - Strong Matching</option>"
     new_row += "<option value='medium_language'>Language - Medium Matching</option>"
     new_row += "<option value='weak_language'>Language - Weak Matching</option>"
     new_row += "<option value='country'>Country</option>"
@@ -446,11 +446,13 @@ documents_scripts = ->
 #    use the value of
 #    #added_query_select_ID
 
-    if generic_id == 0 or generic_id == 2
+    if generic_id == "0" or generic_id == "2"
       added_query_select_value = $('#added_query_'+ generic_id).text().trim()
       added_query_select_value = added_query_select_value.substr(0,1).toLowerCase()+added_query_select_value.substr(1);
     else
       added_query_select_value = $('#added_query_select_' + generic_id).val()
+    console.log('addedqueryselect')
+    console.log(generic_id)
     console.log(added_query_select_value)
 
     generic_input =  "<input data-number='" + generic_id + "_" + add_field_number + "' type='text' name='keyword[" + generic_id + "][]' id='keyword_' required>"

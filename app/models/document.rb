@@ -14,6 +14,9 @@ class Document < ActiveRecord::Base
   before_destroy :delete_local_documents
   before_destroy {collections.clear}
 
+
+  # document.status is for notifying of failure. TODO: wrap up parsing finished and document status
+
   DOCUMENT_TYPES = ['State Report', 'Committee of Experts Report', 'Committee of Ministers Recommendation']
   DOCUMENT_TYPES_ID = DOCUMENT_TYPES.zip(0...DOCUMENT_TYPES.length).to_h
 
@@ -30,10 +33,8 @@ class Document < ActiveRecord::Base
   end
 
   def url_text
-    # & lets you call methods on objects without worrying that the object may be nil
-    # $ matches the position before newline - to make sure you get the end of the string
-    # this function /assumes/ that .pdf is present at the end of files but this is no longer true for some reason
-    #
+
+
     if self.url.include?('.pdf')
       self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
     else
@@ -45,21 +46,26 @@ class Document < ActiveRecord::Base
 
   end
 
+  #TODO: wrap status and parsing together
   def finish_parsing!
     self.update_attributes(parsing_finished: true)
   end
 
   private
 
+  # TODO: check what is at the url. for now, assume is pdf
+  # TODO: add support for downloading html
   def download_and_set_url_local
     return if Rails.env.test?
     dir = self.clean_url.split('/')[0...-1].join('/')
     FileUtils.mkdir_p(dir)
+
     begin
       IO.copy_stream(open(self.url), self.clean_url)
     rescue StandardError => e
       raise "There is nothing at the supplied URL"
     end
+
     self.update_attributes(url_local: self.clean_url)
   end
 

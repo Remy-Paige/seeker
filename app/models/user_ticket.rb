@@ -7,6 +7,9 @@ class UserTicket < ActiveRecord::Base
 
   before_destroy { users.clear }
 
+
+  # TODO: email and name are duplicated data points
+
   STATUS_TYPES = ['Unmanaged', 'Open', 'Resolved']
   STATUS_TYPES_ID = STATUS_TYPES.zip(0...STATUS_TYPES.length).to_h
 

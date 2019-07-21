@@ -4,7 +4,7 @@ FactoryGirl.define do
     year 2003
     cycle 1
     document_type 1
-    country
+    association :country, factory: :country
 
     trait :finished_parsing do
       parsing_finished true
@@ -13,5 +13,24 @@ FactoryGirl.define do
     trait :parsing do
       parsing_finished false
     end
+
+    trait :failed do
+      status 1
+    end
+
   end
 end
+
+
+# create_table "documents", force: :cascade do |t|
+#   t.string   "url"
+#   t.integer  "country_id"
+#   t.integer  "year"
+#   t.integer  "cycle"
+#   t.datetime "created_at",                       null: false
+#   t.datetime "updated_at",                       null: false
+#   t.string   "url_local"
+#   t.boolean  "parsing_finished", default: false
+#   t.integer  "document_type"
+#   t.integer  "status"
+# end

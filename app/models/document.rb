@@ -15,10 +15,14 @@ class Document < ActiveRecord::Base
   before_destroy {collections.clear}
 
 
-  # document.status is for notifying of failure. TODO: wrap up parsing finished and document status
+
 
   DOCUMENT_TYPES = ['State Report', 'Committee of Experts Report', 'Committee of Ministers Recommendation']
   DOCUMENT_TYPES_ID = DOCUMENT_TYPES.zip(0...DOCUMENT_TYPES.length).to_h
+
+
+  DOCUMENT_STATUS = ['Parsing', 'Failed', 'Finished Parsing']
+  DOCUMENT_STATUS_ID = DOCUMENT_STATUS.zip(0...DOCUMENT_STATUS.length).to_h
 
   validates :url, presence: true
   validates :country_id, presence: true
@@ -46,9 +50,8 @@ class Document < ActiveRecord::Base
 
   end
 
-  #TODO: wrap status and parsing together
   def finish_parsing!
-    self.update_attributes(parsing_finished: true)
+    self.update_attributes(status: 2)
   end
 
   private

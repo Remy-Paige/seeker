@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190216174651) do
+ActiveRecord::Schema.define(version: 20190721233109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,10 +55,9 @@ ActiveRecord::Schema.define(version: 20190216174651) do
     t.integer  "country_id"
     t.integer  "year"
     t.integer  "cycle"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.string   "url_local"
-    t.boolean  "parsing_finished", default: false
     t.integer  "document_type"
     t.integer  "status"
   end

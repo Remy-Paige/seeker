@@ -32,13 +32,13 @@ Rails.application.routes.draw do
     end
     #this code points to sections, a subclass of documents and adds the extra routes to the resource generation
     resources :sections
+
     member do
       get 'edit_section_separation'
       post 'update_section_separation'
     end
   end
 
-  get 'search' => 'documents#search'
   get 'advanced' => 'documents#advanced_search'
 
   # The priority is based upon order of creation: first created -> highest priority.

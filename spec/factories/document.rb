@@ -7,11 +7,11 @@ FactoryGirl.define do
     association :country, factory: :country
 
     trait :finished_parsing do
-      parsing_finished true
+      status 2
     end
 
     trait :parsing do
-      parsing_finished false
+      status 0
     end
 
     trait :failed do

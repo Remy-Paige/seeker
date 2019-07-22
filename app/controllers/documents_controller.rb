@@ -130,46 +130,10 @@ class DocumentsController < ApplicationController
   end
 
   def update_section_separation
-    # destroy previous sections
-    # If foo is an object with a to_proc method,
-    # then you can pass it to a method as &foo,
-    # which will call foo.to_proc and use that as the method's block.
 
+    Document.remove_sections(params[:id])
+    Document.reconstruct_sections(params)
 
-    @document.sections.group_by(&:section_number).map do |section_number, sections|
-      unless section_number == "-"
-        sections.map(&:destroy)
-      end
-    end
-
-    # create new sections with custom method
-    # each section created new - split into section parts in the model
-    #
-    params[:section_number]&.each_key do |key|
-      if params[:language_id].present?
-        @document.sections.add_section(
-            section_number: params[:section_number][key][0],
-            section_name: params[:section_name][key][0],
-            content: params[:content][key][0],
-            languages: params[:language_id][key],
-            strengths: params[:strength][key],
-            page_number: params[:page_number][key][0]
-        )
-      else
-        @document.sections.add_section(
-            section_number: params[:section_number][key][0],
-            section_name: params[:section_name][key][0],
-            content: params[:content][key][0],
-            languages: nil,
-            strengths: nil,
-            page_number: params[:page_number][key][0]
-        )
-      end
-
-
-    end
-
-    SectionReindexJob.perform_async
     redirect_to documents_path, notice: 'Sections Updated!'
   end
 
@@ -183,95 +147,23 @@ class DocumentsController < ApplicationController
     end
   end
 
+  # thse 2 are hidden dev only methods only accesible through a link
+  # normal users can overload the server using them
+  # add a status or notice for this?
+  # TODO: admin only
   def language_parse
-    document = Document.find(params[:id])
-    LanguageParserJob.perform_async(document)
-    logger.info 'language parsing'
-    redirect_to document_path(document)
+    Document.language_parse(params[:id])
+    redirect_to document_path(params[:id])
   end
-
   def resection_document
-    document = Document.find(params[:id])
-    content = nil
-    document.sections.group_by(&:section_number).map do |section_number, sections|
-      if section_number == "-"
-        content = sections.sort_by(&:section_part).map(&:content).join
-      end
-    end
-    logger.info 'hahaha'
-    SectionDocumentJob.perform_async(document, content)
-    logger.info 'resectioning'
-    redirect_to document_path(document)
+    Document.resection_document(params[:id])
+    redirect_to document_path(params[:id])
   end
-
-  # this is the old search function - remove?
-  def search
-    # An object is present if it's not blank.
-    #                                               The & calls to_proc on the object, and passes it as a block to the method
-    # params is the q, and array of query (field types) and array of keyword (values)
-    if params[:q].present? || params[:keyword]&.any?(&:present?)
-      #simply creates an array with 2 symbols
-      numeric_queries = [:year, :cycle]
-
-      #grab ONLY numeric filters and put them in 'query' - use in initial content search
-      # it only does one of them - if you put in 2 years it doesn't work
-      query = params[:keyword]&.each_with_index&.map do |keyword, idx|
-        if keyword.present?
-          field = params[:query][idx].parameterize.underscore.to_sym
-          next unless numeric_queries.include?(field)
-          [field, keyword]
-        end
-      end&.compact&.to_h
-
-      highlight = { tag: "<strong>" }
-      boost_where = { full_content: false }
-
-
-      @search_results =
-        Section.search(params[:q].presence || '*',
-                       fields: [:content],
-                       where: query,
-                       highlight: highlight.merge({ fields: { content: { type: 'plain', fragment_size: (params[:q].presence&.length || 100) } } }),
-                       boost_where: boost_where, debug: true).with_details
-
-      #grab the other filters - ignore the numeric ones
-      params[:query]&.each_with_index do |query, idx|
-        if (keyword = params[:keyword][idx]).present?
-          field = query.parameterize.underscore.to_sym
-          next if numeric_queries.include?(field)
-          options = {
-            fields: [field],
-            highlight: highlight,
-            boost_where: boost_where,
-            misspellings: {
-              below: 10
-            }
-          }
-          #special options for the section number
-          options.merge!(match: :word_start, misspellings: false) if field == :section_number
-          @search_results.intersect_nested_search_result!(Section.search(keyword, options).with_details)
-        end
-      end
-      @search_results = @search_results.paginate(page: params[:page], per_page: 10)
-      render :search_results
-    else
-      @available_queries = [
-        'Section Number',
-        'Section Name',
-        'Country',
-        'Year',
-        'Cycle',
-        'Language'
-      ]
-      render 'home/index'
-    end
-  end
-
-
 
   def advanced_search
     #abcdefgh jklmnopq rstuvwxyz
     # this skeleton copies the format of the queries that searchkick runs if you use it as a wrapper, with a few edits
+    # TODO: move into model?
 
     numeric_queries = [:year, :cycle]
     logical_queries = [:country, :strong_language, :medium_language, :weak_language]

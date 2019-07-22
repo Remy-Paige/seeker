@@ -67,6 +67,52 @@ RSpec.describe Document, type: :model do
       pending
     end
 
+    describe '#language_parse(id)' do
+
+      it "fetches a document given a valid id" do
+
+      end
+
+      it "returns an error given an invalid id" do
+
+      end
+
+      it "recreates all section-language associations by running language_parser_job" do
+
+      end
+
+    #   TODO: what happens to the old associations?
+    #   TODO:notice is a controller test
+    end
+
+    describe '#resection_document(id)' do
+
+      it "fetches a document given a valid id" do
+
+      end
+
+      it "returns an error given an invalid id" do
+
+      end
+
+      it "destroys all sections except the full_content section" do
+
+      end
+
+      it "recreates all sections by running section_document_job" do
+
+      end
+      #   TODO:notice is a controller test
+    end
+
+    describe '#remove_sections(id)' do
+
+    end
+
+    describe '#reconstruct_sections(params)' do
+
+    end
+
   end
 
 

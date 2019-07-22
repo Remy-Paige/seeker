@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :language do
-    name 'Manx Gaelic'
+    name {'Manx Gaelic'}
   end
 end
 

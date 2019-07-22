@@ -1,5 +1,5 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :country do
-    name 'United Kingdom'
+    name {'United Kingdom'}
   end
 end

@@ -1,15 +1,14 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :user_ticket do
-    name  'joseph smith'
-    email 'email@email.com'
-    link nil
-    comment 'test test test'
-    subject 'meta-data error'
-    section_number ''
-    status 0
-    admin_id nil
+    name  {'joseph smith'}
+    email {'email@email.com'}
+    link {nil}
+    comment {'test test test'}
+    subject {'meta-data error'}
+    section_number {''}
+    status {0}
+    admin_id {nil}
     # todo: sort out admin_id association, make more subject examples
-
 
 
   end

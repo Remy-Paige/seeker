@@ -30,7 +30,7 @@ gem "poppler"
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.4'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'capybara'
   gem 'guard-rspec'
   gem 'spring-commands-rspec'

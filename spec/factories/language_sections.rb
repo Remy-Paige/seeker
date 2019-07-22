@@ -1,9 +1,9 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :language_section do
 
     association :language, factory: :language
     association :section, factory: :section
-    strength 1
+    strength {1}
 
 
   end

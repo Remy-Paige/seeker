@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :query do
 
     association :collection, factory: :collection

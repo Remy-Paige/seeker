@@ -1,11 +1,11 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :collection_document do
     # before_destroy {documents.clear}
     #
 
     association :document, factory: :document
     association :collection, factory: :collection
-    section_number '1.2'
+    section_number {'1.2'}
 
   end
 end

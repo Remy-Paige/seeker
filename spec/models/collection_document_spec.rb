@@ -4,11 +4,11 @@ RSpec.describe CollectionDocument, type: :model do
 
 
   it "has a valid factory" do
-    expect(FactoryGirl.create(:collection_document)).to be_valid
+    expect(FactoryBot.create(:collection_document)).to be_valid
   end
 
   it "is invalid without a section_number" do
-    expect(FactoryGirl.build(:collection_document, section_number: nil)).not_to be_valid
+    expect(FactoryBot.build(:collection_document, section_number: nil)).not_to be_valid
   end
 
 

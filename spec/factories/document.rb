@@ -1,21 +1,21 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :document do
-    url 'http://www.coe.int/t/dg4/education/minlang/Report/EvaluationReports/UKECRML1_en.pdf'
-    year 2003
-    cycle 1
-    document_type 1
+    url {'http://www.coe.int/t/dg4/education/minlang/Report/EvaluationReports/UKECRML1_en.pdf'}
+    year {2003}
+    cycle {1}
+    document_type {1}
     association :country, factory: :country
 
     trait :finished_parsing do
-      status 2
+      status {2}
     end
 
     trait :parsing do
-      status 0
+      status {0}
     end
 
     trait :failed do
-      status 1
+      status {1}
     end
 
   end

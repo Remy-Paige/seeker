@@ -1,9 +1,29 @@
+
+
 FactoryBot.define do
+
+  sequence :section_number do |n|
+    "1.#{n}"
+  end
+  sequence :section_name do |n|
+    "Section #{n}"
+  end
+
+
   factory :section do
-    section_number {'1.2'}
-    section_name {'New Section'}
+    section_number {generate(:section_number)}
+    section_name {generate(:section_name)}
     content {'Lorem ipsum'}
+    section_part {0}
+    page_number {0}
     association :document, factory: :document
+
+
+    trait :full_content do
+      section_number {'-'}
+      section_name {'Full Content'}
+      end
+
   end
 end
 

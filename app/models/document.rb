@@ -50,6 +50,69 @@ class Document < ActiveRecord::Base
     self.update_attributes(status: 2)
   end
 
+  def self.language_parse(id)
+    record = self.find(id)
+    LanguageParserJob.perform_async(record)
+    logger.info 'language parsing'
+  end
+
+  def resection_document
+    content = nil
+    self.sections.group_by(&:section_number).map do |section_number, sections|
+      if section_number == "-"
+        content = sections.sort_by(&:section_part).map(&:content).join
+      end
+    end
+    SectionDocumentJob.perform_async(self, content)
+  end
+
+  def remove_sections
+    # destroy sections except full section
+    #
+    # If foo is an object with a to_proc method,
+    # then you can pass it to a method as &foo,
+    # which will call foo.to_proc and use that as the method's block.
+    self.sections.group_by(&:section_number).map do |section_number, sections|
+      puts section_number
+      unless section_number == "-"
+        puts 'destroy'
+        sections.map(&:destroy)
+      end
+    end
+  end
+
+  def reconstruct_sections(params)
+    # create new sections with custom method
+    # each section created new - split into section parts in the sections model
+
+    # TODO: validate input
+
+    params[:section_number]&.each_key do |key|
+      if params[:language_id].present?
+        self.sections.add_section(
+            section_number: params[:section_number][key][0],
+            section_name: params[:section_name][key][0],
+            content: params[:content][key][0],
+            languages: params[:language_id][key],
+            strengths: params[:strength][key],
+            page_number: params[:page_number][key][0]
+        )
+      else
+        self.sections.add_section(
+            section_number: params[:section_number][key][0],
+            section_name: params[:section_name][key][0],
+            content: params[:content][key][0],
+            languages: nil,
+            strengths: nil,
+            page_number: params[:page_number][key][0]
+        )
+      end
+
+    end
+    # TODO: users could overload server with many requests - rate limit
+    SectionReindexJob.perform_async
+  end
+
   private
 
   # TODO: check what is at the url. for now, assume is pdf
@@ -76,69 +139,6 @@ class Document < ActiveRecord::Base
 
   end
 
-  def self.language_parse(id)
-    record = self.find(id)
-    LanguageParserJob.perform_async(record)
-    logger.info 'language parsing'
-  end
 
-  def self.resection_document(id)
-    record = self.find(id)
-    content = nil
-    record.sections.group_by(&:section_number).map do |section_number, sections|
-      if section_number == "-"
-        content = sections.sort_by(&:section_part).map(&:content).join
-      end
-    end
-    SectionDocumentJob.perform_async(record, content)
-    logger.info 'resectioning'
-  end
-
-  def self.remove_sections(id)
-    # destroy sections except full section
-    #
-    # If foo is an object with a to_proc method,
-    # then you can pass it to a method as &foo,
-    # which will call foo.to_proc and use that as the method's block.
-    record = self.find(id)
-    record.sections.group_by(&:section_number).map do |section_number, sections|
-      unless section_number == "-"
-        sections.map(&:destroy)
-      end
-    end
-  end
-
-  def self.reconstruct_sections(params)
-    # create new sections with custom method
-    # each section created new - split into section parts in the sections model
-
-
-    record = self.find(params[:id])
-
-    params[:section_number]&.each_key do |key|
-      if params[:language_id].present?
-        record.sections.add_section(
-            section_number: params[:section_number][key][0],
-            section_name: params[:section_name][key][0],
-            content: params[:content][key][0],
-            languages: params[:language_id][key],
-            strengths: params[:strength][key],
-            page_number: params[:page_number][key][0]
-        )
-      else
-        record.sections.add_section(
-            section_number: params[:section_number][key][0],
-            section_name: params[:section_name][key][0],
-            content: params[:content][key][0],
-            languages: nil,
-            strengths: nil,
-            page_number: params[:page_number][key][0]
-        )
-      end
-
-    end
-    # TODO: users could overload server with many requests - rate limit
-    SectionReindexJob.perform_async
-  end
 
 end

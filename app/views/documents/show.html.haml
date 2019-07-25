@@ -56,7 +56,7 @@
           %div{:class => "save_form"}
             - if user_signed_in?
               - @collections = current_user.collections
-              = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: @document.id , collections: @collections}
+              = render 'collections/save_section',  locals: {section_number: section.section_number, document_id: @document.id , collections: @collections}
       - else
         - full_section = section
     %div{:class => 'section_content'}

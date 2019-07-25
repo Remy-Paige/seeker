@@ -67,7 +67,7 @@
         - @collections = current_user.collections
         %br
         %div{:class => "save_form"}
-          = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: section.document.id , collections: @collections}
+          = render 'collections/save_section',  locals: {section_number: section.section_number, document_id: section.document.id , collections: @collections}
 
 %div{:id => 'sticky', :class => "btn btn-primary"}
   Jump to Top

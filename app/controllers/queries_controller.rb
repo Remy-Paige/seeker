@@ -1,10 +1,37 @@
 class QueriesController < ApplicationController
   before_action :set_query, only: [:show, :edit, :update, :destroy]
-
+  before_action :authenticate_user!
   # GET /queries
   # GET /queries.json
   def index
     @queries = Query.all
+  end
+
+  def save_query
+    collection = current_user.collections.where("name = '" + params[:collection].to_s + "'").first
+
+    if collection == nil
+      respond_to do |format|
+        format.js { flash.now[:notice] = "Please Select or Create a Collection" }
+        format.json { flash.now[:notice] = "Please Select or Create a Collection" }
+      end
+      return
+    end
+
+    existing_queries = collection.queries
+    query_list = existing_queries.where("query = '" + params[:query] + "'")
+
+    if query_list.length == 0
+      @query = Query.new(:collection_id => collection.id, :query => params[:query])
+      @query.save
+    else
+
+    end
+    respond_to do |format|
+      format.js { flash.now[:notice] = "Successfully Added to Collection" }
+      format.json { flash.now[:notice] = "Successfully Added to Collection" }
+    end
+
   end
 
   # GET /queries/1

@@ -1,8 +1,8 @@
 %div{:class => "centre"}
 
-  -#TODO: change this to use the queries controller
+
   - if user_signed_in?
-    = render 'collections/save',  locals: {save_type: 'query', section_number: nil, document_id: nil, query: ActiveSupport::JSON.encode(params) , collections: @collections}
+    = render 'queries/save_query',  locals: {query: ActiveSupport::JSON.encode(params) , collections: @collections}
 
   %div{:class => "results_grid"}
     - if @search_results.blank?
@@ -52,5 +52,5 @@
           %br
             %div{:class => "save_form"}
             - if section.section_name != 'Full Content' && user_signed_in?
-              = render 'collections/save',  locals: {save_type: 'section', section_number: section.section_number, document_id: section.document.id, query: nil , collections: @collections}
+              = render 'collections/save_section',  locals: {section_number: section.section_number, document_id: section.document.id, collections: @collections}
       = will_paginate(@search_results)

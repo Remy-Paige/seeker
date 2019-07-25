@@ -3,10 +3,6 @@ class CollectionsController < ApplicationController
   before_action :authenticate_user!
   respond_to :html, :js
 
-
-
-
-
   # GET /collections
   # GET /collections.json
   def index
@@ -25,8 +21,8 @@ class CollectionsController < ApplicationController
 
   end
 
-  def save
-    # can only save sections and queries, not whole documents
+  def save_section
+    # can only save sections not whole documents
     collection = current_user.collections.where("name = '" + params[:collection].to_s + "'").first
 
     if collection == nil
@@ -37,53 +33,32 @@ class CollectionsController < ApplicationController
       return
     end
 
-    if params[:save_type] == 'section'
+    document = Document.find(params[:document_id])
 
-      document = Document.find(params[:document_id])
+    section_list = collection.collection_documents.where("section_number = '" + params[:section_number].to_s + "'")
 
-      section_list = collection.collection_documents.where("section_number = '" + params[:section_number].to_s + "'")
+    #if the section is not already in the collection
+    if section_list.length == 0
+      # add a new relation
+      collection.documents << document
+      # this is why the section number validation doesnt work
 
-      #if the section is not already in the collection
-      if section_list.length == 0
-        # add a new relation
-        collection.documents << document
-
-        # edit the new relation to include the section number
-        relation = collection.collection_documents.where("section_number IS ?", nil).first
-        relation.section_number = params[:section_number]
-        relation.save
-        respond_to do |format|
-          format.js { flash.now[:notice] = "Successfully Added to Collection" }
-          format.json { flash.now[:notice] = "Successfully Added to Collection" }
-        end
-      else
-        #would put a failure notice here but the click happens twice and idk how to stop that
-        respond_to do |format|
-          format.js { flash.now[:notice] = "Successfully Added to Collection" }
-          format.json { flash.now[:notice] = "Successfully Added to Collection" }
-        end
-      end
-
-    else
-    #   save query
-    # class => string
-    #
-
-      existing_queries = collection.queries
-      query_list = existing_queries.where("query = '" + params[:query] + "'")
-
-      if query_list.length == 0
-        @query = Query.new(:collection_id => collection.id, :query => params[:query])
-        @query.save
-      else
-
-      end
+      # edit the new relation to include the section number
+      relation = collection.collection_documents.where("section_number IS ?", nil).first
+      relation.section_number = params[:section_number]
+      relation.save
       respond_to do |format|
         format.js { flash.now[:notice] = "Successfully Added to Collection" }
         format.json { flash.now[:notice] = "Successfully Added to Collection" }
       end
-
+    else
+      #would put a failure notice here but the click happens twice and idk how to stop that
+      respond_to do |format|
+        format.js { flash.now[:notice] = "Successfully Added to Collection" }
+        format.json { flash.now[:notice] = "Successfully Added to Collection" }
+      end
     end
+
 
 
   end

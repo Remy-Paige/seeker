@@ -1,13 +1,15 @@
 Rails.application.routes.draw do
+
+
   resources :queries
+  post 'save_query' => 'queries#save_query'
 
   resources :collections do
     member do
       get 'remove'
     end
   end
-
-  post 'save' => 'collections#save'
+  post 'save_section' => 'collections#save_section'
   get 'export' => 'collections#export'
 
   devise_for :users, :path_prefix => 'my'

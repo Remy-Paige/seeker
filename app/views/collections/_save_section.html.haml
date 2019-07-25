@@ -1,0 +1,10 @@
+%div
+  = form_tag(save_section_path, method: :post, :remote => true) do
+    = hidden_field_tag :document_id, locals[:document_id]
+    = hidden_field_tag :section_number, locals[:section_number]
+    - if @collections.length == 0
+      = select_tag :collection, content_tag(:option,'no collections',:value=>"")+options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
+      = link_to 'Create Collection', new_collection_path, :class => "btn btn-default right_button"
+    - else
+      = select_tag :collection, options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
+      = submit_tag(value = 'Add Section to Collection', class: "btn btn-default right_button")

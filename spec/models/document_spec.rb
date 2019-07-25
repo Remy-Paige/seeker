@@ -585,6 +585,9 @@ RSpec.describe Document, type: :model do
 
   end
 
+  describe '#construct_sections_from_parts' do
+    pending
+  end
 
   describe '#language_parse' do
 

@@ -50,6 +50,23 @@ class Document < ActiveRecord::Base
     self.update_attributes(status: 2)
   end
 
+  def construct_sections_from_parts
+
+    self.sections.group_by(&:section_number).map do |section_number, sections|
+      section_name = sections.first.section_name
+      page_number = sections.first.page_number
+      language_sections = sections.first.language_sections
+      content = sections.sort_by(&:section_part).map(&:content).join
+      sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number)
+      language_sections&.each do |relation|
+        sec.language_sections << relation
+      end
+      # this line avoids an undefined method for [] array error
+      sec
+    end.sort_by(&:section_number)
+
+  end
+
   def language_parse
     LanguageParserJob.perform_async(self)
   end

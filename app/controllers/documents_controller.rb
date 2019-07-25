@@ -17,19 +17,7 @@ class DocumentsController < ApplicationController
   def show
     # reconstruct a temporary section from parts
     @languages = Language.all
-    @sections =
-        @document.sections.group_by(&:section_number).map do |section_number, sections|
-          section_name = sections.first.section_name
-          page_number = sections.first.page_number
-          language_sections = sections.first.language_sections
-          content = sections.sort_by(&:section_part).map(&:content).join
-          sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number)
-          language_sections&.each do |relation|
-            sec.language_sections << relation
-          end
-          # this line avoids an undefined method for [] array error
-          sec
-        end.sort_by(&:section_number)
+    @sections = @document.construct_sections_from_parts
   end
 
   # GET /documents/new
@@ -54,20 +42,9 @@ class DocumentsController < ApplicationController
 
     @languages = Language.all
     gon.languages = @languages
-    # reconstruct a temporary section from parts
-    @sections =
-      @document.sections.group_by(&:section_number).map do |section_number, sections|
-        section_name = sections.first.section_name
-        page_number = sections.first.page_number
-        language_sections = sections.first.language_sections
-        content = sections.sort_by(&:section_part).map(&:content).join
-        sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number)
-        language_sections&.each do |relation|
-          sec.language_sections << relation
-        end
-        # this line avoids an undefined method for [] array error
-        sec
-      end.sort_by(&:section_number)
+    # construct a temporary section from parts
+    @sections = @document.construct_sections_from_parts
+
   end
 
   # POST /documents

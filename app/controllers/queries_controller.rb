@@ -8,28 +8,30 @@ class QueriesController < ApplicationController
   end
 
   def save_query
-    collection = current_user.collections.where("name = '" + params[:collection].to_s + "'").first
 
-    if collection == nil
+    result = Query.save_query(params, current_user)
+
+    if result == 'nil collection'
       respond_to do |format|
         format.js { flash.now[:notice] = "Please Select or Create a Collection" }
         format.json { flash.now[:notice] = "Please Select or Create a Collection" }
       end
-      return
-    end
-
-    existing_queries = collection.queries
-    query_list = existing_queries.where("query = '" + params[:query] + "'")
-
-    if query_list.length == 0
-      @query = Query.new(:collection_id => collection.id, :query => params[:query])
-      @query.save
+    elsif result == 'first submit'
+      respond_to do |format|
+        format.js { flash.now[:notice] = "Successfully Added to Collection" }
+        format.json { flash.now[:notice] = "Successfully Added to Collection" }
+      end
+    elsif result == 'second submit'
+      #the click happens twice and idk how to stop that, so its just repeated
+      respond_to do |format|
+        format.js { flash.now[:notice] = "Successfully Added to Collection" }
+        format.json { flash.now[:notice] = "Successfully Added to Collection" }
+      end
     else
-
-    end
-    respond_to do |format|
-      format.js { flash.now[:notice] = "Successfully Added to Collection" }
-      format.json { flash.now[:notice] = "Successfully Added to Collection" }
+      respond_to do |format|
+        format.js { flash.now[:notice] = "Failed to add to Collection" }
+        format.json { flash.now[:notice] = "Failed to add to Collection" }
+      end
     end
 
   end

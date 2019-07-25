@@ -159,7 +159,8 @@ class DocumentsController < ApplicationController
   # add a status or notice for this?
   # TODO: admin only
   def language_parse
-    Document.language_parse(params[:id])
+    document = Document.find(params[:id])
+    document.language_parse
     redirect_to document_path(params[:id])
   end
   def resection_document

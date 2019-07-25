@@ -539,6 +539,9 @@ so that it now provides a comprehensive resource for users of the language."
 
 RSpec.describe Document, type: :model do
 
+  #
+
+
   subject do
     FactoryBot.create(:document)
   end
@@ -582,6 +585,83 @@ RSpec.describe Document, type: :model do
 
   end
 
+
+  describe '#language_parse' do
+
+    it "returns an error given an invalid id" do
+      skip("unimplemented")
+    end
+
+    it "recreates all section-language associations by running language_parser_job" do
+      skip("unimplemented - async")
+    end
+
+  # TODO: what happens to the old associations?
+  # TODO: notice is a controller test
+  end
+
+  describe '#resection_document' do
+
+    it "returns an error given an invalid id" do
+      skip("unimplemented")
+    end
+
+    it "destroys and recreates all sections by running section_document_job" do
+      skip("unimplemented - async")
+    end
+    #   TODO:notice is a controller test
+  end
+
+  describe '#remove_sections' do
+
+    it "removes sections not named 'Full Content'" do
+      expect { [subject.remove_sections, subject.reload] }.to change{subject.sections.length}.from(3).to(2)
+    end
+
+  end
+
+
+  describe '#reconstruct_sections(params)' do
+
+    it "invalid params" do
+      skip("unimplemented functionality")
+    end
+
+    it "builds sections with content less than 30000 characters" do
+
+      language1 = FactoryBot.create(:language)
+      language2 = FactoryBot.create(:language)
+      language3 = FactoryBot.create(:language)
+      params = {
+        section_number: {'0' => ['1.1'], '1' => ['1.2']},
+        section_name:  {'0' => ['section 1 name'], '1' => ['section 2 name']},
+        page_number:  {'0' => ['5'], '1' => ['10']},
+        content:  {'0' => ['lorem ipsum'], '1' => ['dorem incate']},
+        language_id: {'1' => [language1.id.to_s, language2.id.to_s, language3.id.to_s]},
+        strength: {'1' => [1,1,1]},
+        id: subject.id.to_s
+      }
+
+      expect { [subject.reconstruct_sections(params), subject.reload] }.to change{subject.sections.length}.from(3).to(5)
+
+    end
+
+    it "builds sections with content more than 30000 characters" do
+
+      params = {
+        section_number: {'0' => ['1.1']},
+        section_name:  {'0' => ['section 1 name']},
+        page_number:  {'0' => ['5']},
+        content:  {'0' => [content1+content2]},
+        id: subject.id.to_s
+      }
+
+      expect { [subject.reconstruct_sections(params), subject.reload] }.to change{subject.sections.length}.from(3).to(5)
+
+    end
+
+  end
+
   #after create
   describe '#download_and_set_url_local' do
 
@@ -613,96 +693,10 @@ RSpec.describe Document, type: :model do
 
   end
 
-    describe '#delete_local_documents' do
-      pending("file")
-    end
 
-    describe '#language_parse(id)' do
-
-      it "fetches a document given a valid id" do
-        skip("unimplemented")
-      end
-
-      it "returns an error given an invalid id" do
-        skip("unimplemented")
-      end
-
-      it "recreates all section-language associations by running language_parser_job" do
-        skip("unimplemented - async")
-      end
-
-    #   TODO: what happens to the old associations?
-    #   TODO:notice is a controller test
-    end
-
-    describe '#resection_document(id)' do
-
-      it "fetches a document given a valid id" do
-        skip("unimplemented")
-      end
-
-      it "returns an error given an invalid id" do
-        skip("unimplemented")
-      end
-
-      it "destroys and recreates all sections by running section_document_job" do
-        skip("unimplemented - async")
-      end
-      #   TODO:notice is a controller test
-    end
-
-    describe '#remove_sections' do
-
-      it "removes sections not named 'Full Content'" do
-
-        expect { [subject.remove_sections, subject.reload] }.to change{subject.sections.length}.from(3).to(2)
-
-      end
-    end
-
-
-    describe '#reconstruct_sections(params)' do
-
-      it "invalid params" do
-        skip("unimplemented functionality")
-      end
-
-      it "builds sections with content less than 30000 characters" do
-
-        language1 = FactoryBot.create(:language)
-        language2 = FactoryBot.create(:language)
-        language3 = FactoryBot.create(:language)
-
-        params = {
-            section_number: {'0' => ['1.1'], '1' => ['1.2']},
-            section_name:  {'0' => ['section 1 name'], '1' => ['section 2 name']},
-            page_number:  {'0' => ['5'], '1' => ['10']},
-            content:  {'0' => ['lorem ipsum'], '1' => ['dorem incate']},
-            language_id: {'1' => [language1.id.to_s, language2.id.to_s, language3.id.to_s]},
-            strength: {'1' => [1,1,1]},
-            id: subject.id.to_s
-        }
-
-        expect { [subject.reconstruct_sections(params), subject.reload] }.to change{subject.sections.length}.from(3).to(5)
-
-      end
-
-      it "builds sections with content more than 30000 characters" do
-
-        params = {
-            section_number: {'0' => ['1.1']},
-            section_name:  {'0' => ['section 1 name']},
-            page_number:  {'0' => ['5']},
-            content:  {'0' => [content1+content2]},
-            id: subject.id.to_s
-        }
-
-        expect { [subject.reconstruct_sections(params), subject.reload] }.to change{subject.sections.length}.from(3).to(5)
-
-      end
-
-    end
-
+  describe '#delete_local_documents' do
+    pending("file")
+  end
 end
 
 

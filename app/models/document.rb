@@ -50,10 +50,8 @@ class Document < ActiveRecord::Base
     self.update_attributes(status: 2)
   end
 
-  def self.language_parse(id)
-    record = self.find(id)
-    LanguageParserJob.perform_async(record)
-    logger.info 'language parsing'
+  def language_parse
+    LanguageParserJob.perform_async(self)
   end
 
   def resection_document

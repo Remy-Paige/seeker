@@ -1,12 +1,12 @@
 class CollectionsController < ApplicationController
   before_action :set_collection, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :require_login
   respond_to :html, :js
 
   # GET /collections
   # GET /collections.json
   def index
-    @collections = current_user.collections
+    @collections = current_signed_in.collections
 
     # TODO: what is this for?
     # @blank = Collection.new
@@ -16,7 +16,7 @@ class CollectionsController < ApplicationController
   def save_section
     # can only save sections not whole documents
 
-    result = Collection.save_section(params, current_user)
+    result = Collection.save_section(params, current_signed_in)
 
     if result == 'nil collection'
       respond_to do |format|
@@ -51,7 +51,8 @@ class CollectionsController < ApplicationController
   end
 
   def export
-    # maybe these should go in a service, or in the 2 separate controllers
+    # both types of export come here and get sorted out
+    # put in a service? or the 2 separate controllers? They Could go in the 2 controllers
     if params[:export_type] == 'collection'
       collection = Collection.find(params[:id])
       collection.export_collection
@@ -65,6 +66,7 @@ class CollectionsController < ApplicationController
   # GET /collections/1.json
   def show
     @collection = Collection.find(params[:id])
+    @collections = current_signed_in.collections
     @queries = @collection.queries
     @languages = Language.all
     @sections = @collection.construct_sections_from_parts
@@ -85,14 +87,14 @@ class CollectionsController < ApplicationController
   # POST /collections.json
   def create
 
-    if Collection.check_exists(collection_params, current_user)
+    if Collection.check_exists(collection_params, current_signed_in)
       respond_to do |format|
         format.html { redirect_to collections_path, notice: 'Collection already present' }
         format.json { render :show, status: :created, location: @collection }
       end
     else
       @collection = Collection.new(collection_params)
-      current_user.collections << @collection
+      current_signed_in.collections << @collection
 
       respond_to do |format|
         if @collection.save
@@ -144,5 +146,10 @@ class CollectionsController < ApplicationController
       params.require(:collection).permit(:name, :collection, :document_id, :section_number, :save_type, :query)
     end
 
+    def require_login
+      unless user_signed_in? or admin_signed_in?
+        redirect_to new_user_session_path # halts request cycle
+      end
+    end
 
 end

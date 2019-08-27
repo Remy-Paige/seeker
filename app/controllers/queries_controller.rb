@@ -1,6 +1,6 @@
 class QueriesController < ApplicationController
   before_action :set_query, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :require_login
   # GET /queries
   # GET /queries.json
   def index
@@ -9,7 +9,7 @@ class QueriesController < ApplicationController
 
   def save_query
 
-    result = Query.save_query(params, current_user)
+    result = Query.save_query(params, current_signed_in)
 
     if result == 'nil collection'
       respond_to do |format|
@@ -99,5 +99,11 @@ class QueriesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def query_params
       params.fetch(:query, {})
+    end
+
+    def require_login
+      unless user_signed_in? or admin_signed_in?
+        redirect_to new_user_session_path # halts request cycle
+      end
     end
 end

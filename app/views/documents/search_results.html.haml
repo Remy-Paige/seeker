@@ -1,7 +1,7 @@
 %div{:class => "centre"}
 
 
-  - if user_signed_in?
+  - if user_signed_in? or admin_signed_in?
     = render 'queries/save_query',  locals: {query: ActiveSupport::JSON.encode(params) , collections: @collections}
 
   %div{:class => "results_grid"}
@@ -51,6 +51,6 @@
           = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_number => section.section_number), :class => "btn btn-default btn-xs right_button button_spacing", target: :_blank
           %br
             %div{:class => "save_form"}
-            - if section.section_name != 'Full Content' && user_signed_in?
+            - if section.section_name != 'Full Content' && ( user_signed_in? or admin_signed_in? )
               = render 'collections/save_section',  locals: {section_number: section.section_number, document_id: section.document.id, collections: @collections}
       = will_paginate(@search_results)

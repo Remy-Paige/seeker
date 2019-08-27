@@ -1,16 +1,15 @@
 class UserTicketsController < ApplicationController
   before_action :set_user_ticket, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :require_login, except: [:claim, :resolve, :create, :new]
+  before_action :authenticate_user!, only: [:create, :new]
+  before_action :authenticate_admin!, only: [:claim, :resolve]
 
   # GET /user_tickets
   # GET /user_tickets.json
   def index
-    if current_user.admin?
+    if admin_signed_in?
       @unmanaged_user_tickets = UserTicket.where('status = 0')
-      # should admins be able to make tickets? the where defends against admins unmanaged tickets
-      # appearing in their list of open tickets in any case
-      # todo: do over terminology
-      @open_user_tickets = current_user.user_tickets.where('status = 1').uniq
+      @open_user_tickets = current_admin.user_tickets.where('status = 1').uniq
       render 'user_tickets/index_admin'
     else
       @user_tickets = current_user.user_tickets
@@ -33,34 +32,20 @@ class UserTicketsController < ApplicationController
 
   # GET /user_tickets/1/edit
   def edit
-    @subject_types = Document::SUBJECT_TYPES
+    @subject_types = UserTicket::SUBJECT_TYPES
   end
 
   # GET /user_tickets/1/claim
   def claim
-    @user_ticket = UserTicket.find(params[:id])
-
-    if @user_ticket.status == 0
-      @user_ticket.status = 1
-      @user_ticket.save
-      current_user.user_tickets << @user_ticket
-
-      ticket_relation = current_user.ticket_relations.where('user_ticket_id =' + params[:id]).first
-      ticket_relation.manages = true
-      ticket_relation.save
-    end
-
-    # TODO: json check?
-    # TODO: improve the error/redirect
+    user_ticket = UserTicket.find(params[:id])
+    user_ticket.claim(current_admin.id)
 
     redirect_to user_tickets_path
   end
 
   def resolve
-    @user_ticket = UserTicket.find(params[:id])
-
-    @user_ticket.status = 2
-    @user_ticket.save
+    user_ticket = UserTicket.find(params[:id])
+    user_ticket.resolve
 
     redirect_to user_tickets_path
 
@@ -69,7 +54,8 @@ class UserTicketsController < ApplicationController
   # POST /user_tickets
   # POST /user_tickets.json
   def create
-    @user_ticket = UserTicket.new(:name => current_user.name, :email => current_user.email,:link => user_ticket_params[:link],
+
+    @user_ticket = UserTicket.new(:user_id => current_user.id,:email => current_user.email,:link => user_ticket_params[:link],
                                   :comment => user_ticket_params[:comment], :subject => user_ticket_params[:subject], :status => 0,
                                   :section_number => user_ticket_params[:section_number], :document_id => user_ticket_params[:document_id])
 
@@ -83,7 +69,6 @@ class UserTicketsController < ApplicationController
       end
     end
 
-    current_user.user_tickets << @user_ticket
   end
 
   # PATCH/PUT /user_tickets/1
@@ -119,6 +104,12 @@ class UserTicketsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_ticket_params
       params.require(:user_ticket).permit(:comment, :subject, :link, :section_number, :document_id)
+    end
+
+    def require_login
+      unless user_signed_in? or admin_signed_in?
+        redirect_to new_user_session_path # halts request cycle
+      end
     end
 
 end

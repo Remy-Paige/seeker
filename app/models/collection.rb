@@ -5,7 +5,9 @@ class Collection < ActiveRecord::Base
 
   has_many :queries, dependent: :destroy
 
+  # only one at a time
   belongs_to :user
+  belongs_to :admin
 
   before_destroy {documents.clear}
 
@@ -18,11 +20,11 @@ class Collection < ActiveRecord::Base
     collection = user.collections.where("name = '" + params[:collection].to_s + "'").first
 
     if collection == nil
+      # caught by controller and creates a flash message
       return 'nil collection'
     end
 
     document = Document.find(params[:document_id])
-
     section_list = collection.collection_documents.where("section_number = '" + params[:section_number].to_s + "'")
 
     #if the section is not already in the collection
@@ -43,7 +45,7 @@ class Collection < ActiveRecord::Base
 
   def remove_section(params)
     relation = self.collection_documents.where("document_id =" + params[:document_id] + "AND section_number = '" + params[:section_number] + "'").first
-    relation.destroy
+    relation&.destroy
   end
 
   # maybe these should go in a service, or in the 2 separate controllers
@@ -113,19 +115,4 @@ class Collection < ActiveRecord::Base
     end
     return false
   end
-
-  # ???? was in index ????
-  # def self.fetch_sections(collections)
-  #
-  #   sections = []
-  #   collections.each do |collection|
-  #     collection.collection_documents.each do |relation|
-  #       document = Document.find(relation.document_id)
-  #       sections.push(document.sections.where("section_number = '" + relation.section_number.to_s + "'").first)
-  #     end
-  #   end
-  #   return sections
-  #
-  # end
-
 end

@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  root 'home#index'
+  get 'advanced' => 'documents#advanced_search'
+
 
   resources :queries
   post 'save_query' => 'queries#save_query'
@@ -12,11 +15,19 @@ Rails.application.routes.draw do
   post 'save_section' => 'collections#save_section'
   get 'export' => 'collections#export'
 
+  devise_for :admins, :path_prefix => 'my'
   devise_for :users, :path_prefix => 'my'
   #, separates devise and custom admin crud
-
-  root 'home#index'
-  ###=> documents#search
+  resources :users do
+    member do
+      get 'convert_to_admin'
+    end
+  end
+  resources :admins do
+    member do
+      get 'convert_to_user'
+    end
+  end
 
   resources :user_tickets do
     member do
@@ -24,7 +35,7 @@ Rails.application.routes.draw do
       get 'resolve'
     end
   end
-  resources :users
+
 
   #where the magic happens
   resources :documents do
@@ -41,7 +52,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'advanced' => 'documents#advanced_search'
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

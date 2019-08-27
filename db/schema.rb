@@ -11,10 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190721233109) do
+ActiveRecord::Schema.define(version: 20190825150626) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "admins", force: :cascade do |t|
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet     "current_sign_in_ip"
+    t.inet     "last_sign_in_ip"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  add_index "admins", ["email"], name: "index_admins_on_email", unique: true, using: :btree
+  add_index "admins", ["reset_password_token"], name: "index_admins_on_reset_password_token", unique: true, using: :btree
 
   create_table "collection_documents", force: :cascade do |t|
     t.integer  "collection_id"
@@ -32,8 +50,10 @@ ActiveRecord::Schema.define(version: 20190721233109) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "name"
+    t.integer  "admin_id"
   end
 
+  add_index "collections", ["admin_id"], name: "index_collections_on_admin_id", using: :btree
   add_index "collections", ["user_id"], name: "index_collections_on_user_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
@@ -103,19 +123,7 @@ ActiveRecord::Schema.define(version: 20190721233109) do
 
   add_index "sections", ["document_id"], name: "index_sections_on_document_id", using: :btree
 
-  create_table "ticket_relations", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "user_ticket_id"
-    t.boolean  "manages"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "ticket_relations", ["user_id"], name: "index_ticket_relations_on_user_id", using: :btree
-  add_index "ticket_relations", ["user_ticket_id"], name: "index_ticket_relations_on_user_ticket_id", using: :btree
-
   create_table "user_tickets", force: :cascade do |t|
-    t.string   "name"
     t.string   "email"
     t.string   "link"
     t.text     "comment"
@@ -126,30 +134,30 @@ ActiveRecord::Schema.define(version: 20190721233109) do
     t.string   "subject"
     t.string   "section_number"
     t.integer  "document_id"
+    t.integer  "user_id"
   end
 
   add_index "user_tickets", ["document_id"], name: "index_user_tickets_on_document_id", using: :btree
+  add_index "user_tickets", ["user_id"], name: "index_user_tickets_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.integer  "role"
-    t.string   "email",                  default: "",    null: false
-    t.string   "name"
-    t.string   "search_options"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.string   "encrypted_password",     default: "",    null: false
+    t.string   "email",                  default: "", null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,     null: false
+    t.integer  "sign_in_count",          default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.inet     "current_sign_in_ip"
     t.inet     "last_sign_in_ip"
-    t.boolean  "admin",                  default: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "collections", "admins"
+  add_foreign_key "user_tickets", "users"
 end

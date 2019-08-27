@@ -4,7 +4,11 @@ require 'services/search_generator'
 class DocumentsController < ApplicationController
   include SearchGenerator
   before_action :set_document, only: [:show, :edit, :edit_section_separation, :update, :update_section_separation, :destroy]
-  before_action :authenticate_user!, except: [:index, :search, :advanced_search, :show]
+  # before_action :authenticate_user!, except:
+
+  before_action :authenticate_admin!, except: [:index, :advanced_search, :show]
+
+
 
   # GET /documents
   # GET /documents.json
@@ -18,6 +22,12 @@ class DocumentsController < ApplicationController
     # reconstruct a temporary section from parts
     @languages = Language.all
     @sections = @document.construct_sections_from_parts
+
+    if user_signed_in? or admin_signed_in?
+      render "documents/show"
+    else
+      render "documents/show_no_user"
+    end
   end
 
   # GET /documents/new
@@ -36,10 +46,6 @@ class DocumentsController < ApplicationController
   # for each section - create a new section - because each will be deleted and made new on update
   # these are section PARTS - we are grouping sections together and
   def edit_section_separation
-    unless current_user.admin?
-      redirect_to('/404')
-    end
-
     @languages = Language.all
     gon.languages = @languages
     # construct a temporary section from parts
@@ -50,7 +56,6 @@ class DocumentsController < ApplicationController
   # POST /documents
   # POST /documents.json
   def create
-
     if Document.where("url = '" + document_params[:url] + "'").first != nil
       respond_to do |format|
         format.html { redirect_to :documents, notice: 'Document already exists' }
@@ -131,10 +136,7 @@ class DocumentsController < ApplicationController
     end
   end
 
-  # thse 2 are hidden dev only methods only accesible through a link
-  # normal users can overload the server using them
-  # add a status or notice for this?
-  # TODO: admin only
+  # these 2 are hidden dev only methods only accesible through a link
   def language_parse
     document = Document.find(params[:id])
     document.language_parse
@@ -155,7 +157,7 @@ class DocumentsController < ApplicationController
       @search_results = Section.search(SearchGenerator.generate_search_hash(params)).with_details
 
       @languages = Language.all
-      @collections = current_user&.collections
+      @collections = current_signed_in&.collections
       @search_results = @search_results.paginate(page: params[:page], per_page: 10)
       render :search_results
     else
@@ -178,6 +180,12 @@ class DocumentsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def document_params
       params.require(:document).permit(:url, :country_id, :document_type, :year, :cycle)
+    end
+
+    def require_login
+      unless user_signed_in? or admin_signed_in?
+        redirect_to new_user_session_path # halts request cycle
+      end
     end
 
 end

@@ -5,7 +5,7 @@
       %ul
         - @user_ticket.errors.full_messages.each do |msg|
           %li= msg
-  %h4= current_user.email
+  %h4= current_signed_in.email
   -#something about if statements doesnt work here
   - if @document_id == nil
     = f.input :link, placeholder: 'Link'

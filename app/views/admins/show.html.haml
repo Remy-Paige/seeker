@@ -1,0 +1,8 @@
+%div{:class => "centre"}
+
+  %div{:class => "user_grid"}
+    %h1{:class => "email"}= @admin.email
+
+    =link_to 'edit email or password', edit_admin_registration_path, :class => "btn btn-default email"
+
+    //TODO:

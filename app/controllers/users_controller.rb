@@ -1,22 +1,12 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!
+  before_action :set_user, only: [:show, :destroy]
+  before_action :authenticate_admin!, except: [:show]
+  before_action :authenticate_user!, except: [:convert_to_admin, :destroy]
 
-  #TODO: improve the admin protection method - but it is mostly guarding against direct url input so
+  # TODO: simply routes from a resource for clarity - only need show and delete
 
-  # GET /users
-  # GET /users.json
-  # admins: can see all users and can edit, delete, give privileges from this screen
-  # users: blocked
-  # TODO:add a search or filter or something
-  def index
-    unless current_user.admin?
-      redirect_to('/404')
-    end
+  # move index functionality to admin screen
 
-    @users = User.all
-
-  end
 
   # GET /users/1
   # GET /users/1.json
@@ -24,72 +14,30 @@ class UsersController < ApplicationController
   # admin: can edit, delete, give privileges from this screen
   # user: can edit, delete THEMSELVES ONLY
   def show
-    unless current_user.admin?
-      redirect_to('/404')
-    end
-    @user = User.find(params[:id])
+    # TODO: ugly permissions thing
+    @user = User.find(current_user.id)
   end
 
-  # GET /users/new
-  # users:blocked
-  def new
-    redirect_to('/404')
-  end
+  # cant make new users
 
-  # GET /users/1/edit
-  #   # admin: can edit, delete, give privileges
-  #   # user: can edit, delete THEMSELVES ONLY
-  def edit
-    unless current_user.admin?
-      redirect_to('/404')
-    end
-    @user = User.find(params[:id])
-  end
+  # edit is dont thru devise - admin changed thru custom function button
 
-  #TODO: investigate admin protection on the post and put
-
-  # POST /users
-  # POST /users.json
-  def create
-    @user = User.new(user_params)
-
+  def convert_to_admin
+    user = User.find(params[:id])
+    user.convert_to_admin
     respond_to do |format|
-      if @user.save
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render :show, status: :created, location: @user }
-      else
-        format.html { render :new }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PATCH/PUT /users/1
-  # PATCH/PUT /users/1.json
-  def update
-    if params[:user][:password].blank?
-      params[:user].delete(:password)
-      params[:user].delete(:password_confirmation)
-    end
-
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to users_path, notice: 'User was successfully updated.' }
-        format.json { render :show, status: :ok, location: users_path }
-      else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+      format.html { redirect_to admins_path, notice: 'User was successfully converted to admin.' }
+      format.json { head :no_content }
     end
   end
 
   # DELETE /users/1
   # DELETE /users/1.json
-  # //TODO: deleting seems to work but this should be monitered
+  # ONLY for admin from index - user self deleteing handled thru devise
   def destroy
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
+      format.html { redirect_to admins_path, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

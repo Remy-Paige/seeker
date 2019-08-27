@@ -31,13 +31,13 @@
   %br
   %br
   %br
-  - if @user_ticket.status == 0 && current_user.admin?
+  - if @user_ticket.status == 0 && admin_signed_in?
     = link_to 'Claim Ticket', claim_user_ticket_path(@user_ticket), :class => "btn btn-default"
-  - if @user_ticket.status == 1 && current_user.admin?
+  - if @user_ticket.status == 1 && admin_signed_in?
     = link_to 'Mark Resolved', resolve_user_ticket_path(@user_ticket), :class => "btn btn-default"
-  - if @user_ticket.link != nil && current_user.admin?
+  - if @user_ticket.link != nil && admin_signed_in?
     = link_to 'Create New Document', new_document_path, :class => "btn btn-info", target: :_blank
   - if @user_ticket.document_id != nil
     = link_to 'View Sectioning', document_path(@user_ticket.document_id), :class => "btn btn-default", target: :_blank
-  - if @user_ticket.document_id != nil && current_user.admin?
+  - if @user_ticket.document_id != nil && admin_signed_in?
     = link_to 'Edit Sections', edit_section_separation_document_path(@user_ticket.document_id), :class => "btn btn-default", target: :_blank

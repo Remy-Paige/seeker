@@ -11,10 +11,6 @@ RSpec.describe DocumentsController, type: :routing do
       expect(:get => "/documents/new").to route_to("documents#new")
     end
 
-    it "should not have show route" do
-      expect(:get => "/documents/1").not_to be_routable
-    end
-
     it "routes to #edit" do
       expect(:get => "/documents/1/edit").to route_to("documents#edit", :id => "1")
     end

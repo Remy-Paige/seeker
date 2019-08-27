@@ -1,7 +1,7 @@
 %div{:class => "centre"}
-  = link_to 'New Document', new_document_path, {:class => "btn btn-info"} if current_user&.admin?
+  = link_to 'New Document', new_document_path, {:class => "btn btn-info"} if admin_signed_in?
   -#users do not see unparsed documents or actions, and may not be signed in
-  %div{:class => current_user&.admin? ? "documents_grid" : "documents_users_grid"}
+  %div{:class => admin_signed_in? ? "documents_grid" : "documents_users_grid"}
     %div{:class => "country"}
       %h4 Country
     %div{:class => "type"}
@@ -12,7 +12,7 @@
       %h4 Year
     %div
       %h4 View
-    - if current_user&.admin?
+    - if admin_signed_in?
       %div
         %h4 Parse Status
       %div
@@ -21,7 +21,7 @@
     - @grouped_documents.each do |country, documents|
       - country_row = true
       - documents.sort_by{ |doc| [doc.document_type, doc.cycle, doc.year] }.each do |document|
-        - if current_user&.admin?
+        - if admin_signed_in?
           - if country_row
             %div{:class => alternating ? 'alternating' : ''}= country
             - country_row = false

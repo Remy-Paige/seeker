@@ -1,14 +1,13 @@
 class UserTicket < ActiveRecord::Base
 
-  has_many :ticket_relations
-  has_many :users, through: :ticket_relations
 
   belongs_to :document
+  # document has many user_ticket
 
-  before_destroy { users.clear }
+  # either user only or user and admin
+  belongs_to :user
+  belongs_to :admin
 
-
-  # TODO: email and name are duplicated data points
 
   STATUS_TYPES = ['Unmanaged', 'Open', 'Resolved']
   STATUS_TYPES_ID = STATUS_TYPES.zip(0...STATUS_TYPES.length).to_h
@@ -16,5 +15,20 @@ class UserTicket < ActiveRecord::Base
   SUBJECT_TYPES = ['meta-data error', 'sectioning error', 'document request', 'other']
 
   validates :comment, presence: true
+
+  def claim(user)
+
+    self.admin_id = user
+    self.status = 1
+    self.save
+
+  end
+
+  def resolve
+
+    self.status = 2
+    self.save
+
+  end
 
 end

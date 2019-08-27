@@ -7,16 +7,15 @@ end
 FactoryBot.define do
   factory :user do
     email
-    name  {'joseph smith'}
     password {'password'}
     password_confirmation {'password'}
-    admin {true}
-
-
-    trait :not_admin do
-      admin {false}
+    #ignore red wiggily line
+    after(:create) do |user|
+      create(:collection, user: user, admin: nil)
+      create(:user_ticket, user: user, status: 0)
+      admin = create(:admin)
+      create(:user_ticket, user: user, admin: admin, status: 1)
     end
-
   end
 end
 

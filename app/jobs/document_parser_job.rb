@@ -18,6 +18,11 @@ class DocumentParserJob
       logger.info 'Start OCR'
       logger.info 'clean' + document.clean_url
       logger.info 'text' + document.url_text
+
+
+      HexaPDF::CLI::Split(document.clean_url)
+
+
       begin
         Docsplit.extract_text(document.clean_url, output: dir, ocr: true, pages: 'all')
       rescue StandardError => e

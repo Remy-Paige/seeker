@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2'
-gem 'pg'
+gem 'rails', '4.2.8'
+gem 'pg', '~> 0.18'
 gem 'sass-rails', '~> 4.0.3'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
@@ -23,8 +23,9 @@ gem 'searchkick'
 gem 'sucker_punch', '~> 2.0'
 
 gem "pdftk"
+gem "hexapdf"
 gem "docsplit"
-gem "glib2"
+gem "glib2", '~> 3.3.7'
 gem "gdk_pixbuf2"
 gem "poppler"
 

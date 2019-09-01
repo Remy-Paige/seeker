@@ -20,7 +20,7 @@ class DocumentParserJob
       logger.info 'text' + document.url_text
 
 
-      HexaPDF::CLI::Split(document.clean_url)
+      # HexaPDF::CLI::Split(document.clean_url)
 
 
       begin

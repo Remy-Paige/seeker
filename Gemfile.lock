@@ -97,12 +97,12 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.3)
     docsplit (0.7.6)
-    elasticsearch (7.3.0)
-      elasticsearch-api (= 7.3.0)
-      elasticsearch-transport (= 7.3.0)
-    elasticsearch-api (7.3.0)
+    elasticsearch (1.0.17)
+      elasticsearch-api (= 1.0.17)
+      elasticsearch-transport (= 1.0.17)
+    elasticsearch-api (1.0.17)
       multi_json
-    elasticsearch-transport (7.3.0)
+    elasticsearch-transport (1.0.17)
       faraday
       multi_json
     erubis (2.7.0)
@@ -289,9 +289,9 @@ GEM
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
-    searchkick (3.1.3)
-      activemodel (>= 4.2)
-      elasticsearch (>= 5)
+    searchkick (1.3.0)
+      activemodel
+      elasticsearch (>= 1)
       hashie
     sexp_processor (4.12.1)
     shellany (0.0.1)
@@ -351,6 +351,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   devise
   docsplit
+  elasticsearch (= 1.0.17)
   factory_bot_rails
   gdk_pixbuf2
   glib2 (~> 3.3.7)
@@ -369,7 +370,7 @@ DEPENDENCIES
   rspec-rails (~> 3.4)
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
-  searchkick
+  searchkick (= 1.3.0)
   simple_form
   spring
   spring-commands-rspec

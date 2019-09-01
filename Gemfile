@@ -19,7 +19,8 @@ gem 'bootstrap-sass'
 gem 'devise'
 gem 'pundit'
 gem 'pry'
-gem 'searchkick'
+gem 'searchkick', '1.3.0'
+gem 'elasticsearch', '1.0.17'
 gem 'sucker_punch', '~> 2.0'
 
 gem "pdftk"

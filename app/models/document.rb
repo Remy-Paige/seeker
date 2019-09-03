@@ -30,21 +30,7 @@ class Document < ActiveRecord::Base
 
   # url_local substitution before document is saved
   # Returns a copy of str with the all occurrences of pattern substituted for the second argument
-  def clean_url
-    "public/storage/#{self.url.gsub(/https?:\/\//, '')}"
-  end
 
-  def url_text
-    if self.url.include?('.pdf')
-      self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
-    else
-      first = self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
-      second = first + '.txt'
-      return second
-    end
-
-
-  end
 
   def finish_parsing!
     self.update_attributes(status: 2)
@@ -69,6 +55,10 @@ class Document < ActiveRecord::Base
 
   def language_parse
     LanguageParserJob.perform_async(self)
+  end
+
+  def test_pdf
+    TestJob.perform_async(self)
   end
 
   def resection_document
@@ -128,17 +118,55 @@ class Document < ActiveRecord::Base
     SectionReindexJob.perform_async
   end
 
+  def clean_url
+
+    if self.url.include?('.pdf')
+      "public/storage/#{self.url.gsub(/https?:\/\//, '')}"
+    else
+      "public/storage/#{self.url.gsub(/https?:\/\//, '')}" + '.pdf'
+    end
+
+  end
+
+  def url_text
+    self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
+  end
+
+
   private
 
-  # TODO: check what is at the url. for now, assume is pdf
-  # TODO: add support for downloading html
+  # TODO: check what is at the url. for now, assume is pdf - see also url/file path handling
   def download_and_set_url_local
     return if Rails.env.test?
     dir = self.clean_url.split('/')[0...-1].join('/')
     FileUtils.mkdir_p(dir)
 
     begin
-      IO.copy_stream(open(self.url), self.clean_url)
+      uri = URI(self.url)
+      res = Net::HTTP.get_response(uri)
+
+      text = 'Only authorised users may access this document.'
+
+      if res.code[0] == '2'
+        if res.body.include?(text)
+          raise 'unauthorised'
+        else
+          IO.copy_stream(open(self.url), 'file')
+          fm = FileMagic.new
+          filetype = fm.file('file')
+
+          if filetype.include?('PDF')
+            FileUtils.rm('file')
+            File.open(self.clean_url, "wb") do |file|
+              file.write open(url).read
+            end
+          else
+            raise 'not PDF'
+          end
+        end
+      else
+        raise 'http response failure'
+      end
     rescue StandardError => e
       raise "There is nothing at the supplied URL"
     end

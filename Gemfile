@@ -23,7 +23,7 @@ gem 'searchkick', '1.3.0'
 gem 'elasticsearch', '1.0.17'
 gem 'sucker_punch', '~> 2.0'
 
-gem "pdftk"
+gem "ruby-filemagic"
 gem "hexapdf"
 gem "docsplit"
 gem "glib2", '~> 3.3.7'

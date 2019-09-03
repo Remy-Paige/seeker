@@ -1,5 +1,7 @@
 class DocumentParserJob
   include SuckerPunch::Job
+  require 'hexapdf'
+  require 'hexapdf/cli'
   workers 1
 
   ACCEPTABLE_ALPHABET_RATIO = 0.9
@@ -9,22 +11,39 @@ class DocumentParserJob
     @l = Logger.new("#{Rails.root}/log/parser.log")
     write_to_log('start perform')
     unless Rails.env.test?
-      original_url = document.url
-      clean_url = document.clean_url
-      text_url = document.url_text
 
-      dir = document.clean_url.split('/')[0...-1].join('/')
       write_to_log('ocr-ing...')
       logger.info 'Start OCR'
       logger.info 'clean' + document.clean_url
       logger.info 'text' + document.url_text
 
-
-      # HexaPDF::CLI::Split(document.clean_url)
-
-
       begin
-        Docsplit.extract_text(document.clean_url, output: dir, ocr: true, pages: 'all')
+        # HexaPDF::CLI::Split(document.clean_url)
+        HexaPDF::CLI.run(args =["split", document.clean_url])
+
+        dir = document.clean_url.split('/')[0...-1].join('/')
+        raw_file_path = document.clean_url.chomp('.pdf')
+        i = 1
+        while true do
+          if i > 999
+            number = '_' + i.to_s
+          elsif i > 99
+            number = '_0' + i.to_s
+          elsif i > 9
+            number = '_00' + i.to_s
+          else
+            number = '_000' + i.to_s
+          end
+          part_file_path = raw_file_path + number + '.pdf'
+          if File.file?(part_file_path)
+            Docsplit.extract_text(part_file_path, output: dir, ocr: true)
+          else
+            break
+          end
+
+          i = i + 1
+        end
+
       rescue StandardError => e
         logger.info 'DocsplitError' + e.message
         raise 'Something went wrong with DocSplit'
@@ -37,37 +56,41 @@ class DocumentParserJob
       file_name = document.url_text
       #a+ - Read-write, each write call appends data at end of file.
       # Creates a new file for reading and writing if file does not exist.
+      #a+ - Read-write, each write call appends data at end of file.
+      # Creates a new file for reading and writing if file does not exist.
       document_file = File.new(file_name, "a+")
 
       # 'path'
-      document_name = file_name[0, file_name.rindex('.txt')]
       page_number = 1
-      # 'path_1.txt'
-      # docsplit starts page file creation at 1
-      document_page_file_name = document_name + "_" + page_number.to_s + ".txt"
-
-      while File.exists?(document_page_file_name) do
-
-        # File.open(document_file, 'a') { |file| file.write("your text") }
-
-        File.open(document_page_file_name, 'rb') do |input_stream|
-          File.open(document_file, 'ab') do |output_stream|
-            IO.copy_stream(input_stream, output_stream)
-          end
+      while true do
+        if page_number > 999
+          number = '_' + page_number.to_s
+        elsif page_number > 99
+          number = '_0' + page_number.to_s
+        elsif page_number > 9
+          number = '_00' + page_number.to_s
+        else
+          number = '_000' + page_number.to_s
         end
+        document_page_file_name = raw_file_path + number + '.txt'
+        part_file_path = raw_file_path + number + '.pdf'
 
-        File.delete(document_page_file_name)
+        puts document_page_file_name
 
+        if File.file?(document_page_file_name)
+          File.open(document_page_file_name, 'rb') do |input_stream|
+            File.open(document_file, 'ab') do |output_stream|
+              IO.copy_stream(input_stream, output_stream)
+            end
+          end
+
+          File.delete(document_page_file_name)
+          File.delete(part_file_path)
+        else
+          break
+        end
         page_number = page_number + 1
-        document_page_file_name = document_name + "_" + page_number.to_s + ".txt"
       end
-
-      # while file_xx.txt exists
-      #
-      #   append file_xx.txt to file.txt
-      #   erase file_xx.txt
-      #   increment XX
-
 
       content = File.read(document.url_text)
 

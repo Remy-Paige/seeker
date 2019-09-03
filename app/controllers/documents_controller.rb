@@ -140,6 +140,7 @@ class DocumentsController < ApplicationController
   def language_parse
     document = Document.find(params[:id])
     document.language_parse
+    # document.test_pdf
     redirect_to document_path(params[:id])
   end
   def resection_document

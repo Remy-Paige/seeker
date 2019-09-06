@@ -18,13 +18,13 @@ class DocumentParserJob
       logger.info 'text' + document.url_text
 
       begin
-        # HexaPDF::CLI::Split(document.clean_url)
         HexaPDF::CLI.run(args =["split", document.clean_url])
 
         dir = document.clean_url.split('/')[0...-1].join('/')
         raw_file_path = document.clean_url.chomp('.pdf')
         i = 1
         while true do
+          # count up numbers and turn them into file names that match the hexapdf pattern
           if i > 999
             number = '_' + i.to_s
           elsif i > 99
@@ -35,6 +35,7 @@ class DocumentParserJob
             number = '_000' + i.to_s
           end
           part_file_path = raw_file_path + number + '.pdf'
+          # if the pdf file exists, process it into a 'one page' text file
           if File.file?(part_file_path)
             Docsplit.extract_text(part_file_path, output: dir, ocr: true)
           else
@@ -63,6 +64,7 @@ class DocumentParserJob
       # 'path'
       page_number = 1
       while true do
+        # count up numbers like before
         if page_number > 999
           number = '_' + page_number.to_s
         elsif page_number > 99
@@ -77,6 +79,8 @@ class DocumentParserJob
 
         puts document_page_file_name
 
+        # if the file exists, write its contents to the end of the master file
+        # delete both .pdf and .txt part files
         if File.file?(document_page_file_name)
           File.open(document_page_file_name, 'rb') do |input_stream|
             File.open(document_file, 'ab') do |output_stream|
@@ -103,7 +107,7 @@ class DocumentParserJob
       # fix new lines after numbering
       content.gsub!(/^((\d|\w)\.)+[\n\r]+/mi, '\1 ')
       logger.info 'start sectioning'
-      SectionDocumentJob.perform_async(document, content)
+      SectionDocumentJob.perform_async(document)
       # separate committee of experts report sections automatically
       # documents not following the rules may not be parsed correctly
 
@@ -116,17 +120,6 @@ class DocumentParserJob
     document.status = 1
     document.save
     raise e
-  end
-
-
-  def save_section(document, prev_section_number, prev_section_name, prev_content, current_page)
-    content_exists = prev_section_number.present?
-    content_exists &&= prev_section_name.present?
-    content_exists &&= prev_content.present?
-    content_exists &&= current_page.present?
-    content_exists && document.sections.add_section(section_number: prev_section_number, section_name: prev_section_name, content: prev_content, page_number: current_page)
-  rescue Searchkick::ImportError
-    write_to_log("too long, not indexed")
   end
 
   def write_to_log(message)

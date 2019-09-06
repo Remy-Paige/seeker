@@ -15,6 +15,9 @@
       - @sections.each do |section|
         -if section.section_name != 'Full Content'
           %div{:class => count}
+            chapter
+            = text_field_tag 'section_number' + text, section.chapter
+            %br
             section number
             - text = '[' + count.to_s + '][]'
             %br
@@ -23,6 +26,9 @@
             = text_field_tag 'section_name' + text, section.section_name
             %br page number
             = text_field_tag 'page_number' + text, section.page_number
+            %br article.paragraph
+            = text_field_tag 'page_number' + text, section.article_paragraph
+
 
           %div{:class => count}
             = text_area_tag 'content' + text, section.content, :class =>'edit_section_box'

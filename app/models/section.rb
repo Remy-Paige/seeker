@@ -14,7 +14,6 @@ class Section < ActiveRecord::Base
   validates :section_name, presence: true
   validates :content, presence: true
   # the page_number can be blank, adding the validation here cause the program to get rid of the full content section
-  # TODO: fix full content so that its given a page number and we can add the validation check back
 
   # elasticsearch string length limit is 32766, take caution
   STRING_LEN_LIMIT = 30_000
@@ -47,11 +46,12 @@ class Section < ActiveRecord::Base
     }
   end
 
-  def self.add_section(section_number:, section_name:, content:, languages:, strengths:, page_number:)
+  def self.add_section(chapter:, section_number:, section_name:, article_paragraph: ,content:, languages:, strengths:, page_number:)
+    section_uid = chapter.to_s + '.' + section_number + '.' + article_paragraph
     ((content.length / STRING_LEN_LIMIT) + 1).times do |section_part|
       section_start = section_part * STRING_LEN_LIMIT
       section_end = (section_part + 1) * STRING_LEN_LIMIT
-      part = self.create(section_number: section_number, section_name: section_name, content: content[section_start...section_end], section_part: section_part, page_number: page_number)
+      part = self.create(section_uid: section_uid, chapter: chapter,section_number: section_number, section_name: section_name, article_paragraph: article_paragraph, content: content[section_start...section_end], section_part: section_part, page_number: page_number)
       relation_array = languages&.zip(strengths)
       relation_array&.each do |element|
         language = Language.find(element[0])
@@ -62,6 +62,7 @@ class Section < ActiveRecord::Base
       end
     end
   end
+
 
   def full_content?
     self.section_number == '-' && self.section_name == 'Full Content'

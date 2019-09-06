@@ -38,18 +38,21 @@ class Document < ActiveRecord::Base
 
   def construct_sections_from_parts
 
-    self.sections.group_by(&:section_number).map do |section_number, sections|
+    self.sections.group_by(&:section_uid).map do |section_uid, sections|
+      chapter = sections.first.chapter
+      section_number = sections.first.section_number
       section_name = sections.first.section_name
+      article_paragraph = sections.first.article_paragraph
       page_number = sections.first.page_number
       language_sections = sections.first.language_sections
       content = sections.sort_by(&:section_part).map(&:content).join
-      sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number)
+      sec = Section.new(section_uid: section_uid, chapter: chapter, section_number: section_number, section_name: section_name,article_paragraph: article_paragraph ,content: content, page_number: page_number)
       language_sections&.each do |relation|
         sec.language_sections << relation
       end
       # this line avoids an undefined method for [] array error
       sec
-    end.sort_by(&:section_number)
+    end.sort_by(&:section_uid)
 
   end
 
@@ -62,13 +65,7 @@ class Document < ActiveRecord::Base
   end
 
   def resection_document
-    content = nil
-    self.sections.group_by(&:section_number).map do |section_number, sections|
-      if section_number == "-"
-        content = sections.sort_by(&:section_part).map(&:content).join
-      end
-    end
-    SectionDocumentJob.perform_async(self, content)
+    SectionDocumentJob.perform_async(self)
   end
 
   def remove_sections
@@ -95,8 +92,10 @@ class Document < ActiveRecord::Base
     params[:section_number]&.each_key do |key|
       if params[:language_id].present?
         self.sections.add_section(
+            chapter: params[:chapter][key][0],
             section_number: params[:section_number][key][0],
             section_name: params[:section_name][key][0],
+            article_paragraph: params[:article_paragraph][key][0],
             content: params[:content][key][0],
             languages: params[:language_id][key],
             strengths: params[:strength][key],
@@ -104,8 +103,10 @@ class Document < ActiveRecord::Base
         )
       else
         self.sections.add_section(
+            chapter: params[:chapter][key][0],
             section_number: params[:section_number][key][0],
             section_name: params[:section_name][key][0],
+            article_paragraph: params[:article_paragraph][key][0],
             content: params[:content][key][0],
             languages: nil,
             strengths: nil,

@@ -13,12 +13,12 @@
     %h4
       Document reference number:
       = @document_id
-  - if @section_number != nil
+  - if @section_uid != nil
     %h4
-      Section Number:
-      = @section_number
+      Section reference number:
+      = @section_uid
   = f.hidden_field :document_id, :value => @document_id
-  = f.hidden_field :section_number, :value => @section_number
+  = f.hidden_field :section_uid, :value => @section_uid
   = f.input :subject, placeholder: 'Subject', as: :select, include_blank: false, collection: [['meta-data error', 'meta-data error'], ['sectioning error','sectioning error'], ['document request','document request'], ['other','other']], input_html: { class: 'form-control ', style: "width: auto;" }
   = f.input :comment, placeholder: 'Comment', input_html: { class: 'comment_box block' }
   %div{:class => "actions form-action-padding"}

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190906221545) do
+ActiveRecord::Schema.define(version: 20190908234409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,9 +37,9 @@ ActiveRecord::Schema.define(version: 20190906221545) do
   create_table "collection_documents", force: :cascade do |t|
     t.integer  "collection_id"
     t.integer  "document_id"
-    t.string   "section_number"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "section_uid"
   end
 
   add_index "collection_documents", ["collection_id"], name: "index_collection_documents_on_collection_id", using: :btree

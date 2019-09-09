@@ -87,7 +87,9 @@ class DocumentParserJob
               IO.copy_stream(input_stream, output_stream)
             end
           end
-
+          open(document_file, 'a') { |f|
+            f.puts 'page number: ' + page_number.to_s
+          }
           File.delete(document_page_file_name)
           File.delete(part_file_path)
         else

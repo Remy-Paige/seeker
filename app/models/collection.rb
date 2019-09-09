@@ -25,7 +25,7 @@ class Collection < ActiveRecord::Base
     end
 
     document = Document.find(params[:document_id])
-    section_list = collection.collection_documents.where("section_number = '" + params[:section_number].to_s + "'")
+    section_list = collection.collection_documents.where("section_uid = '" + params[:section_uid].to_s + "'")
 
     #if the section is not already in the collection
     if section_list.length == 0
@@ -34,8 +34,8 @@ class Collection < ActiveRecord::Base
       # this is why the section number validation doesnt work
 
       # edit the new relation to include the section number
-      relation = collection.collection_documents.where("section_number IS ?", nil).first
-      relation.section_number = params[:section_number]
+      relation = collection.collection_documents.where("section_uid IS ?", nil).first
+      relation.section_uid = params[:section_uid]
       relation.save
       return 'first submit'
     else
@@ -44,7 +44,7 @@ class Collection < ActiveRecord::Base
   end
 
   def remove_section(params)
-    relation = self.collection_documents.where("document_id =" + params[:document_id] + "AND section_number = '" + params[:section_number] + "'").first
+    relation = self.collection_documents.where("document_id =" + params[:document_id] + "AND section_uid = '" + params[:section_uid] + "'").first
     relation&.destroy
   end
 
@@ -62,7 +62,7 @@ class Collection < ActiveRecord::Base
       relation = self.collection_documents[index]
       document = Document.find(relation.document_id)
       country = Country.find(document.country_id)
-      section = document.sections.where("section_number = '" + relation.section_number.to_s + "'").first
+      section = document.sections.where("section_uid = '" + relation.section_uid.to_s + "'").first
       File.open('export.txt', 'a') {
           |file| file.write('URL: ' + document.url.to_s + "\n" + 'type: ' + Document::DOCUMENT_TYPES[document.document_type].to_s + "\n" + 'year: ' + document.year.to_s + "\n" + 'cycle: ' + document.cycle.to_s + "\n" + 'country: ' + country.name.to_s + "\n" + 'section name: ' + section.section_name.to_s + 'section number: ' + section.section_number.to_s + "\n" + "\n")
       }
@@ -72,7 +72,7 @@ class Collection < ActiveRecord::Base
 
   def self.export_section(params)
     document = Document.find(params[:document_id])
-    section = document.sections.where("section_number = '" + params[:section_number].to_s + "'").first
+    section = document.sections.where("section_uid = '" + params[:section_uid].to_s + "'").first
     country = Country.find(document.country_id)
 
     File.open('export.txt', 'w') {
@@ -86,15 +86,19 @@ class Collection < ActiveRecord::Base
     # patch together section parts
     self.collection_documents.each do |relation|
       document = Document.find(relation.document_id)
-      document.sections.group_by(&:section_number).map do |section_number, sections|
+      document.sections.group_by(&:section_uid).map do |section_uid, sections|
+        document_id = sections.first.document_id
+        chapter = sections.first.chapter
+        section_number = sections.first.section_number
         section_name = sections.first.section_name
-        language_sections = sections.first.language_sections
+        article_paragraph = sections.first.article_paragraph
         page_number = sections.first.page_number
+        language_sections = sections.first.language_sections
         # reconstruct content
         content = sections.sort_by(&:section_part).map(&:content).join
-        sec = Section.new(section_number: section_number, section_name: section_name, content: content, page_number: page_number, document_id: relation.document_id)
+        sec = Section.new(section_uid: section_uid, document_id: document_id, chapter: chapter, section_number: section_number, section_name: section_name,article_paragraph: article_paragraph ,content: content, page_number: page_number)
         # reconstruct language relations
-        if relation.section_number == section_number
+        if relation.section_uid == section_uid
           language_sections&.each do |relation2|
             sec.language_sections << relation2
           end

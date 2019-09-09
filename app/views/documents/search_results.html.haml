@@ -17,8 +17,10 @@
       - @search_results.each do |section, details|
         -counter = counter + 1
         %div{:class => 'section_content'}
-          %h4= details != {} ? details[:highlight][:section_number]&.html_safe || section.section_number : section.section_number
-          %h4= details != {} ? details[:highlight][:section_name]&.html_safe || section.section_name : section.section_name
+          - section.article_paragraph ? text = section&.article_paragraph : text = '-'
+
+          %h4= section.section_name == 'Full Content' ? '-' : 'Section Number: ' + section.section_number + ' | ' + 'Article and Paragraph: ' + text
+          %h4= section.section_name
         %div{:class => 'section_information'}
           = details != {} ? details[:highlight][:country]&.html_safe || section.document.country : section.document.country
           %br
@@ -42,15 +44,15 @@
 
         %div{:class => "right_box"}
           - section.page_number == nil ? number = 0 : number = section.page_number
-          = link_to 'Jump to Page', section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
+          = link_to 'Jump to Page ' + number.to_s, section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
           %br
-          = link_to 'Export XML', export_path(section_number: section.section_number ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
+          = link_to 'Export XML', export_path(section_uid: section.section_uid ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
           %br
           = link_to 'Jump to First Page', section.document.url, target: '_blank', :class => "btn btn-default btn-xs right_button", target: :_blank
           %br
-          = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_number => section.section_number), :class => "btn btn-default btn-xs right_button button_spacing", target: :_blank
+          = link_to 'Report Problem', new_user_ticket_path(:document_id =>section.document.id, :section_uid => section.section_uid), :class => "btn btn-default btn-xs right_button button_spacing", target: :_blank
           %br
             %div{:class => "save_form"}
             - if section.section_name != 'Full Content' && ( user_signed_in? or admin_signed_in? )
-              = render 'collections/save_section',  locals: {section_number: section.section_number, document_id: section.document.id, collections: @collections}
+              = render 'collections/save_section',  locals: {section_uid: section.section_uid, document_id: section.document.id, collections: @collections}
       = will_paginate(@search_results)

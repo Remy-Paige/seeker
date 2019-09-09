@@ -143,7 +143,7 @@ class CollectionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def collection_params
-      params.require(:collection).permit(:name, :collection, :document_id, :section_number, :save_type, :query)
+      params.require(:collection).permit(:name, :collection, :document_id, :section_uid, :save_type, :query)
     end
 
     def require_login

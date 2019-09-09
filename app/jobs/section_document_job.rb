@@ -55,12 +55,23 @@ class SectionDocumentJob
         section_number_regex_no_nl = /\d(\.\d)+\.?/
         chapter_regex = /^chapter\d/
         article_regex = /^article\d/
-        paragraph_regex = /(^|^")paragraph\d/
+        paragraph_regex = /^(.|)paragraph\d/
+
+        page_number_regex = /^(.|)pagenumber:\d/
 
         if processed_line =~ chapter_regex
           chapter_header_check = true
         else
           chapter_header_check = false
+        end
+
+        if processed_line =~ page_number_regex
+          # prev page is the page of the old thing
+          # when a hit occurs, set the new old thing prev page to current page
+          # that way, the page where the section starts is recorded
+          # plus 1 because this hits at the end of the page
+          current_page = line.scan(/\d/).join('').to_i + 1
+          next
         end
 
         if processed_line =~ section_number_regex_no_nl
@@ -84,7 +95,6 @@ class SectionDocumentJob
           prev_section_name = 'preamble'
           prev_article = 0
           prev_paragraph = 0
-          prev_page = current_page
           prev_thing = 'preamble'
 
         #   create the preamble on the next hit
@@ -106,8 +116,8 @@ class SectionDocumentJob
 
             # new old thing
             prev_content = ''
-            prev_chapter = prev_chapter + 1
-            prev_section_number = (prev_chapter + 1).to_s
+            prev_chapter = line.scan(/\d/).join('').to_i
+            prev_section_number = (prev_chapter).to_s
             prev_section_name = line
             prev_article = 0
             prev_paragraph = 0
@@ -162,7 +172,7 @@ class SectionDocumentJob
             prev_article = prev_article
             prev_paragraph = line.scan(/\d/).join('').to_i
             prev_page = current_page
-            prev_thing = 'article'
+            prev_thing = 'paragraph'
             create_section = true
           end
 
@@ -178,9 +188,8 @@ class SectionDocumentJob
       end
 
 
-      # prev page + 1 because of a tick over problem TODO: fix the hack
       # process last section after reading last line
-      save_section(document,prev_chapter, prev_chapter.to_s, prev_section_name,'', prev_content, prev_page + 1)
+      save_section(document,prev_chapter, prev_chapter.to_s, prev_section_name,'', prev_content, prev_page)
       write_to_log('final section create')
     end
 
@@ -199,11 +208,11 @@ class SectionDocumentJob
 
 
     logger.info 'start language parsing'
-    # LanguageParserJob.perform_in(60, document.id)
+    LanguageParserJob.perform_in(60, document.id)
 
   rescue StandardError => e
     logger.info 'Failure'
-    # document.status = 1
+    document.status = 1
     document.save
     raise e
   end
@@ -212,24 +221,24 @@ class SectionDocumentJob
 
     if prev_thing == 'preamble'
       # chapter, section_number, section_name, article_paragraph
-      save_section(document,prev_chapter, prev_chapter.to_s, prev_section_name,'', prev_content, prev_page + 1)
+      save_section(document,prev_chapter, prev_chapter.to_s, prev_section_name,'', prev_content, prev_page)
       write_to_log('thing: ' + prev_thing)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_chapter.to_s + 'section name: Chapter ' + prev_chapter.to_s + 'article paragraph: '+ 'content: '+ prev_content)
     elsif prev_thing == 'chapter'
       write_to_log('thing: ' + prev_thing)
-      save_section(document,prev_chapter, prev_chapter.to_s, prev_section_name,'', prev_content, prev_page + 1)
+      save_section(document,prev_chapter, prev_chapter.to_s, prev_section_name,'', prev_content, prev_page)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_chapter.to_s + 'section name: '+ prev_section_name + 'article paragraph: '+ 'content: '+ prev_content)
     elsif prev_thing == 'section'
       write_to_log('thing: ' + prev_thing)
-      save_section(document,prev_chapter, prev_section_number, prev_section_name,'', prev_content, prev_page + 1)
+      save_section(document,prev_chapter, prev_section_number, prev_section_name,'', prev_content, prev_page)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_section_number + 'section name: ' + prev_section_name + 'article paragraph: '+ 'content: '+ prev_content)
     elsif prev_thing == 'article'
       write_to_log('thing: ' + prev_thing)
-      save_section(document,prev_chapter, prev_section_number, prev_section_name,prev_article.to_s, prev_content, prev_page + 1)
+      save_section(document,prev_chapter, prev_section_number, prev_section_name,prev_article.to_s, prev_content, prev_page)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_section_number + 'section name: ' + prev_section_name + 'article paragraph: ' + prev_article.to_s + 'content: '+ prev_content)
     elsif prev_thing == 'paragraph'
       write_to_log('thing: ' + prev_thing)
-      save_section(document,prev_chapter, prev_section_number, prev_section_name,prev_article.to_s + '.' + prev_paragraph.to_s, prev_content, prev_page + 1)
+      save_section(document,prev_chapter, prev_section_number, prev_section_name,prev_article.to_s + '.' + prev_paragraph.to_s, prev_content, prev_page)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_section_number + 'section name: ' + prev_section_name + 'article paragraph: ' + prev_article.to_s + '.' + prev_paragraph.to_s + 'content: '+ prev_content)
     end
 

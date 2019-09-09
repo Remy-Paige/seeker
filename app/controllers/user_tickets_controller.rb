@@ -27,7 +27,7 @@ class UserTicketsController < ApplicationController
 
     # can be nil
     @document_id = params[:document_id]
-    @section_number = params[:section_number]
+    @section_uid = params[:section_uid]
   end
 
   # GET /user_tickets/1/edit
@@ -57,7 +57,7 @@ class UserTicketsController < ApplicationController
 
     @user_ticket = UserTicket.new(:user_id => current_user.id,:email => current_user.email,:link => user_ticket_params[:link],
                                   :comment => user_ticket_params[:comment], :subject => user_ticket_params[:subject], :status => 0,
-                                  :section_number => user_ticket_params[:section_number], :document_id => user_ticket_params[:document_id])
+                                  :section_uid => user_ticket_params[:section_uid], :document_id => user_ticket_params[:document_id])
 
     respond_to do |format|
       if @user_ticket.save
@@ -103,7 +103,7 @@ class UserTicketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_ticket_params
-      params.require(:user_ticket).permit(:comment, :subject, :link, :section_number, :document_id)
+      params.require(:user_ticket).permit(:comment, :subject, :link, :section_uid, :document_id)
     end
 
     def require_login

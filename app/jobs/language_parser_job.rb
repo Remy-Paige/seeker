@@ -37,7 +37,7 @@ class LanguageParserJob
 
     # this will do each part
     document.sections.each do |section|
-      parse_log.info section.section_number.to_s
+      parse_log.info section.section_uid.to_s
       languages.each do |language|
         parse_log.info '  ' + language.name.to_s
         strengths.each do |strength|

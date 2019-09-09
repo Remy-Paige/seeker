@@ -44,7 +44,7 @@
           - section.page_number == nil ? number = 0 : number = section.page_number
           = link_to 'Jump to Page', @document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
           %br
-          = link_to 'Export XML', export_path(section_number: section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
+          = link_to 'Export XML', export_path(section_uid: section.section_uid ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
           %br
           = link_to 'Jump to First Page', @document.url, target: '_blank', :class => "btn btn-default right_button btn-xs", target: :_blank
           %br
@@ -66,7 +66,7 @@
     %div{:class => "right_box"}
       = link_to 'Jump to First Page', @document.url , :class => "btn btn-default right_button", target: :_blank
       %br
-      = link_to 'Export XML', export_path(section_number: full_section.section_number ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
+      = link_to 'Export XML', export_path(section_uid: full_section.section_uid ,document_id: @document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
       %br
 
 %div{:id => 'sticky', :class => "btn btn-primary"}

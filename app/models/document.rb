@@ -37,8 +37,9 @@ class Document < ActiveRecord::Base
   end
 
   def construct_sections_from_parts
-
+    # if you change this, also change the one in collections. I'm not sure where to refactor the common code to
     self.sections.group_by(&:section_uid).map do |section_uid, sections|
+      document_id = sections.first.document_id
       chapter = sections.first.chapter
       section_number = sections.first.section_number
       section_name = sections.first.section_name
@@ -46,7 +47,7 @@ class Document < ActiveRecord::Base
       page_number = sections.first.page_number
       language_sections = sections.first.language_sections
       content = sections.sort_by(&:section_part).map(&:content).join
-      sec = Section.new(section_uid: section_uid, chapter: chapter, section_number: section_number, section_name: section_name,article_paragraph: article_paragraph ,content: content, page_number: page_number)
+      sec = Section.new(section_uid: section_uid, document_id: document_id, chapter: chapter, section_number: section_number, section_name: section_name,article_paragraph: article_paragraph ,content: content, page_number: page_number)
       language_sections&.each do |relation|
         sec.language_sections << relation
       end
@@ -74,6 +75,7 @@ class Document < ActiveRecord::Base
     # If foo is an object with a to_proc method,
     # then you can pass it to a method as &foo,
     # which will call foo.to_proc and use that as the method's block.
+    # TODO: change to uid?
     self.sections.group_by(&:section_number).map do |section_number, sections|
       puts section_number
       unless section_number == "-"
@@ -89,7 +91,8 @@ class Document < ActiveRecord::Base
 
     # TODO: validate input
 
-    params[:section_number]&.each_key do |key|
+    # section uid is created by add section
+    params[:section_uid]&.each_key do |key|
       if params[:language_id].present?
         self.sections.add_section(
             chapter: params[:chapter][key][0],

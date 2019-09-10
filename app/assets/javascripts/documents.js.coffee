@@ -188,17 +188,19 @@ documents_scripts = ->
 
 #    selecting .added_query_select fills values in .added_filter_select
 #    selecting .added_filter_select adds a box in .added_field and filter icons
-
+    console.log('add search')
     new_row =  "<div class='box added_query' id='added_query_" + counter + "' >"
 
     new_row += "<select class='added_query_select form-control' name='query_type[" + counter +  "][]' id='added_query_select_" + counter + "' required >"
     new_row += "<option disabled selected value>Select filter</option>"
+    new_row += "<option value='text search'>Text Search</option>"
+    new_row += "<option value='article paragraph'>Article</option>"
     new_row += "<option value='section number'>Section number</option>"
     new_row += "<option value='strong_language'>Language - Strong Matching</option>"
     new_row += "<option value='medium_language'>Language - Medium Matching</option>"
     new_row += "<option value='weak_language'>Language - Weak Matching</option>"
     new_row += "<option value='country'>Country</option>"
-    new_row += "<option value='text search'>Text Search</option>"
+    new_row += "<option value='report type'>Report Type</option>"
     new_row += "<option value='year'>Year</option>"
     new_row += "<option value='cycle'>Cycle</option>"
     new_row += "</select>"
@@ -271,7 +273,9 @@ documents_scripts = ->
       when added_query_select_value == 'medium_language' then language_options
       when added_query_select_value == 'weak_language' then language_options
       when added_query_select_value == 'text search' then text_options
+      when added_query_select_value == 'article paragraph' then section_number_options
       when added_query_select_value == 'section number' then section_number_options
+      when added_query_select_value == 'report type' then section_number_options
       when added_query_select_value == 'year' then numeric_options
       when added_query_select_value == 'cycle' then numeric_options
 
@@ -280,8 +284,9 @@ documents_scripts = ->
 
     numeric_filters = ['all','only','less than','greater than','between']
     logical_filters = ['only','none of','one of']
+#    used to define field type/plus button behaviour later
     numeric_queries = ['Year', 'Cycle']
-    logical_queries = ['Section Number','Country','strong_language', 'medium_language','weak_language', 'Text Search']
+    logical_queries = ['Section Number', 'article paragraph', 'report type', 'Country','strong_language', 'medium_language','weak_language', 'Text Search']
 
     filter_select_value = $("#added_filter_select_" + generic_id).val()
 
@@ -357,6 +362,15 @@ documents_scripts = ->
 
     plus_country_select_row = country_select_row + plus_button
 
+    report_type_select_row = "<select class='form-control' name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    i = 0
+    for type in gon.report_types
+      report_type_select_row += '<option value=' + i.toString() + '>' + type + '</option>'
+      i = i + 1
+    report_type_select_row += "</select>"
+
+    plus_report_type_select_row = report_type_select_row + plus_button
+
     language_select_row = "<select class='form-control' name='keyword[" + generic_id +  "][]' id='keyword_' >"
     for language in gon.languages
 #      max three words in language - so replace 2 spaces. change if more words
@@ -381,6 +395,16 @@ documents_scripts = ->
         when added_filter_select_value == 'only' then country_select_row
         when added_filter_select_value == 'none of' then plus_country_select_row
         when added_filter_select_value == 'one of' then plus_country_select_row
+    else if added_query_select_value == 'report type'
+      field_row = switch
+        when added_filter_select_value == null then nothing_row
+        when added_filter_select_value == 'all' then nothing_row
+        when added_filter_select_value == 'less than' then only_row
+        when added_filter_select_value == 'greater than' then only_row
+        when added_filter_select_value == 'between' then between_row
+        when added_filter_select_value == 'only' then report_type_select_row
+        when added_filter_select_value == 'none of' then plus_report_type_select_row
+        when added_filter_select_value == 'one of' then plus_report_type_select_row
     else if added_query_select_value == 'weak_language' or added_query_select_value == 'medium_language' or added_query_select_value == 'strong_language'
       field_row = switch
         when added_filter_select_value == null then nothing_row
@@ -391,7 +415,6 @@ documents_scripts = ->
         when added_filter_select_value == 'only' then language_select_row
         when added_filter_select_value == 'none of' then plus_language_select_row
         when added_filter_select_value == 'one of' then plus_language_select_row
-
     else if added_query_select_value == 'year' or added_query_select_value == 'cycle'
       field_row = switch
         when added_filter_select_value == null then nothing_row
@@ -401,7 +424,7 @@ documents_scripts = ->
         when added_filter_select_value == 'between' then between_row
         when added_filter_select_value == 'only' then only_number_row
     else
-    #  text search, section number
+    #  text search, section number, article paragraph
       field_row = switch
         when added_filter_select_value == null then nothing_row
         when added_filter_select_value == 'all' then nothing_row
@@ -468,14 +491,22 @@ documents_scripts = ->
       language_select_row += '<option value=' + language.name.replace(' ', '_').replace(' ', '_') + '>' + language.name + '</option>'
     language_select_row += "</select>"
 
+    report_type_select_row = "<select class='form-control' name='keyword[" + generic_id +  "][]' id='keyword_' >"
+    i = 0
+    for type in gon.report_types
+      report_type_select_row += '<option value=' + i.toString() + '>' + type + '</option>'
+      i = i + 1
+    report_type_select_row += "</select>"
 
 #   capitalisation bugf
     input = switch
       when added_query_select_value == 'country' then country_select_row
+      when added_query_select_value == 'report type' then report_type_select_row
       when added_query_select_value == 'strong_language' then language_select_row
       when added_query_select_value == 'medium_language' then language_select_row
       when added_query_select_value == 'weak_language' then language_select_row
       when added_query_select_value == 'text search' then generic_input
+      when added_query_select_value == 'article paragraph' then generic_input
       when added_query_select_value == 'section number' then generic_input
       when added_query_select_value == 'section Number' then generic_input
       when added_query_select_value == 'year' then number_input

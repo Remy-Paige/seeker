@@ -1,5 +1,5 @@
 class Section < ActiveRecord::Base
-  searchkick callbacks: :async, highlight: [:content, :section_number, :section_name, :country], word_start: [:section_number],  merge_mappings: true
+  searchkick callbacks: :async, highlight: [:content, :section_number, :section_name, :country], word_start: [:section_number, :article_paragraph],  merge_mappings: true
 
   belongs_to :document
 
@@ -18,6 +18,7 @@ class Section < ActiveRecord::Base
   # elasticsearch string length limit is 32766, take caution
   STRING_LEN_LIMIT = 30_000
 
+  # dont forget the callbacks
   def search_data
     {
       #   the url is for the language parsing not the main search function
@@ -28,6 +29,8 @@ class Section < ActiveRecord::Base
       country: document.country&.name,
       year: document.year,
       cycle: document.cycle,
+      report_type: document.document_type,
+      article_paragraph: article_paragraph,
       strong_language: language_sections.map { |relation|
         if relation.strength == 1 or relation.strength == 0
           Language.all[relation.language_id-1].name
@@ -41,7 +44,6 @@ class Section < ActiveRecord::Base
       weak_language: language_sections.map { |relation|
           Language.all[relation.language_id-1].name
       },
-      report_type: document.document_type,
       full_content: full_content?
     }
   end

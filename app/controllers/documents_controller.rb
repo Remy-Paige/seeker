@@ -167,6 +167,9 @@ class DocumentsController < ApplicationController
       gon.languages = @languages
       @countries = Country.all
       gon.countries = @countries
+      @report_types = Document::DOCUMENT_TYPES
+      gon.report_types = @report_types
+      # cant use this plain - recorded in the database as numbers
 
       render 'home/advanced_search'
     end

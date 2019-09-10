@@ -7,10 +7,6 @@ class CollectionsController < ApplicationController
   # GET /collections.json
   def index
     @collections = current_signed_in.collections
-
-    # TODO: what is this for?
-    # @blank = Collection.new
-
   end
 
   def save_section

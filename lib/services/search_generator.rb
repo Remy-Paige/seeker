@@ -24,7 +24,9 @@ module SearchGenerator
     def generate_search_hash(params)
 
       numeric_queries = [:year, :cycle]
-      logical_queries = [:country, :strong_language, :medium_language, :weak_language]
+      logical_queries = [:country, :report_type, :strong_language, :medium_language, :weak_language]
+
+      # text_search, section_number, article_paragraph
 
       must_arr = []
       must_not_text_arr = []
@@ -63,7 +65,13 @@ module SearchGenerator
             keyword&.each do |word|
               must_not_text_arr.append({match:{"section_number.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
             end
-            #the numerical queries don't have a none_of option
+          elsif query_type == :article_paragraph
+            must_not_text_search_present = true
+            keyword&.each do |word|
+              must_not_text_arr.append({match:{"article_paragraph.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
+            end
+
+          #the numerical queries don't have a none_of option
           elsif logical_queries.include?(query_type)
             must_not_arr.append(logical_queries(query_type, filter_type, keyword))
           end
@@ -86,6 +94,13 @@ module SearchGenerator
             if word != ""
               text_search_present = true
               text_arr.append({match:{"section_number.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
+            end
+          end
+        elsif query_type == :article_paragraph
+          keyword&.each do |word|
+            if word != ""
+              text_search_present = true
+              text_arr.append({match:{"article_paragraph.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
             end
           end
           # dont need to loop over words for these - keyword array just gets dumped into es
@@ -127,6 +142,8 @@ module SearchGenerator
   end
 
 
+  # logical queries are the ones with a set list of options
+  # we only need the filter type because of default options going through into the params - usually its just a front end thing
   def self.logical_queries(query_type, filter_type, keyword)
     #use the terms function in the elastic search DSL because we don't need to worry about the analysis of the text
     if filter_type == :all

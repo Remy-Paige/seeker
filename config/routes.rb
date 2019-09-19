@@ -15,17 +15,12 @@ Rails.application.routes.draw do
   post 'save_section' => 'collections#save_section'
   get 'export' => 'collections#export'
 
-  devise_for :admins, :path_prefix => 'my'
   devise_for :users, :path_prefix => 'my'
   #, separates devise and custom admin crud
   resources :users do
     member do
-      get 'convert_to_admin'
-    end
-  end
-  resources :admins do
-    member do
       get 'convert_to_user'
+      get 'convert_to_admin'
     end
   end
 

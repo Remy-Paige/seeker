@@ -1,5 +1,6 @@
 %div{:class => "centre"}
-  = link_to 'New Ticket', new_user_ticket_path, :class => "btn btn-info"
+  - if !current_user.admin?
+    = link_to 'New Ticket', new_user_ticket_path, :class => "btn btn-info"
   %h3 Listing tickets
   %div{:class => "user_tickets_grid"}
 

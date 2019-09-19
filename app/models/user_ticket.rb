@@ -4,9 +4,10 @@ class UserTicket < ActiveRecord::Base
   belongs_to :document
   # document has many user_ticket
 
-  # either user only or user and admin
-  belongs_to :user
-  belongs_to :admin
+  has_many :user_user_tickets
+  has_many :users, through: :user_user_tickets
+
+  before_destroy { users.clear }
 
 
   STATUS_TYPES = ['Unmanaged', 'Open', 'Resolved']
@@ -18,10 +19,11 @@ class UserTicket < ActiveRecord::Base
 
   def claim(user)
 
-    self.admin_id = user
-    self.status = 1
-    self.save
-
+    if self.status == 0
+      self.status = 1
+      self.save
+      user.user_tickets << self
+    end
   end
 
   def resolve

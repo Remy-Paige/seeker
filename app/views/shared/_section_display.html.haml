@@ -38,6 +38,6 @@
   %br
 
   %div{:class => "save_form"}
-    - if user_signed_in? or admin_signed_in?
-      - @collections = current_signed_in.collections
+    - if user_signed_in?
+      - @collections = current_user.collections
       = render 'collections/save_section',  locals: {section_uid: section.section_uid, document_id: section.document.id , collections: @collections}

@@ -8,12 +8,6 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def current_signed_in
-    if user_signed_in?
-      return current_user
-    elsif admin_signed_in?
-      return current_admin
-    end
-  end
+
 
 end

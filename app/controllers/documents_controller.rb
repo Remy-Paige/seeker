@@ -5,8 +5,8 @@ class DocumentsController < ApplicationController
   include SearchGenerator
   before_action :set_document, only: [:show, :edit, :edit_section_separation, :update, :update_section_separation, :destroy]
   # before_action :authenticate_user!, except:
-
-  before_action :authenticate_admin!, except: [:index, :advanced_search, :show]
+  before_action :authenticate_user!, except: [:index, :advanced_search, :show]
+  before_action :authenticate_admin, except: [:index, :advanced_search, :show]
 
 
 
@@ -21,9 +21,9 @@ class DocumentsController < ApplicationController
   def show
     # reconstruct a temporary section from parts
     @languages = Language.all
-    @sections = @document.construct_sections_from_parts
+    @sections = @document.sections
 
-    if user_signed_in? or admin_signed_in?
+    if user_signed_in?
       render "documents/show"
     else
       render "documents/show_no_user"
@@ -158,7 +158,7 @@ class DocumentsController < ApplicationController
       @search_results = Section.search(SearchGenerator.generate_search_hash(params)).with_details
 
       @languages = Language.all
-      @collections = current_signed_in&.collections
+      @collections = current_user&.collections
       @search_results = @search_results.paginate(page: params[:page], per_page: 10)
       render :search_results
     else
@@ -186,10 +186,8 @@ class DocumentsController < ApplicationController
       params.require(:document).permit(:url, :country_id, :document_type, :year, :cycle)
     end
 
-    def require_login
-      unless user_signed_in? or admin_signed_in?
-        redirect_to new_user_session_path # halts request cycle
-      end
+    def authenticate_admin
+      redirect_to new_user_session_path unless current_user && current_user.admin?
     end
 
 end

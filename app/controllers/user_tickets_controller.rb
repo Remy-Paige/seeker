@@ -1,15 +1,15 @@
 class UserTicketsController < ApplicationController
   before_action :set_user_ticket, only: [:show, :edit, :update, :destroy]
-  before_action :require_login, except: [:claim, :resolve, :create, :new]
-  before_action :authenticate_user!, only: [:create, :new]
-  before_action :authenticate_admin!, only: [:claim, :resolve]
+  before_action :authenticate_user!
+  # ONLY needs new - admin cant make new - has to be in the controller
+  before_action :authenticate_admin, only: [:claim, :resolve]
 
   # GET /user_tickets
   # GET /user_tickets.json
   def index
-    if admin_signed_in?
+    if current_user.admin?
       @unmanaged_user_tickets = UserTicket.where('status = 0')
-      @open_user_tickets = current_admin.user_tickets.where('status = 1').uniq
+      @open_user_tickets = current_user.user_tickets.where('status = 1').uniq
       render 'user_tickets/index_admin'
     else
       @user_tickets = current_user.user_tickets
@@ -23,11 +23,15 @@ class UserTicketsController < ApplicationController
 
   # GET /user_tickets/new
   def new
-    @user_ticket = UserTicket.new
+    if current_user.admin?
+      render 'user_tickets/admin_new'
+    else
+      @user_ticket = UserTicket.new
 
-    # can be nil
-    @document_id = params[:document_id]
-    @section_uid = params[:section_uid]
+      # can be nil
+      @document_id = params[:document_id]
+      @section_uid = params[:section_uid]
+    end
   end
 
   # GET /user_tickets/1/edit
@@ -38,7 +42,7 @@ class UserTicketsController < ApplicationController
   # GET /user_tickets/1/claim
   def claim
     user_ticket = UserTicket.find(params[:id])
-    user_ticket.claim(current_admin.id)
+    user_ticket.claim(current_user)
 
     redirect_to user_tickets_path
   end
@@ -58,6 +62,8 @@ class UserTicketsController < ApplicationController
     @user_ticket = UserTicket.new(:user_id => current_user.id,:email => current_user.email,:link => user_ticket_params[:link],
                                   :comment => user_ticket_params[:comment], :subject => user_ticket_params[:subject], :status => 0,
                                   :section_uid => user_ticket_params[:section_uid], :document_id => user_ticket_params[:document_id])
+
+    current_user.user_tickets << @user_ticket
 
     respond_to do |format|
       if @user_ticket.save
@@ -106,10 +112,8 @@ class UserTicketsController < ApplicationController
       params.require(:user_ticket).permit(:comment, :subject, :link, :section_uid, :document_id)
     end
 
-    def require_login
-      unless user_signed_in? or admin_signed_in?
-        redirect_to new_user_session_path # halts request cycle
-      end
+    def authenticate_admin
+      redirect_to new_user_session_path unless current_user && current_user.admin?
     end
 
 end

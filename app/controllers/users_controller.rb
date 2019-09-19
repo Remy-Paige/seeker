@@ -1,12 +1,13 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :destroy]
-  before_action :authenticate_admin!, except: [:show]
-  before_action :authenticate_user!, except: [:convert_to_admin, :destroy]
+  before_action :authenticate_user!
+  before_action :authenticate_admin, except: [:show]
 
-  # TODO: simply routes from a resource for clarity - only need show and delete
+  def index
+    @users = User.where("admin is false")
+    @admins = User.where("admin is true")
 
-  # move index functionality to admin screen
-
+  end
 
   # GET /users/1
   # GET /users/1.json
@@ -14,21 +15,7 @@ class UsersController < ApplicationController
   # admin: can edit, delete, give privileges from this screen
   # user: can edit, delete THEMSELVES ONLY
   def show
-    # TODO: ugly permissions thing
     @user = User.find(current_user.id)
-  end
-
-  # cant make new users
-
-  # edit is dont thru devise - admin changed thru custom function button
-
-  def convert_to_admin
-    user = User.find(params[:id])
-    user.convert_to_admin
-    respond_to do |format|
-      format.html { redirect_to admins_path, notice: 'User was successfully converted to admin.' }
-      format.json { head :no_content }
-    end
   end
 
   # DELETE /users/1
@@ -37,9 +24,27 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to admins_path, notice: 'User was successfully destroyed.' }
+      format.html { redirect_to users_path, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def convert_to_user
+    user = User.find(params[:id])
+    user.convert_to_user
+
+    if current_user.admin?
+      redirect_to :controller => 'users', :action => 'index'
+    else
+      redirect_to :controller => 'documents', :action => 'advanced_search'
+    end
+  end
+
+  def convert_to_admin
+    user = User.find(params[:id])
+    user.convert_to_admin
+
+    redirect_to :controller => 'users', :action => 'index'
   end
 
   private
@@ -52,5 +57,9 @@ class UsersController < ApplicationController
     def user_params
       #params.fetch(:user, {})
       params.require(:user).permit(:email,:admin, :password, :password_confirmation)
+    end
+
+    def authenticate_admin
+      redirect_to new_user_session_path unless current_user && current_user.admin?
     end
 end

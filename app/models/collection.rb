@@ -5,9 +5,7 @@ class Collection < ActiveRecord::Base
 
   has_many :queries, dependent: :destroy
 
-  # only one at a time
   belongs_to :user
-  belongs_to :admin
 
   before_destroy {documents.clear}
 

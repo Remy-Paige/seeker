@@ -3,17 +3,17 @@
   %br
   %div{:class => "user_grid"}
     - alternating = true
-    - @admins.each do |admin|
+    - @admins&.each do |admin|
       %div{:class => alternating ? 'alternating email' : 'email'}= admin.email
       %div{:class => alternating ? 'alternating' : '', :style => "grid-column-start: 2; grid-column-end:4;"}
-      %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to 'convert admin to user', convert_to_user_admin_path(admin), :data => { :confirm => 'Are you sure?' }
+      %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to 'convert admin to user', convert_to_user_user_path(admin), :data => { :confirm => 'Are you sure?' }
       %div{:class => alternating ? 'alternating delete' : 'delete'}= link_to 'Delete Admin', admin, :method => :delete, :data => { :confirm => 'Are you sure?' }
       - alternating ? alternating = false : alternating = true
   %h1{:class => "main_title"} Listing Users
   %br
   %div{:class => "user_grid"}
     - alternating = true
-    - @users.each do |user|
+    - @users&.each do |user|
       %div{:class => alternating ? 'alternating email' : 'email'}= user.email
       %div{:class => alternating ? 'alternating' : '', :style => "grid-column-start: 2; grid-column-end:4;"}
       %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to 'convert user to admin', convert_to_admin_user_path(user), :data => { :confirm => 'Are you sure?' }

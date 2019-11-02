@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  root 'home#index'
+  root 'documents#advanced_search'
   get 'advanced' => 'documents#advanced_search'
 
 

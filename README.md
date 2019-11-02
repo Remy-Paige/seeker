@@ -70,7 +70,7 @@ setup
 	chmod 700 config db
 	chmod 600 config/database.yml config/secrets.yml
 
-
+    if webpacker asks to overwrite the yml file, that's fine
 
 	If you are using an IDE that manages your gems like rubymine, make sure that it is set up to use the seeker gemset, not default.
 
@@ -78,7 +78,9 @@ setup
 	rake searchkick:reindex CLASS=Section
 
 	I reccomend *not* doing db:migrate, db:setup will run db:schema:load instead
-
+running
+    
+    make sure that elastic search and ./bin/webpack-dev-server are running before rails serve happens 
 deployment
 
 	Once you have the development envrionment working correctly, you should be able to deploy the project using the passenger tutorial. I unfortunatly do not know how to install elasticsearch or postgres in production

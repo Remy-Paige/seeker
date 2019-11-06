@@ -18,10 +18,31 @@
 #
 # defines ::ask_age as a module function. It is directly callable, and does not appear on included classes when the module is mixed into another class.
 
+# query: {
+#    "id": NIL,
+#    "options": [{
+#        "label_select": 'label',
+#        "field": 'Article',
+#        "filter": 'includes',
+#        "keywords": []
+#    },{
+#        "label_select": 'label',
+#        "field": 'Language',
+#        "filter": 'includes',
+#        "keywords": []
+#    }, {
+#        "label_select": 'label',
+#        "field": 'Country',
+#        "filter": 'includes',
+#        "keywords": []
+#    }]
+#}
+
+
 module SearchGenerator
 
   class << self
-    def generate_search_hash(params)
+    def generate_search_hash(query)
 
       numeric_queries = [:year, :cycle]
       logical_queries = [:country, :report_type, :strong_language, :medium_language, :weak_language]
@@ -124,7 +145,7 @@ module SearchGenerator
               function_score:{
                   functions:[{filter:{and:[{term:{full_content:false}}]},boost_factor:1000}],
                   query:{
-                      bool:{
+ bool:{
                           must: must_arr,
                           filter:filter_arr,
                           must_not: must_not_arr

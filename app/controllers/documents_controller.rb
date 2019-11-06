@@ -5,8 +5,8 @@ class DocumentsController < ApplicationController
   include SearchGenerator
   before_action :set_document, only: [:show, :edit, :edit_section_separation, :update, :update_section_separation, :destroy]
   # before_action :authenticate_user!, except:
-  before_action :authenticate_user!, except: [:index, :advanced_search, :show]
-  before_action :authenticate_admin, except: [:index, :advanced_search, :show]
+  before_action :authenticate_user!, except: [:index, :search_form, :submit_search, :show]
+  before_action :authenticate_admin, except: [:index, :search_form, :submit_search, :show]
 
 
 
@@ -149,30 +149,27 @@ class DocumentsController < ApplicationController
     redirect_to document_path(params[:id])
   end
 
+  def search_form
 
+    # give vue what it wants
+    @languages = Language.all.map{ |language| [language.name, language.name] }.to_h
+    gon.languages = @languages
+    @countries = Country.all.map{ |country| [country.name, country.name] }.to_h
+    gon.countries = @countries
+    @report_types = Document::DOCUMENT_TYPES.map { |type| [type, type] }.to_h
+    gon.report_types = @report_types
 
-  def advanced_search
-    #check post, otherwise get
-    if params[:keyword]&.any?(&:present?)
+    render 'home/advanced_search'
 
-      @search_results = Section.search(SearchGenerator.generate_search_hash(params)).with_details
+  end
 
-      @languages = Language.all
-      @collections = current_user&.collections
-      @search_results = @search_results.paginate(page: params[:page], per_page: 10)
-      render :search_results
-    else
+  def submit_search
+    @search_results = Section.search(SearchGenerator.generate_search_hash(JSON.parse(params['query']))).with_details
 
-      @languages = Language.all
-      gon.languages = @languages
-      @countries = Country.all
-      gon.countries = @countries
-      @report_types = Document::DOCUMENT_TYPES
-      gon.report_types = @report_types
-      # cant use this plain - recorded in the database as numbers
-
-      render 'home/advanced_search'
-    end
+    @languages = Language.all
+    @collections = current_user&.collections
+    @search_results = @search_results.paginate(page: params[:page], per_page: 10)
+    render :search_results
   end
 
   private

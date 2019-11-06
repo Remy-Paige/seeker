@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
 
-  root 'documents#advanced_search'
-  get 'advanced' => 'documents#advanced_search'
+  root 'documents#search_form'
+  get 'search' => 'documents#search_form'
+  get 'submit_search' => 'documents#submit_search'
 
 
   resources :queries

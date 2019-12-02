@@ -2,7 +2,7 @@
 %html
   %head
     %title Seeker
-    -#= stylesheet_link_tag "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity:"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"
+    = stylesheet_link_tag "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity:"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"
     -#load jquery, turbolinks, bootstrap sprockets
     = stylesheet_link_tag    'application'
     = javascript_include_tag 'application'
@@ -18,10 +18,10 @@
   %body
     = include_gon(:init => true)
     -#inline style to override bootstrap
-    %nav{:class=>"navbar navbar-fixed-top navbar-inverse"}
+    %nav{:class=>" navbar-expand-sm bg-dark fixed-top navbar navbar-fixed-top navbar-inverse"}
       %div{:class=>"container-fluid"}
         %div{:class=>"navbar-header"}
-          = link_to 'Search', search_path, :class => "navbar-brand"
+          = link_to 'Search', search_path, :class => "navbar-brand", :style => "color: white;"
           %button{:type=>"button", :class=>"navbar-toggle collapsed", 'data-toggle'=>"collapse", 'data-target'=>"#bs-example-navbar-collapse-1", 'aria-expanded'=>"false"}
             %span{:class=>"sr-only"}Toggle navigation
             %span{:class=>"icon-bar"}
@@ -60,9 +60,9 @@
             - else
               = link_to 'Documents', documents_path, :class => "navbar-brand"
               //devise/sessions#new
-              = link_to 'Login', new_user_session_path, :class => "navbar-brand", :style => "color: white;"
+              = link_to 'Login', new_user_session_path, :class => "navbar-brand"
               //devise/registrations#new
-              = link_to 'Sign Up', new_user_registration_path, :class => "navbar-brand", :style => "color: white;"
+              = link_to 'Sign Up', new_user_registration_path, :class => "navbar-brand"
 
 
     %div{:id => "flash"}

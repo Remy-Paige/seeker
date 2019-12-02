@@ -28,7 +28,7 @@
   <h1 style="padding-bottom: 10px">Search Builder</h1>
   <div v-for="(option, index) in query.options">
     <query-line
-        v-on:updateRoot="updateRoot"
+        v-on:updateroot="updateRoot"
         :index="index.toString()"
         :option="option"
         :languages="languages"
@@ -36,99 +36,42 @@
         :report_types="report_types"
     ></query-line>
   </div>
-  <label v-on:click="addQueryLine">add filter</label>
-  <button v-on:click="submitToSearch">Search</button>
+  <div class="query_line">
+    <div>
+      <div class="send_to_bottom_hack_label"></div>
+      <span class="add_filter_label" v-on:click="addQueryLine"><b>+</b> Add Filter</span>
+    </div>
 
-
+  </div>
+  <button class="btn btn-primary btn-search btn-lg" v-on:click="submitToSearch" >Search</button>
 <% end %>
 
-<!--{query_type:{-->
-<!--0:{ ["section number"] }-->
-<!--1:{ ["medium_language"] }-->
-<!--2:{ ["country"] }-->
-<!--4:{ ["year"] }-->
-<!--5:{ ["text search"] }-->
-<!--}-->
-<!--filter_type:{-->
-<!--0:{ ["all"] }-->
-<!--1:{ ["one of"] }-->
-<!--2:{ ["only"] }-->
-<!--4:{ ["between"] }-->
-<!--5:{ ["none of"] }-->
-<!--}-->
-<!--keyword:{-->
-<!--0:{ [""] }-->
-<!--1:{ ["Scottish-Gaelic", "Scots"] }-->
-<!--2:{ ["United_Kingdom"] }-->
-<!--4:{ [2005, 2010] }-->
-<!--5:{ ["education", "legal"] }-->
-<!--}}-->
-
-
-
-
-
-<!--%div{:class => "box form"}-->
-<!--  %h1{:class => "main_title"} Advanced Search-->
-<!--  %br-->
-<!--  = form_tag advanced_path, method: :get, target: '_blank' do-->
-<!--    -#= hidden_field_tag queries = %w['Country','Language','Text'], class: 'queries', disabled: true-->
-<!--    -#= hidden_field_tag logical_filters = ['Only','none of','one of'], class: 'logical_filters', disabled: true-->
-
-<!--    %div{:class => "sub_grid"}-->
-<!--      %div{:class =>"box added_query", :id=>"added_query_0", :style=>"padding-top: 7px;"}-->
-<!--        %input{:type=>"hidden", :name=>"query_type[0][]", :value=>"article paragraph"} Article-->
-<!--      %div{:class=>"box select", :id=>"added_select_0"}-->
-<!--        %select{:class=>"added_filter_select form-control", :name=>"filter_type[0][]", :id=>"added_filter_select_0"}-->
-<!--          %option{:value=>'all', :selected=>"selected"}='all'-->
-<!--          %option{:value=>'only'}='only'-->
-<!--          %option{:value=>'none of'}='none of'-->
-<!--          %option{:value=>'one of'}='one of'-->
-<!--      %div{:class=>"box added_field", :id=>"added_field_0"}-->
-<!--        %input{:type=>"hidden", :name=>"keyword[0][]", :value=>""}-->
-<!--      %div{:class=>"box added_filter_icons", :id=>"added_filter_icons_0"}-->
-<!--        %i{:class=>"fas fa- red filter_icon delete_filter", :id=>"delete_filter_0"}-->
-<!--      %i{:class=>"question_icon fas fa--circle black", :id=>"question_icon_0"}-->
-
-<!--      %div{:class =>"box added_query", :id => "added_query_1"}-->
-<!--        %select{:class=>"added_query_select form-control", :name=>"query_type[1][]", :id=>"added_query_select_1"}-->
-<!--          %option{:value=>'strong_language'}='Langauge - Strong Matching'-->
-<!--          %option{:value=>'medium_language', :selected=>"selected"}='Language - Medium Matching'-->
-<!--          %option{:value=>'weak_language'}='Language - Weak Matching'-->
-<!--      %div{:class=>"box select", :id=>"added_select_1"}-->
-<!--        %select{:class=>"added_filter_select form-control", :name=>"filter_type[1][]", :id=>"added_filter_select_1"}-->
-<!--          %option{:value=>'all', :selected=>"selected"}='all'-->
-<!--          %option{:value=>'only'}='only'-->
-<!--          %option{:value=>'none of'}='mentions none of'-->
-<!--          %option{:value=>'one of'}='mentions one of'-->
-<!--      %div{:class=>"box added_field", :id=>"added_field_1"}-->
-<!--        %input{:type=>"hidden", :name=>"keyword[1][]", :value=>""}-->
-<!--      %div{:class=>"box added_filter_icons", :id=>"added_filter_icons_1"}-->
-<!--        %i{:class=>"fas fa- red filter_icon delete_filter", :id=>"delete_filter_1"}-->
-<!--      %i{:class=>"question_icon fas fa--circle black", :id=>"question_icon_1"}-->
-
-<!--      %div{:class =>"box added_query", :id => "added_query_2", :style=>"padding-top: 7px;"}-->
-<!--        %input{:type=>"hidden", :name=>"query_type[2][]", :value=>"country"} Country-->
-<!--      %div{:class=>"box select", :id=>"added_select_2"}-->
-<!--        %select{:class=>"added_filter_select form-control", :name=>"filter_type[2][]", :id=>"added_filter_select_2"}-->
-<!--          %option{:value=>'all', :selected=>"selected"}='all'-->
-<!--          %option{:value=>'only'}='only'-->
-<!--          %option{:value=>'none of'}='mentions none of'-->
-<!--          %option{:value=>'one of'}='mentions one of'-->
-<!--      %div{:class=>"box added_field", :id=>"added_field_2"}-->
-<!--        %input{:type=>"hidden", :name=>"keyword[2][]", :value=>""}-->
-<!--      %div{:class=>"box added_filter_icons", :id=>"added_filter_icons_2"}-->
-<!--        %i{:class=>"fas fa- red filter_icon delete_filter", :id=>"delete_filter_2"}-->
-<!--      %i{:class=>"question_icon fas fa--circle black", :id=>"question_icon_2"}-->
-
-<!--    %div{:class => "sub_grid2"}-->
-<!--      %div{:class => "add"}-->
-<!--        = link_to 'Add More Filters', '#', id: 'add_search', :class => "btn btn-default"-->
-<!--      %div{:class => "search"}-->
-<!--        = submit_tag 'Search Documents', :class => "search_button btn btn-success"-->
 <script>
     import QueryLine from "../../javascript/components/QueryLine";
     export default {
         components: {QueryLine}
     }
 </script>
+
+<style>
+  .btn-search {
+    float: right;
+    position: relative;
+    right: 25px;
+  }
+
+  .add_filter_label {
+    font-size: 27px;
+    color: #6c6c6a;
+    cursor: default;
+  }
+  .query_line {
+    margin-bottom: 0;
+    display: grid;
+    grid-template-columns: 3fr 4fr 50px 8fr;
+  }
+
+  .send_to_bottom_hack_label {
+    height: 27px;
+  }
+</style>

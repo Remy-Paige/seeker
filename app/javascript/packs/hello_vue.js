@@ -64,6 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 saveQuery() {
 
+                },
+                addQueryLine(){
+                    this.query.options.push({
+                        "label_select": 'select',
+                            "field": '',
+                            "filter": '',
+                            "keywords": []
+                    })
                 }
             },
             components: {

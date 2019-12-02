@@ -31,6 +31,7 @@
 </template>
 
 <script>
+    import EventBus from '../packs/event-bus.js';
     export default {
         props: {
             index: {
@@ -38,6 +39,10 @@
                 required: true
             },
             value: null,
+            field: {
+                type: String,
+                required: true
+            },
             emitType: {
                 type: String,
                 required: true
@@ -80,7 +85,7 @@
             suggestionSelected (suggestion) {
                 this.open = false
                 this.searchText = suggestion[0]
-                this.$emit('updateQueryLine', [this.emitType, this.index, this.selectedElements])
+                this.$emit('updateQueryLine', [this.emitType, this.index, this.searchText])
                 this.$emit('input', suggestion[1])
             },
             updateComponentWithValue(newValue) {
@@ -133,6 +138,11 @@
             value: function (newValue) {
                 this.updateComponentWithValue(newValue)
             },
+            field: function () {
+                this.value = ''
+                this.searchText = ''
+                this.updateComponentWithValue('')
+            }
             // searchText: function (newValue) { if we want them to be able to type the whole thing
             //     this.$emit('does this work')
             // }

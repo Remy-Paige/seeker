@@ -2,6 +2,17 @@
 //The fixed navbar will overlay your other content, unless you add padding to the top of the <body>.
 // Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
 
+
+
+input {
+  padding-left: 5px;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;         /* Opera/IE 8+ */
+  border: black 1px solid;
+  border-radius: 3px;
+}
+
 body {
   padding-top: 50px;
 }

@@ -1,7 +1,8 @@
 <template>
     <div>
-        <div class="dropdown" :class="{'open' : open}">
+        <div class="dropdown" :class="{'open' : open, 'width_100' : 'width_100'}" >
             <input type="text"
+                   class="width_100_plus_toggle"
                    ref="search"
                    :placeholder="placeholder"
                    v-model="element"
@@ -17,7 +18,7 @@
             <span class="arrow-up">▲</span>
             <span class="arrow-down">▼</span>
         </a>
-            <ul class="suggestion-list">
+            <ul class="suggestion-list width_100">
                 <li v-for="(suggestion, index) in matches"
                     :class="{'active' : index === highlightIndex}"
                     @mousedown.prevent
@@ -27,13 +28,12 @@
                 </li>
             </ul>
         </div>
-
-        <div v-for="(item, index) in selectedElements">
-            <div >
+        <span v-for="(item, index) in selectedElements" >
+            <div class="pill">
                 {{item}}
-                <button v-on:click="removeElement(item)">remove</button>
+                <span v-on:click="removeElement(item)"><i class="fas fa-times-circle"></i></span>
             </div>
-        </div>
+        </span>
     </div>
 </template>
 
@@ -46,6 +46,10 @@
             },
             value: null,
             emitType: {
+                type: String,
+                required: true
+            },
+            filter: {
                 type: String,
                 required: true
             },
@@ -179,6 +183,13 @@
                     var optionText = option[0].toUpperCase()
                     return optionText.match(this.element.toUpperCase().replace(/\s+/g, '.+'))
                 }).sort(this.elements[0])
+            },
+            redGreenObject: function () {
+                return {
+                    'red_pill': this.filter == 'excludes',
+                    'green_pill': this.filter == 'includes',
+                    'pill': this.filter == ''
+                }
             }
         }
     }
@@ -187,12 +198,33 @@
 <style scoped>
 
     /*<!--fix to be variable-->*/
-    input {
-        width: 150px;
+    .width_100 {
+        width: 100%;
+    }
+    .width_100_plus_toggle {
+        width: 95%;
     }
     .dropdown {
         display: inline-block;
         position: relative;
+    }
+    .red_pill {
+        background-color: red;
+    }
+    .green_pill {
+        background-color: green;
+    }
+
+    .pill {
+        display: inline-block;
+        border-radius: 10px;
+        background-color: lightslategray;
+        color: white;
+        margin: 5px;
+        margin-bottom: 0px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 1px;
     }
 
     .suggestion-list {

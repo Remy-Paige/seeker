@@ -11,9 +11,10 @@ import Vue from 'vue/dist/vue.esm'
 // import TurbolinksAdapter from 'vue-turbolinks'
 import VueResource from 'vue-resource'
 import App from '../components/app.vue'
-import AutocompleteDropdown from '../components/AutocompleteDropdown'
+import AutocompleteDropdown from '../components/AutocompleteDropdown.vue'
 import QueryLine from '../components/QueryLine.vue'
-
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
 Vue.use(VueResource)
 console.log("hello from load");
 

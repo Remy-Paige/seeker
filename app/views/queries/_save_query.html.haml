@@ -1,10 +1,19 @@
-%div
-  = form_tag(save_query_path, method: :post, :remote => true) do
-    = hidden_field_tag :query, locals[:query]
-    -#= section.page_number == nil ? number = 0 : number = section.page_number
+%div{:class => 'save_query', :id => 'save_query_element_0'}
+  %b-button{'v-b-toggle.collapse-0' => true, :variant=>"outline-dark", :class=>"", :style => "color: #212529; font-size: 1.75em; box-shadow: 0 0 0 0"}
+    Add Query to Collection
+    %span.when-opened
+      %i.fas.fa-chevron-down
+    %span.when-closed
+      %i.fas.fa-chevron-right
+
+  %b-collapse{:id=>"collapse-0", :class=>"collection_box"}
     - if @collections.length == 0
-      = select_tag :collection, content_tag(:option,'no collections',:value=>"")+options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
-      = link_to 'Create Collection', new_collection_path, :class => "btn btn-default right_button"
+      %div{:class => ''}
+        = link_to 'Create Collection', new_collection_path, :class => "btn btn-outline-dark collection_btn", :style => 'border-radius: 0px;'
     - else
-      = select_tag :collection, options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
-      = submit_tag(value = 'Add Query to Collection', class: "btn btn-default")
+      - @collections.each do |collection|
+        %div{:class => ''}
+          = form_tag(save_query_path, method: :post, :remote => true, :format=>:js) do
+            = hidden_field_tag :query, locals[:query]
+            = hidden_field_tag :collection, collection.name
+            = submit_tag(value = collection.name, class: "btn btn-outline-dark collection_btn", :style => 'border-radius: 0px;')

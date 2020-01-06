@@ -1,6 +1,7 @@
 class CollectionsController < ApplicationController
   before_action :set_collection, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  skip_before_filter :verify_authenticity_token, :only => [:save_section]
   respond_to :html, :js
 
   # GET /collections
@@ -16,24 +17,28 @@ class CollectionsController < ApplicationController
 
     if result == 'nil collection'
       respond_to do |format|
-        format.js { flash.now[:notice] = "Please Select or Create a Collection" }
-        format.json { flash.now[:notice] = "Please Select or Create a Collection" }
+        format.html { redirect_to :back, notice: "Please Create a Collection" }
+        format.js { flash.now[:notice] = "Please Create a Collection" }
+        format.json { flash.now[:notice] = "Please Create a Collection" }
       end
     elsif result == 'first submit'
       respond_to do |format|
+        format.html { redirect_to :back, notice: "Successfully Added to Collection" }
         format.js { flash.now[:notice] = "Successfully Added to Collection" }
         format.json { flash.now[:notice] = "Successfully Added to Collection" }
       end
     elsif result == 'second submit'
       #the click happens twice and idk how to stop that, so its just repeated
       respond_to do |format|
+        format.html { redirect_to :back, notice: "Successfully Added to Collection" }
         format.js { flash.now[:notice] = "Successfully Added to Collection" }
         format.json { flash.now[:notice] = "Successfully Added to Collection" }
       end
     else
       respond_to do |format|
-        format.js { flash.now[:notice] = "Failed to add to Collection" }
-        format.json { flash.now[:notice] = "Failed to add to Collection" }
+        format.html { redirect_to :back, notice: "Failed to add to Collection, Contact Administrator" }
+        format.js { flash.now[:notice] = "Failed to add to Collection, Contact Administrator" }
+        format.json { flash.now[:notice] = "Failed to add to Collection, Contact Administrator" }
       end
     end
 
@@ -65,6 +70,10 @@ class CollectionsController < ApplicationController
     @collections = current_user.collections
     @queries = @collection.queries
     @languages = Language.all
+
+    @vue_languages = @languages.map{ |language| [language.name, language.name] }.to_h
+    @countries = Country.all.map{ |country| [country.name, country.name] }.to_h
+    @report_types = Document::DOCUMENT_TYPES.map { |type| [type, type] }.to_h
     @sections = @collection.construct_sections_from_parts
   end
 
@@ -139,7 +148,7 @@ class CollectionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def collection_params
-      params.require(:collection).permit(:name, :collection, :document_id, :section_uid, :save_type, :query)
+      params.require(:collection).permit(:name, :description, :collection, :document_id, :section_uid, :save_type, :query)
     end
 
 end

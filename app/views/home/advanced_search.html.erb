@@ -25,7 +25,8 @@
                         }]
                     }
                 } do %>
-  <h1 style="padding-bottom: 10px">Search Builder</h1>
+  <h1 class="main-heading">Query Builder</h1>
+  <!--main form-->
   <div v-for="(option, index) in query.options">
     <query-line
         v-on:updateroot="updateRoot"
@@ -36,13 +37,15 @@
         :report_types="report_types"
     ></query-line>
   </div>
+
+  <!--add filter line-->
   <div class="query_line">
     <div>
       <div class="send_to_bottom_hack_label"></div>
       <span class="add_filter_label" v-on:click="addQueryLine"><b>+</b> Add Filter</span>
     </div>
-
   </div>
+
   <button class="btn btn-primary btn-search btn-lg" v-on:click="submitToSearch" >Search</button>
 <% end %>
 
@@ -52,26 +55,3 @@
         components: {QueryLine}
     }
 </script>
-
-<style>
-  .btn-search {
-    float: right;
-    position: relative;
-    right: 25px;
-  }
-
-  .add_filter_label {
-    font-size: 27px;
-    color: #6c6c6a;
-    cursor: default;
-  }
-  .query_line {
-    margin-bottom: 0;
-    display: grid;
-    grid-template-columns: 3fr 4fr 50px 8fr;
-  }
-
-  .send_to_bottom_hack_label {
-    height: 27px;
-  }
-</style>

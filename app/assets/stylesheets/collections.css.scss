@@ -2,6 +2,12 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+.collection_card {
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+  padding: 1.25rem;
+  margin: 0.75rem;
+}
 
 .results_grid {
   display: grid;
@@ -10,6 +16,7 @@
 .result{
   grid-column-start: 1;
 }
+
 
 .title {
   font-size: medium;

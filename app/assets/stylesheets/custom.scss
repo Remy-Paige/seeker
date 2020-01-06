@@ -1,235 +1,281 @@
-
-//The fixed navbar will overlay your other content, unless you add padding to the top of the <body>.
-// Try out your own values or use our snippet below. Tip: By default, the navbar is 50px high.
-
-
-
 input {
-  padding-left: 5px;
+
   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
   -moz-box-sizing: border-box;    /* Firefox, other Gecko */
   box-sizing: border-box;         /* Opera/IE 8+ */
-  border: black 1px solid;
-  border-radius: 3px;
 }
-
-body {
-  padding-top: 50px;
+.width_block {
+  width: 100%;
 }
-//bootstrap override
-//note on select - the select rules are a carefully crafted mix of removing all styles in the select rule,
-// and then adding styles back again with a custom form-control
-.inverse-dropdown{
-  background-color: #222;
-  border-color: #080808;
-  &>li>a{
-    color: #999;
-    &:hover{
-      color: #fff;
-      background-color: #000;
-    }
-  }
-  &>.divider {
-    background-color: #000;
-  }
-}
-.form-control{
-  background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+) no-repeat 100% 50%;
-  padding-left: 7px;
-}
-
-.main_grid_centre {
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-row-start: 1;
-}
-
+//app/views/layouts/application.html.haml
 #flash {
   position: fixed;
   top: 60px;
   left: 0;
 }
+//app/views/layouts/application.html.haml
+.grid {
+  //border: 2px blue solid;
+  display: grid;
+  grid-template-columns: 1fr 5fr 1fr;
+}
+//some style in app/views/layouts/application.html.haml because it breaks if put here
+
+//app/views/home/advanced_search.html.erb
+.main_grid_centre {
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 1;
+}
+.main-heading {
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+.btn-search {
+  float: right;
+  position: relative;
+  right: 17.75%;
+}
+.add_filter_label {
+  font-size: 27px;
+  color: #6c6c6a;
+  cursor: default;
+}
+
+//app/views/collections/show.html.haml
 #sticky {
   position: fixed;
   top: 60px;
   right: 10px;
   font-size: large;
 }
-//for forms
-.block {
+
+//app/views/collections/_save_section.html.haml
+//app/views/documents/search_results.html.haml
+//app/views/queries/_save_query.html.haml
+//app/views/shared/_section_display.html.haml
+.right_button {
+  position: relative;
+  float: right;
+  margin-bottom: 5px;
   display: block;
-  width: auto;
+  justify-self: right;
 }
+
+//app/views/collections/_save_section.html.haml
+.collection_box {
+  background-color: #b0b0b09e;
+  position: relative;
+  bottom: 2px;
+}
+.collection_btn {
+  width: 100%;
+}
+.save_query_container {
+  width: 354px;
+}
+
+//app/views/devise/registrations/new.html.erb
 .form-action-padding {
   padding-top: 10px;
 }
-.comment_box {
-  width: 450px;
-  height: 200px;
-}
-//page parent
-//avoid using bootstrap 3's inbuilt stuff - grid is much better
-.grid {
-  //border: 2px blue solid;
-  display: grid;
-  grid-template-columns: 1fr 5fr 1fr;
-}
-
+//app/views/devise/registrations/edit.html.erb
+//app/views/devise/registrations/new.html.erb
 .centre {
   grid-column-start: 2;
   grid-column-end: 2;
   grid-row-start: 1;
   text-align: left;
 }
+.block {
+  display: block;
+  width: auto;
+}
+//app/javascript/components/QueryLine.vue
+.width_100_plus_toggle {
+  width: 75%;
+}
+
+//bootstrap override
+//note on select - the select rules are a carefully crafted mix of removing all styles in the select rule,
+//// and then adding styles back again with a custom form-control
+//.inverse-dropdown{
+//  background-color: #222;
+//  border-color: #080808;
+//  &>li>a{
+//    color: #999;
+//    &:hover{
+//      color: #fff;
+//      background-color: #000;
+//    }
+//  }
+//  &>.divider {
+//    background-color: #000;
+//  }
+//}
+//.form-control{
+//  background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+) no-repeat 100% 50%;
+//  padding-left: 7px;
+//}
+
+
+
+//.comment_box {
+//  width: 450px;
+//  height: 200px;
+//}
+
+
+
 //centre parent
-.form {
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-row-start: 1;
-  text-align: center;
-}
+//app/views/home/index.html.haml
+//no longer used
+//.form {
+//  grid-column-start: 2;
+//  grid-column-end: 2;
+//  grid-row-start: 1;
+//  text-align: center;
+//}
 //Search Form Rules
+//
+////form wide rules
 
-//form wide rules
-input, select{
-  height: 34px;
-}
-select{
-  background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+) no-repeat 100% 50%;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  appearance: none;
-  /* and then whatever styles you want*/
-  height: 34px;
-  width: 140px;
-  padding-left: 7px;
-  border-color: lightgray;
-}
+//select{
+//  background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+) no-repeat 100% 50%;
+//  -moz-appearance: none;
+//  -webkit-appearance: none;
+//  appearance: none;
+//  /* and then whatever styles you want*/
+//  height: 34px;
+//  width: 140px;
+//  padding-left: 7px;
+//  border-color: lightgray;
+//}
 
+//
+//select{
+//  width: 140px;
+//}
+//select[name^="key"] {
+//  width: 188px;
+//}
+//.sub_grid {
+//  display: grid;
+//  grid-template-columns: 1fr 140px 200px 25px 25px 25px 1fr;
+//}
 
-select{
-  width: 140px;
-}
-select[name^="key"] {
-  width: 188px;
-}
-.sub_grid {
-  display: grid;
-  grid-template-columns: 1fr 140px 200px 25px 25px 25px 1fr;
-}
-
-
-//div rules
-// remember to escape containing grid if you want it to be in a new column/row
-.caption {
-  grid-column-start: 1;
-  text-align: right;
-  font-size: large;
-  padding-top: 6px;
-  //guard against the boxes moving
-  padding-right: 10px;
-}
-
-.number {
-  width: 88px;
-}
-.field {
-  grid-column-start: 3;
-  text-align: left;
-  padding-left: 5px;
-}
-.question_icon {
-  grid-column-start: 6;
-  font-size: 25px;
-  padding-top: 5px;
-  text-align: left;
-  justify-content: center;
-  align-items: center;
-  color: #434342;
-}
-
-.added_query {
-  grid-column-start: 1;
-  text-align: right;
-  font-size: large;
-  padding-right: 10px;
-  justify-self: right;
-}
-
-.added_field {
-  grid-column-start: 3;
-  text-align: right;
-  padding-left: 5px;
-}
-[data-number] {
-  padding-bottom: 5px;
-}
-.added_filter_icons {
-  grid-column-start: 4;
-}
-.filter_icon {
-  font-size: 25px;
-  padding-left: 5px;
-  text-align: left;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  color: #90908f;
-}
-.plus_icon {
-  font-size: 25px;
-  padding-left: 5px;
-  text-align: left;
-  justify-content: center;
-  align-items: center;
-  color: #90908f;
-}
-.minus_filter_added_field {
-  font-size: 15px;
-  padding-left: 2px;
-  padding-right: 5px;
-  text-align: left;
-  padding-top: 10px;
-  padding-bottom: 9px;
-  color: #90908f;
-}
-
-
-//under buttons
-.sub_grid2 {
-  //border: 2px blue solid;
-  display: grid;
-  //hacky hack
-  grid-template-columns: 1fr 140px 200px 25px 25px 1fr;
-}
-
-.add {
-  grid-column-start: 1;
-}
-.search {
-  grid-row-start: 2;
-  grid-column-start: 3;
-}
-//style
-
-
-//old search
-.search_bar {
-  width: 100%;
-}
-
-
-section {
-  overflow: auto;
-}
-
-textarea {
-  resize: vertical;
-}
-
-.center {
-  text-align: center;
-}
-
-.center h1 {
-  margin-bottom: 10px;
-}
+//
+////div rules
+//// remember to escape containing grid if you want it to be in a new column/row
+//.caption {
+//  grid-column-start: 1;
+//  text-align: right;
+//  font-size: large;
+//  padding-top: 6px;
+//  //guard against the boxes moving
+//  padding-right: 10px;
+//}
+//
+//.number {
+//  width: 88px;
+//}
+//.field {
+//  grid-column-start: 3;
+//  text-align: left;
+//  padding-left: 5px;
+//}
+//.question_icon {
+//  grid-column-start: 6;
+//  font-size: 25px;
+//  padding-top: 5px;
+//  text-align: left;
+//  justify-content: center;
+//  align-items: center;
+//  color: #434342;
+//}
+//
+//.added_query {
+//  grid-column-start: 1;
+//  text-align: right;
+//  font-size: large;
+//  padding-right: 10px;
+//  justify-self: right;
+//}
+//
+//.added_field {
+//  grid-column-start: 3;
+//  text-align: right;
+//  padding-left: 5px;
+//}
+//[data-number] {
+//  padding-bottom: 5px;
+//}
+//.added_filter_icons {
+//  grid-column-start: 4;
+//}
+//.filter_icon {
+//  font-size: 25px;
+//  padding-left: 5px;
+//  text-align: left;
+//  padding-top: 5px;
+//  padding-bottom: 5px;
+//  color: #90908f;
+//}
+//.plus_icon {
+//  font-size: 25px;
+//  padding-left: 5px;
+//  text-align: left;
+//  justify-content: center;
+//  align-items: center;
+//  color: #90908f;
+//}
+//.minus_filter_added_field {
+//  font-size: 15px;
+//  padding-left: 2px;
+//  padding-right: 5px;
+//  text-align: left;
+//  padding-top: 10px;
+//  padding-bottom: 9px;
+//  color: #90908f;
+//}
+//
+//
+////under buttons
+//.sub_grid2 {
+//  //border: 2px blue solid;
+//  display: grid;
+//  //hacky hack
+//  grid-template-columns: 1fr 140px 200px 25px 25px 1fr;
+//}
+//
+//.add {
+//  grid-column-start: 1;
+//}
+//.search {
+//  grid-row-start: 2;
+//  grid-column-start: 3;
+//}
+////style
+//
+//
+////old search
+//.search_bar {
+//  width: 100%;
+//}
+//
+//
+//section {
+//  overflow: auto;
+//}
+//
+//textarea {
+//  resize: vertical;
+//}
+//
+//.center {
+//  text-align: center;
+//}
+//
+//.center h1 {
+//  margin-bottom: 10px;
+//}

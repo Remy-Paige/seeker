@@ -1,39 +1,30 @@
 %div{:class => "centre"}
-  %h3
-    Collection:
-    = @collection.name
-
+  %div{:class => "gap1"}
+  %h1= @collection.name
+  %div{:class => "gap1"}
+  %h3 Description:
+  %p= @collection.description
+  %div{:class => "gap1"}
   %h4 Queries:
   -@queries.each do |query|
-    %div{:class => 'queries_grid'}
+    %div{:class => ''}
       - params = ActiveSupport::JSON.decode(query.query)
-      - params['keyword'].each_key do |key|
-        %div{:class => 'query'}
-          %span{:class => 'title'}
-            -if params['query_type'][key][0] == 'weak_language'
-              = 'Language - Weak Matching:'
-            -elsif params['query_type'][key][0] == 'medium_language'
-              = 'Language - Medium Matching:'
-            -elsif params['query_type'][key][0] == 'strong_language'
-              = 'Language - Strong Matching:'
-            -else
-              =params['query_type'][key][0] +':'
-        %div{:class => 'filter'}
-          =params['filter_type'][key][0] + ':'
-        %div{:class => 'field'}
-          -params['keyword'][key].each do |word|
-            =word
+      = render 'shared/query_display', locals: {query: params['query'], languages: @vue_languages, countries: @countries, report_types: @report_types}
+      = link_to 'Run Query', submit_search_path(params), :class => "btn btn-info"
+      = button_to 'Delete', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"
 
 
-    = link_to 'Run Query', submit_search_path(params), :class => "btn btn-default"
-    = link_to 'Delete', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-default"
-  %br
-  %br
-
+  %div{:class => "gap1"}
   %h4 Sections:
-  = link_to 'Export Sections', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-info"
+  %div{:class => "gap1"}
+  %div{:class => "document_header_grid"}
+    -# filter box options
+    %div{:class => "action"}
+      = link_to 'Export Sections', export_path(id: @collection.id , export_type: 'collection'), :class => "btn btn-info width_block special_text"
+  %div{:class => "gap1"}
 
-  %div{:class => "results_grid"}
+
+  %div
     - @sections.each do |section|
       = render 'shared/section_display', locals: {display_type: 'collections#show', section: section }
 %div{:id => 'sticky', :class => "btn btn-primary"}

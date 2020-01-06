@@ -1,68 +1,99 @@
 !!!
-%html
+%html{:lang=>'en'}
   %head
     %title Seeker
-    = stylesheet_link_tag "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity:"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"
+
+    -#= javascript_include_tag "https://cdn.jsdelivr.net/npm/bootstrap.native@2.0.27/dist/bootstrap-native-v4.min.js"
+    -#= stylesheet_link_tag "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", integrity:"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin:"anonymous"
     -#load jquery, turbolinks, bootstrap sprockets
     = stylesheet_link_tag    'application'
-    = javascript_include_tag 'application'
+    -#= javascript_include_tag 'application'
     -#hello from webpacker
     = javascript_pack_tag 'application'
     = stylesheet_pack_tag 'application'
-    -#actual app
+
+    -#query builder form
     = javascript_pack_tag 'hello_vue'
     = stylesheet_pack_tag 'hello_vue'
 
     = stylesheet_link_tag    'https://use.fontawesome.com/releases/v5.5.0/css/all.css', integrity:'sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU', crossorigin:'anonymous'
     = csrf_meta_tags
-  %body
-    = include_gon(:init => true)
-    -#inline style to override bootstrap
-    %nav{:class=>" navbar-expand-sm bg-dark fixed-top navbar navbar-fixed-top navbar-inverse"}
-      %div{:class=>"container-fluid"}
-        %div{:class=>"navbar-header"}
-          = link_to 'Search', search_path, :class => "navbar-brand", :style => "color: white;"
-          %button{:type=>"button", :class=>"navbar-toggle collapsed", 'data-toggle'=>"collapse", 'data-target'=>"#bs-example-navbar-collapse-1", 'aria-expanded'=>"false"}
-            %span{:class=>"sr-only"}Toggle navigation
-            %span{:class=>"icon-bar"}
-            %span{:class=>"icon-bar"}
-            %span{:class=>"icon-bar"}
+    %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}
 
-        %div{:class=>"collapse navbar-collapse", :id=>"bs-example-navbar-collapse-1"}
-          %ul{:class=>"nav navbar-nav navbar-right"}
+    -# bootstrap overrides for navbar
+    :css
+      .nav-link {
+        padding: 0px;
+      }
+      .nav-item:hover {
+        background-color: black;
+      }
+      .navbar {
+        padding: 0px;
+      }
+      .navbar-brand {
+        padding: 5px;
+      }
+      .hover_cover_navbar {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      .hover_navbar:hover {
+        background-color: black;
+      }
+      .hover_cover_navbar:hover {
+        background-color: black;
+      }
+      .fix_dropdown_margins {
+        margin: 0px;
+      }
+      .dropdown-item:visited {
+        color: #212529;
+      }
+      .dropdown-menu {
+        margin: 0px;
+      }
+      .special_margin {
+        margin: 0px !important;
+      }
+  %body
+    %div{:id=>'nav'}
+      %b-navbar{:toggleable => "lg", :type => "dark", :variant => "dark"}
+
+        %b-navbar-brand{:href => "/search", :class=>'hover_navbar'} Seeker
+
+        %b-navbar-toggle{:target=>"nav-collapse"}
+        %b-collapse{:id=>"nav-collapse", 'is-nav'=>true}
+          / Right aligned nav items
+          %b-navbar-nav{:class=>'ml-auto'}
+            -#%b-nav-item{:href => '\documents'} Documents
+
             - if user_signed_in? && current_user.admin?
-              = link_to 'Documents', documents_path, :class => "navbar-brand"
-              = link_to 'Users', users_path, :class => "navbar-brand"
-              = link_to 'Tickets', user_tickets_path, :class => "navbar-brand"
-              = link_to 'My Collections', collections_path, :class => "navbar-brand"
-              %li{:class=>"dropdown"}
-                %a{:href=>"#", :class=>"dropdown-toggle",:style => "padding-left: 30px;", 'data-toggle'=>"dropdown", :role=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"}
-                  %span{:class => "fas fa-user-circle navbar-brand", :style=>"font-size: x-large;padding: 0px;color: white;height: 17px;"}
-                  %span{:class=>"caret"}
-                %ul{:class=>"dropdown-menu inverse-dropdown"}
-                  %li
-                    = link_to 'Profile', user_path(current_user), :class => "navbar-brand"
-                  %li
-                    = link_to  'Logout',  destroy_user_session_path, method: :delete, :class => "navbar-brand"
+              = link_to 'Documents', documents_path, :class => 'navbar-brand hover_cover_navbar'
+              = link_to 'Users', users_path, :class => "navbar-brand hover_cover_navbar"
+              = link_to 'Tickets', user_tickets_path, :class => "navbar-brand hover_cover_navbar"
+              = link_to 'My Collections', collections_path, :class => "navbar-brand hover_cover_navbar"
+              / Using 'button-content' slot
+              %b-nav-item-dropdown{:right => true}
+                %template{"v-slot:button-content" => true}
+                  %span{:class => "fas fa-user-circle navbar-brand special_margin hover_cover_navbar"}
+                = link_to 'Profile', user_path(current_user), :class => "dropdown-item"
+                -#without jquery, link_to with delete method doesnt work becasue delete doesnt exist
+                = button_to 'Logout',  destroy_user_session_path, method: :delete, :class => "dropdown-item"
             - elsif user_signed_in?
-              = link_to 'Documents', documents_path, :class => "navbar-brand"
-              = link_to 'Tickets', user_tickets_path, :class => "navbar-brand"
-              = link_to 'My Collections', collections_path, :class => "navbar-brand"
-              %li{:class=>"dropdown"}
-                %a{:href=>"#", :class=>"dropdown-toggle", :style => "padding-left: 30px;",'data-toggle'=>"dropdown", :role=>"button", 'aria-haspopup'=>"true", 'aria-expanded'=>"false"}
-                  %span{:class => "fas fa-user-circle navbar-brand", :style=>"font-size: x-large;padding: 0px;color: white;height: 17px;"}
-                  %span{:class=>"caret"}
-                %ul{:class=>"dropdown-menu inverse-dropdown"}
-                  %li
-                    = link_to 'Profile', user_path(current_user), :class => "navbar-brand"
-                  %li
-                    = link_to  'Logout',  destroy_user_session_path, method: :delete, :class => "navbar-brand"
+              = link_to 'Documents', documents_path, :class => 'navbar-brand hover_cover_navbar'
+              = link_to 'Tickets', user_tickets_path, :class => "navbar-brand hover_cover_navbar"
+              = link_to 'My Collections', collections_path, :class => "navbar-brand hover_cover_navbar"
+              / Using 'button-content' slot
+              %b-nav-item-dropdown{:right => true, :class => "fix_dropdown_margins"}
+                %template{"v-slot:button-content" => true}
+                  %span{:class => "fas fa-user-circle special_margin navbar-brand hover_cover_navbar", :style => "margin-right: 3px"}
+                = link_to 'Profile', user_path(current_user), :class => "dropdown-item"
+                = button_to 'Logout',  destroy_user_session_path, method: :delete, :class => "dropdown-item"
             - else
-              = link_to 'Documents', documents_path, :class => "navbar-brand"
-              //devise/sessions#new
-              = link_to 'Login', new_user_session_path, :class => "navbar-brand"
-              //devise/registrations#new
-              = link_to 'Sign Up', new_user_registration_path, :class => "navbar-brand"
+              = link_to 'Documents', documents_path, :class => "navbar-brand hover_cover_navbar"
+              = link_to 'Login', new_user_session_path, :class => "navbar-brand hover_cover_navbar"
+              = link_to 'Sign Up', new_user_registration_path, :class => "navbar-brand hover_cover_navbar"
 
 
     %div{:id => "flash"}

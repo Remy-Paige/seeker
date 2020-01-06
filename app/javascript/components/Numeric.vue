@@ -81,8 +81,13 @@
 </script>
 
 <style scoped>
+    input {
+        padding-left: 5px;
+        border: black 1px solid;
+        border-radius: 3px;
+    }
     .width_100_plus_toggle {
-        width: 95%;
+        width: 90%;
     }
 
     .half_width_100_plus_toggle {

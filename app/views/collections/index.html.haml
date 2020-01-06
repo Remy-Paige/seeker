@@ -1,10 +1,17 @@
 %div{:class => "centre"}
-  = link_to 'New Collection', new_collection_path, :class => "btn btn-info"
-  %h4 Listing your collections
-  - @collections.each do |collection|
-    %div
-      %h4=collection.name
+  %div{:class => "gap1"}
+  %h1 Your Collections
+  %div{:class => "document_header_grid"}
+    -# filter box options
+    %div{:class => "action"}
+      = link_to 'New Collection', new_collection_path, :class => "btn btn-info width_block special_text"
+  %div{:class => "gap1"}
 
-    = link_to 'Show', collection, :class => "btn btn-default"
-    = link_to 'Edit', edit_collection_path(collection), :class => "btn btn-default"
-    = link_to 'Destroy', collection, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-default"
+  %div{:class => 'edit_user_grid'}
+    - @collections.each do |collection|
+      %div{:class => 'collection_card'}
+        %h4=collection.name
+        %p=collection.description
+        = link_to 'View Items', collection, :class => "btn btn-info special_text"
+        = link_to 'Edit', edit_collection_path(collection), :class => "btn btn-info special_text"
+        = link_to 'Destroy', collection, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning special_text"

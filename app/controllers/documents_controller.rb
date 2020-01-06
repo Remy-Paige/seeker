@@ -23,11 +23,7 @@ class DocumentsController < ApplicationController
     @languages = Language.all
     @sections = @document.sections
 
-    if user_signed_in?
-      render "documents/show"
-    else
-      render "documents/show_no_user"
-    end
+    render "documents/show"
   end
 
   # GET /documents/new

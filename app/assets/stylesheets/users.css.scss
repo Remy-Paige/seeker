@@ -28,23 +28,28 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
 }
-
-.email{
-  grid-column-start: 1;
-  grid-column-end: 2;
+.edit_user_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
-.admin_yn{
-  grid-column-start: 3;
+
+.name {
+  grid-column-start: 1;
+}
+.email{
+  grid-column-start: 2;
 }
 .admin_button{
-  grid-column-start: 4;
-}
-.admin{
   grid-column-start: 3;
-  grid-column-end: 4;
 }
 .delete{
-  grid-column-start: 5;
-  grid-column-end: 6;
-  width: 80px;
+  grid-column-start: 4;
+}
+.edit_user_button {
+  position: relative;
+  left: 68px;
+}
+.up_button {
+  position: relative;
+  bottom: 20px;
 }

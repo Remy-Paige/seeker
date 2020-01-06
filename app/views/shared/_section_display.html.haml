@@ -1,43 +1,105 @@
--#= locals[:display_type]
+:css
+  p {
+  margin: 0px !important;
+  }
+  u {
+  text-decoration: none;
+  border: 1px solid #343a40;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  margin-top: 3px;
+  }
 - section = locals[:section]
-
-%div{:class => 'section_content'}
-  - section.article_paragraph ? text = section&.article_paragraph : text = '-'
-
-  %h4= section.section_name == 'Full Content' ? '-' : 'Section Number: ' + section.section_number + ' | ' + 'Article and Paragraph: ' + text
-  %h4= section.section_name
-
-%div{:class => 'section_information'}
-  - if locals[:display_type] == 'collections#show'
-    = section.document.country
+-#nil if not search results
+-#can be {} if search results
+- details = locals[:details]
+%div{:class => 'gap2', :id => section.section_uid}
+%div{:class => "results_grid"}
+  %div{:class => "results_actions right_box"}
+    - section.page_number == nil ? number = 0 : number = section.page_number
+    = link_to 'Go to Page ' + number.to_s, section.document.url + '#page=' +  number.to_s, :class => "btn btn-outline-dark right_button width_block", target: :_blank
     %br
-    = section.document.year
-    %br
-    = section.document.cycle.ordinalize + ' cycle'
-    %br
-    = Document::DOCUMENT_TYPES[section.document.document_type]
 
-%div{:class => 'language_span'}
-  - section.language_sections&.sort_by(&:strength)&.each do |relation|
-    %div{:class => 'language_box strength_' + relation.strength.to_s, }
-      = @languages[relation.language_id-1]
-%div
-  = simple_format(section&.content)
-%div{:class => "right_box"}
-  - section.page_number == nil ? number = 0 : number = section.page_number
-  = link_to 'Jump to Page ' + number.to_s, section.document.url + '#page=' +  number.to_s, :class => "btn btn-default right_button", target: :_blank
-  %br
-  - if locals[:display_type] == 'collections#show'
-    = link_to 'Remove from Collection', remove_collection_path(section_uid: section.section_uid,document_id: section.document.id , id: @collection.id), :class => "btn btn-default right_button button_spacing"
-    %br
-  = link_to 'Export XML', export_path(section_uid: section.section_uid ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-default right_button button_spacing"
-  %br
-  = link_to 'Jump to First Page', section.document.url, target: '_blank', :class => "btn btn-default right_button btn-xs", target: :_blank
-  %br
-  = link_to 'Report Section Problem', new_user_ticket_path(:document_id => section.document.id, :section_uid => section.section_uid), :class => "btn btn-default right_button btn-xs button_spacing", target: :_blank
-  %br
+    - if locals[:display_type] == 'collections#show'
+      = link_to 'Remove from Collection', remove_collection_path(section_uid: section.section_uid,document_id: section.document.id , id: @collection.id), :variant=>"secondary", :class => "btn btn-outline-dark right_button width_block"
+      %br
 
-  %div{:class => "save_form"}
-    - if user_signed_in?
-      - @collections = current_user.collections
-      = render 'collections/save_section',  locals: {section_uid: section.section_uid, document_id: section.document.id , collections: @collections}
+    %div
+      - if user_signed_in?
+        - @collections = current_user.collections
+        = render 'collections/save_section',  locals: {section_uid: section.section_uid ,section_id: section.id, document_id: section.document.id , collections: @collections}
+        %div{:style => 'height: 5px;'}
+
+    = link_to 'Export XML', export_path(section_uid: section.section_uid ,document_id: section.document.id , export_type: 'section'), :class => "btn btn-outline-dark right_button width_block"
+    %br
+    = link_to 'Go to First Page', section.document.url, target: '_blank', :class => "btn btn-outline-dark default right_button width_block", target: :_blank
+    %br
+    = link_to 'Report Section Problem', new_user_ticket_path(:document_id => section.document.id, :section_uid => section.section_uid), :class => "btn btn-outline-dark right_button width_block", target: :_blank
+    %br
+
+  %div
+    - section.article_paragraph ? text = 'Article: ' + section&.article_paragraph : text = ''
+    %h4= section.document.country.to_s + ', Section Number: ' + section.section_number + ", " + text
+
+    %h5= section.section_name
+
+  %div
+    - if locals[:display_type] != 'collections#show' or locals[:display_type] == 'documents#search_results'
+      = Document::DOCUMENT_TYPES[section.document.document_type]
+      = section.document.year
+      = section.document.cycle.ordinalize + ' cycle'
+      %div{:class => 'language_span'}
+        - section.language_sections&.sort_by(&:strength)&.each do |relation|
+          %div{:class => 'language_box'}
+            = @languages[relation.language_id-1]
+    -else
+      %div{:class => 'language_span'}
+        - section.language_sections&.sort_by(&:strength)&.each do |relation|
+          %div{:class => 'language_box'}
+            = @languages[relation.language_id-1]
+  %div{:class => 'show_more', :id => 'show_more_element_' + section.id.to_s}
+    - if locals[:display_type] == 'documents#search_results' and section.content.length > 1500
+      %div{'v-on:click'=>"seen = !seen"}
+        = details != {} ? simple_format(details[:highlight]['content.analyzed'.to_sym]&.html_safe) || simple_format(section.content[0..1500].html_safe) : simple_format(section.content[0..1500].html_safe)
+        %div{'v-if' => '!seen', :style => 'margin-top: 3px;'}
+          %u Show More
+        %div{'v-if' => 'seen'}
+          = simple_format(section&.content[1500..-1]&.html_safe)
+          %div{'v-if' => 'seen', :style => 'margin-top: 3px;'}
+            %u Show Less
+    - elsif locals[:display_type] == 'documents#search_results' and section.content.length <= 1500
+      %div
+        = details != {} ? simple_format(details[:highlight]['content.analyzed'.to_sym]&.html_safe) || simple_format(section.content[0..1500].html_safe) : simple_format(section.content[0..1500].html_safe)
+    - else
+      = simple_format(section&.content)
+
+
+
+      -#old search results code
+              -#- counter = 0
+      -#- @search_results.each do |section, details|
+      -#  -counter = counter + 1
+      -#  %div{:class => 'section_content'}
+      -#    - section.article_paragraph ? text = section&.article_paragraph : text = '-'
+      -#
+      -#    %h4= section.section_name == 'Full Content' ? '-' : 'Section Number: ' + section.section_number + ' | ' + 'Article and Paragraph: ' + text
+      -#    %h4= section.section_name
+      -#  %div{:class => 'section_information'}
+      -#    = details != {} ? details[:highlight][:country]&.html_safe || section.document.country : section.document.country
+      -#    %br
+      -#    = details != {} ? details[:highlight][:year]&.html_safe || section.document.year : section.document.year
+      -#    %br
+      -#    = details != {} ? (details[:highlight][:cycle]&.html_safe || section.document.cycle).ordinalize + ' cycle' : section.document.cycle.ordinalize + ' cycle'
+      -#    %br
+      -#    = Document::DOCUMENT_TYPES[section.document.document_type]
+      -#  %div{:class => 'language_span'}
+      -#    - section.language_sections&.sort_by(&:strength)&.each do |relation|
+      -#      %div{:class => 'language_box strength_' + relation.strength.to_s, }
+      -#        = @languages[relation.language_id-1]
+      -#  %div
+      -#    %div{:id => 'less_' + counter.to_s}
+      -#      = details != {} ? simple_format(details[:highlight]['content.analyzed'.to_sym]&.html_safe) || simple_format(section.content[0..1500].html_safe) : simple_format(section.content[0..1500].html_safe)
+      -#      = link_to 'Show More...', '#', :class => 'more', :id => 'click_' + counter.to_s
+      -#    %div{:id => 'more_'  + counter.to_s, :style => "display: none;"}
+      -#      = simple_format(section.content)
+      -#      = link_to 'Show Less...', '#', :class => 'less', :id => 'click_' + counter.to_s

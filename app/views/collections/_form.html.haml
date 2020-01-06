@@ -8,6 +8,7 @@
 
   .form-inputs
     = f.input :name, placeholder: 'Name'
+    = f.input :description, placeholder: 'Description', input_html: { class: 'comment_box block' }
   .form-actions
     %br
     = f.button :submit

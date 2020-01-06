@@ -1,6 +1,7 @@
 class QueriesController < ApplicationController
   before_action :set_query, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
+  skip_before_filter :verify_authenticity_token, :only => [:save_query]
   # GET /queries
   # GET /queries.json
   def index
@@ -13,24 +14,28 @@ class QueriesController < ApplicationController
 
     if result == 'nil collection'
       respond_to do |format|
-        format.js { flash.now[:notice] = "Please Select or Create a Collection" }
-        format.json { flash.now[:notice] = "Please Select or Create a Collection" }
+        format.html { redirect_to :back, notice: "Please Create a Collection" }
+        format.js { flash.now[:notice] = "Please Create a Collection" }
+        format.json { flash.now[:notice] = "Please Create a Collection" }
       end
     elsif result == 'first submit'
       respond_to do |format|
+        format.html { redirect_to :back, notice: "Successfully Added to Collection" }
         format.js { flash.now[:notice] = "Successfully Added to Collection" }
         format.json { flash.now[:notice] = "Successfully Added to Collection" }
       end
     elsif result == 'second submit'
       #the click happens twice and idk how to stop that, so its just repeated
       respond_to do |format|
+        format.html { redirect_to :back, notice: "Successfully Added to Collection" }
         format.js { flash.now[:notice] = "Successfully Added to Collection" }
         format.json { flash.now[:notice] = "Successfully Added to Collection" }
       end
     else
       respond_to do |format|
-        format.js { flash.now[:notice] = "Failed to add to Collection" }
-        format.json { flash.now[:notice] = "Failed to add to Collection" }
+        format.html { redirect_to :back, notice: "Failed to add to Collection, Contact Administrator" }
+        format.js { flash.now[:notice] = "Failed to add to Collection, Contact Administrator" }
+        format.json { flash.now[:notice] = "Failed to add to Collection, Contact Administrator" }
       end
     end
 

@@ -1,8 +1,8 @@
 %div{:class => "centre"}
+  %div{:class => "gap1"}
+  %h1 My Profile
+  %div{:class => "gap1"}
+  %h2= @user&.name
+  %h2= @user.email
 
-  %div{:class => "user_grid"}
-    %h1{:class => "email"}= @user.email
-
-    =link_to 'edit email or password', edit_user_registration_path, :class => "btn btn-default email"
-
-    //TODO: links to saved stuff will be here
+  =link_to 'edit email or password', edit_user_registration_path, :class => "btn btn-info special_text"

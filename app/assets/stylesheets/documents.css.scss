@@ -2,38 +2,22 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-
+//_form
 .documents_form {
   padding-bottom: 0px;
   display: block;
   width: auto;
 }
+//index
 .documents_grid {
   display: grid;
-  grid-template-columns: 2fr 3fr 1.1fr 1fr 3fr 2.1fr 4fr;
+  grid-template-columns: 2.3fr 3fr 1.3fr 1.3fr 3fr 3fr 3fr
 }
 .documents_users_grid {
   display: grid;
   grid-template-columns:1fr 2fr 1fr 1fr 2fr;
 }
-//show
-.document_grid {
-  display: grid;
-  grid-template-columns:100px 3fr 1fr;
-}
-.user_grid {
-  //border: 2px blue solid;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-}
-.results_grid {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-}
-.result{
-  grid-column-start: 1;
-}
-//having just these two seems to force it to do what i want - giving grid start of other columns messes it up
+//only define first two grid-column-start because it breaks otherwise
 .country{
   grid-column-start: 1;
 }
@@ -44,12 +28,62 @@
   background: #fff6b3;
 }
 
+
 //show
+.document_header_grid {
+  display: grid;
+  grid-template-columns: 20px 100px 3fr 1fr;
+}
+.user_grid {
+  //border: 2px blue solid;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+.table_of_contents_grid {
+  display: grid;
+  grid-template-columns: 20px 20px 20px 20px 50px 1fr;
+}
+.result{
+  grid-column-start: 1;
+}
+.gap1 {
+  height: 10px;
+}
+.gap2 {
+  height: 20px;
+}
 .section_info {
   padding-right: 10px;
 }
+.label {
+  grid-column-start: 2;
+}
 .info{
-  align-self: center;
+  grid-column-start: 3;
+  padding-top: 0.3rem;
+}
+.action {
+  grid-area: 1 / 4 / span 5 / auto;
+  width: 219px;
+}
+.level1 {
+  grid-column-start: 2;
+}
+.level2 {
+  grid-column-start: 3;
+}
+.level3 {
+  grid-column-start: 4;
+}
+.name {
+  grid-column-start: 6;
+}
+.collapsed > .when-opened,
+:not(.collapsed) > .when-closed {
+  display: none;
+}
+.special_text {
+  color: #000000d4 !important;
 }
 
 //edit_section_separation
@@ -68,13 +102,21 @@
   margin-bottom: 15px;
 
 }
-//show and search_results
-.right_button {
-  position: relative;
-  float: right;
-  margin-bottom: 5px;
-  display: block;
-  justify-self: right;
+
+
+
+//_section_display
+.results_grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+.results_actions {
+  grid-area: 1 / 2 / span 3 / auto;
+}
+.language_span {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  margin-top: 3px;
 }
 .right_box {
   justify-self: right;
@@ -82,29 +124,18 @@
   float: right;
   display: block;
 }
-.section_information {
-  height: 110px;
-  margin-top: 30px;
-}
 .save_form {
   padding-left: 10px;
-}
-.section_content {
-  padding-right: 35px;
-  margin-top: 30px;
-}
-.button_spacing {
-  margin-bottom: 15px;
-}
-.language_span {
-  grid-column-start: 1;
-  grid-column-end: 3;
 }
 .language_box {
   display: inline-block;
   padding: 5px;
   border-radius: 7px;
-  margin: 5px;
+  margin-left: 0px;
+  margin-right: 7px;
+  margin-bottom: 3px;
+  margin-top: 3px;
+  background-color: #A9F5BC;
 }
 .strength_0 {
   background-color: #449d44;
@@ -117,9 +148,4 @@
 }
 .strength_3 {
   background-color: #d3eeff;
-}
-
-//SEARCH
-#keyword_ {
-  float: right;
 }

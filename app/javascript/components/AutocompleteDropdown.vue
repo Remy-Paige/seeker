@@ -1,9 +1,10 @@
-<!--https://www.designhammer.com/blog/reusable-vuejs-components-part-3-autocomplete-dropdown-->
+<!--https://www.designhammer.com/blog/reusable-vuejs-components-part-3-autocomplete-auto_dropdown-->
 
 <template>
-    <div class="dropdown" :class="{'open' : open}">
+    <div class="auto_dropdown" :class="{'open' : open, 'width_100' : 'width_100'}">
         <input type="text"
                ref="search"
+               class="width_100_plus_toggle"
                :placeholder="placeholder"
                v-model="searchText"
                @input="searchChanged"
@@ -31,7 +32,6 @@
 </template>
 
 <script>
-    import EventBus from '../packs/event-bus.js';
     export default {
         props: {
             index: {
@@ -160,23 +160,25 @@
 
 <style scoped>
 
-  /*<!--fix to be variable-->*/
   input {
-      width: 150px;
+      padding-left: 5px;
+      border: black 1px solid;
+      border-radius: 3px;
   }
-  .dropdown {
+  .auto_dropdown {
       display: inline-block;
       position: relative;
   }
 
   .suggestion-list {
+      /*same as width with toggle*/
+      width: 75%;
       background-color: rgba(255, 255, 255, 0.95);
       border: 1px solid #ddd;
       list-style: none;
       display: block;
       margin: 0;
       padding: 0;
-      width: 100%;
       overflow: hidden;
       position: absolute;
       top: 32px;
@@ -192,11 +194,11 @@
       background-color: transparent;
       text-decoration: none;
   }
-  .dropdown.open .suggestion-list {
+  .auto_dropdown.open .suggestion-list {
       display: block;
   }
 
-  .dropdown .suggestion-list {
+  .auto_dropdown .suggestion-list {
       display: none;
   }
   .toggle .arrow-up {

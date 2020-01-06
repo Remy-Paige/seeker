@@ -1,4 +1,5 @@
 %div{:class => "centre"}
-    %h1 New document
+  %div{:class => "gap1"}
+  %h1 New document
 
-    = render 'form'
+  = render 'form', locals: {new_edit: 'new' }

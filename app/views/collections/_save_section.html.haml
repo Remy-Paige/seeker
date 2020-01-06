@@ -1,10 +1,20 @@
-%div
-  = form_tag(save_section_path, method: :post, :remote => true) do
-    = hidden_field_tag :document_id, locals[:document_id]
-    = hidden_field_tag :section_uid, locals[:section_uid]
+%div{:class => 'save_section', :id => 'save_section_element_' + locals[:section_id].to_s}
+  %b-button{'v-b-toggle.collapse-' + locals[:section_id].to_s => true, :variant=>"outline-dark", :class=>"table_contents_header", :style =>'box-shadow: 0 0 0 0;'}
+    Add Section to Collection
+    %span.when-opened
+      %i.fas.fa-chevron-down
+    %span.when-closed
+      %i.fas.fa-chevron-right
+
+  %b-collapse{:id=>"collapse-" + locals[:section_id].to_s, :class=>"collection_box"}
     - if @collections.length == 0
-      = select_tag :collection, content_tag(:option,'no collections',:value=>"")+options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
-      = link_to 'Create Collection', new_collection_path, :class => "btn btn-default right_button"
+      %div{:class => ''}
+        = link_to 'Create Collection', new_collection_path, :class => "btn"
     - else
-      = select_tag :collection, options_from_collection_for_select(@collections, 'name', 'name'), class: "form-control"
-      = submit_tag(value = 'Add Section to Collection', class: "btn btn-default right_button")
+      - @collections.each do |collection|
+        %div{:class => ''}
+          = form_tag(save_section_path, method: :post, :remote => true, :format=>:js) do
+            = hidden_field_tag :document_id, locals[:document_id]
+            = hidden_field_tag :section_uid, locals[:section_uid]
+            = hidden_field_tag :collection, collection.name
+            = submit_tag(value = collection.name, class: "btn btn-outline-dark collection_btn", :style => 'border-radius: 0px;')

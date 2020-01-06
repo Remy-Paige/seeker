@@ -1,0 +1,39 @@
+<%= content_tag :div,
+                id: "search-form",
+                class: "main_grid_centre",
+                data: {
+                    languages: locals[:languages].to_json,
+                    countries: locals[:countries].to_json,
+                    report_types: locals[:report_types].to_json,
+                    query: locals[:query]
+                } do %>
+  <h1 class="main-heading">Query Builder</h1>
+  <!--main form-->
+  <div v-for="(option, index) in query.options">
+    <query-line
+      v-on:updateroot="updateRoot"
+      :index="index.toString()"
+      :option="option"
+      :languages="languages"
+      :countries="countries"
+      :report_types="report_types"
+    ></query-line>
+  </div>
+
+  <!--add filter line-->
+  <div class="query_line">
+    <div>
+      <div class="send_to_bottom_hack_label"></div>
+      <span class="add_filter_label" v-on:click="addQueryLine"><b>+</b> Add Filter</span>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-search btn-lg" v-on:click="submitToSearch" >Search</button>
+<% end %>
+
+<script>
+    import QueryLine from "../../javascript/components/QueryLine";
+    export default {
+        components: {QueryLine}
+    }
+</script>

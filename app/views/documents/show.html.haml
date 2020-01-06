@@ -1,39 +1,81 @@
 %div{:class => "centre"}
-  %h1 Document information
-  -# slight extra divs hacky hack to deal with the grid
-  %div{:class => "document_grid"}
-    %div
-      %h4 URL:
-    %div= link_to @document.url.to_s, @document.url, target: :_blank
-    %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning", :style => "color: #000000d4"
-    %div
-      %h4 country:
+  %div{:class => "gap1"}
+  %h1 Document Information
+
+  %div{:class => "document_header_grid"}
+    %div{:class => "label"}
+      %h4 URL
+    %div{:class => "info"}= link_to @document.url.to_s, @document.url, target: :_blank
+
+    %div{:class => "label"}
+      %h4 Country
     %div{:class => "info"}= @document.country
-    %div= link_to 'Delete Document', @document, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-danger", :style => "color: #000000d4"
-    %div
-      %h4 type:
+
+    %div{:class => "label"}
+      %h4 Type
     %div{:class => "info"}= Document::DOCUMENT_TYPES[@document.document_type]
-    %div
-    %div
-      %h4 cycle:
+
+    %div{:class => "label"}
+      %h4 Cycle
     %div{:class => "info"}= @document.cycle
-    %div
-    %div
-      %h4 year:
+
+    %div{:class => "label"}
+      %h4 Year
     %div{:class => "info"}= @document.year
 
-  %h1 Sectioning
-  - if current_user.admin?
-    = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info"
-  %div{:class => "results_grid"}
-    - full_section = nil
-    - @sections.each do |section|
-      -if section.section_name != 'Full Content'
-        = render 'shared/section_display', locals: {display_type: 'documents#show', section: section }
-      - else
-        - full_section = section
+    %div{:class => "action"}
+      - if current_user&.admin?
+        %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning width_block special_text"
+        %div= link_to 'Delete Document', @document, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-danger width_block special_text"
+        = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info width_block special_text"
 
-    = render 'shared/section_display', locals: {display_type: 'documents#show.full_content', section: full_section }
+  %div{:class => "gap2"}
 
-%div{:id => 'sticky', :class => "btn btn-primary"}
-  Jump to Top
+  %div{:class => 'table_of_contents', :id => 'table_contents_element'}
+    %b-button{'v-b-toggle.collapse-1' => true, :variant=>"outline-dark", :class=>"table_contents_header", :style => "color: #212529; font-size: 1.9em; border: 0px; padding-left: 1px; box-shadow: 0 0 0 0"}
+      Table of Contents
+      %span.when-opened
+        %i.fas.fa-chevron-down
+      %span.when-closed
+        %i.fas.fa-chevron-right
+
+    %b-collapse{:id=>"collapse-1", :class=>"mt-2"}
+      %div{:class => "table_of_contents_grid"}
+        -re = /^[0-9]/
+        -re1 = /^[0-9](\.$|$|\s$|\.\s$)/
+        -re2 = /^[0-9]\.[0-9](\.$|$|\s$|\.\s$)/
+        -re3 = /^[0-9]\.[0-9]\.[0-9](\.$|$|\s$|\.\s$)/
+        -prev_na = nil
+        -@sections.each do |section|
+          - if prev_na != section.section_name
+            - if section.section_number =~ re1
+              %a{:class => 'level1', :href=>"#" + section.section_uid}
+                = section.section_number
+              %div{:class => "name"}
+                %a{:class => 'level1', :href=>"#" + section.section_uid}
+                  = section.section_name
+            - elsif section.section_number =~ re2
+              %a{:class => 'level2', :href=>"#" + section.section_uid}
+                = section.section_number
+              %div{:class => "name"}
+                %a{:class => 'level2', :href=>"#" + section.section_uid}
+                  = section.section_name
+            - elsif section.section_number =~ re3
+              %a{:class => 'level3', :href=>"#" + section.section_uid}
+                = section.section_number
+              %div{:class => "name"}
+                %a{:class => 'level3', :href=>"#" + section.section_uid}
+                  = section.section_name
+          - prev_na = section.section_name
+
+  %div{:class => "gap2"}
+  - full_section = nil
+  - @sections.each do |section|
+    -if section.section_name != 'Full Content'
+      = render 'shared/section_display', locals: {display_type: 'documents#show', section: section }
+    - else
+      - full_section = section
+  = render 'shared/section_display', locals: {display_type: 'documents#show.full_content', section: full_section }
+
+%b-button{:id => 'sticky', :class => "btn btn-info"}
+  %a{:href => '#', :style => 'color: white;'}Jump to Top

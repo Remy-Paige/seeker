@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="dropdown" :class="{'open' : open, 'width_100' : 'width_100'}" >
+        <div class="auto_dropdown" :class="{'open' : open, 'width_100' : 'width_100'}" >
             <input type="text"
                    class="width_100_plus_toggle"
                    ref="search"
@@ -28,12 +28,15 @@
                 </li>
             </ul>
         </div>
-        <span v-for="(item, index) in selectedElements" >
-            <div class="pill">
-                {{item}}
-                <span v-on:click="removeElement(item)"><i class="fas fa-times-circle"></i></span>
-            </div>
-        </span>
+        <div></div>
+        <div class="width_100_plus_toggle">
+            <span v-for="(item, index) in selectedElements" >
+                <div class="pill">
+                    {{item}}
+                    <span v-on:click="removeElement(item)"><i class="fas fa-times-circle"></i></span>
+                </div>
+            </span>
+        </div>
     </div>
 </template>
 
@@ -76,8 +79,8 @@
         //  drop down is opened, focus on text input
         //1.5) click away at any time
         //  goes back to previously selected element (inc nothing)
-        //2) select an element from the dropdown - click on suggestion or press enter in text box
-        //  suggestion selected function - close dropdown, set text as suggestion, emit input event
+        //2) select an element from the auto_dropdown - click on suggestion or press enter in text box
+        //  suggestion selected function - close auto_dropdown, set text as suggestion, emit input event
         //3) input event and value prop watcher
         //  search changed and update component with value
 
@@ -89,7 +92,7 @@
                 this.element = ''
                 this.$emit('updateQueryLine', [this.emitType, this.index, this.selectedElements])
             },
-            //clear text,open the dropdown, focus on text input
+            //clear text,open the auto_dropdown, focus on text input
             //or set text element as last element if click away
             setOpen (isOpen) {
                 this.open = isOpen
@@ -108,7 +111,7 @@
                     this.open = true
                 }
             },
-            //when click or press enter on a dropdown
+            //when click or press enter on a auto_dropdown
             //suggestion comes from matches comes from elements
             //both [0] and [1] are the same right now
             //emit - input triggers searchChanged (event watcher is in template)
@@ -117,7 +120,7 @@
                 this.open = false
                 this.selectedElements.push(suggestion[0])
                 delete this.elements[suggestion[0]]
-                //hack to get the computed matches to change to update the dropdown
+                //hack to get the computed matches to change to update the auto_dropdown
                 this.element = 'a'
                 this.element = ''
                 this.$emit('updateQueryLine', [this.emitType, this.index, this.selectedElements])
@@ -197,14 +200,19 @@
 
 <style scoped>
 
-    /*<!--fix to be variable-->*/
+    input {
+        padding-left: 5px;
+        border: black 1px solid;
+        border-radius: 3px;
+    }
     .width_100 {
         width: 100%;
     }
-    .width_100_plus_toggle {
-        width: 95%;
+    .width_10 {
+        width: 5px;
+        display: inline-block;
     }
-    .dropdown {
+    .auto_dropdown {
         display: inline-block;
         position: relative;
     }
@@ -220,21 +228,25 @@
         border-radius: 10px;
         background-color: lightslategray;
         color: white;
-        margin: 5px;
+        font-size: 13px;
+        margin-left: 10px;
+        margin-top: 5px;
         margin-bottom: 0px;
         padding-left: 5px;
         padding-right: 5px;
         padding-top: 1px;
+        padding-bottom: 1px;
     }
 
     .suggestion-list {
+        /*same as width with toggle*/
+        width: 75%;
         background-color: rgba(255, 255, 255, 0.95);
         border: 1px solid #ddd;
         list-style: none;
         display: block;
         margin: 0;
         padding: 0;
-        width: 100%;
         overflow: hidden;
         position: absolute;
         top: 32px;
@@ -250,11 +262,11 @@
         background-color: transparent;
         text-decoration: none;
     }
-    .dropdown.open .suggestion-list {
+    .auto_dropdown.open .suggestion-list {
         display: block;
     }
 
-    .dropdown .suggestion-list {
+    .auto_dropdown .suggestion-list {
         display: none;
     }
     .toggle .arrow-up {

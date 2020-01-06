@@ -92,9 +92,10 @@ class Collection < ActiveRecord::Base
         article_paragraph = sections.first.article_paragraph
         page_number = sections.first.page_number
         language_sections = sections.first.language_sections
+        id = sections.first.id
         # reconstruct content
         content = sections.sort_by(&:section_part).map(&:content).join
-        sec = Section.new(section_uid: section_uid, document_id: document_id, chapter: chapter, section_number: section_number, section_name: section_name,article_paragraph: article_paragraph ,content: content, page_number: page_number)
+        sec = Section.new(id: id, section_uid: section_uid, document_id: document_id, chapter: chapter, section_number: section_number, section_name: section_name,article_paragraph: article_paragraph ,content: content, page_number: page_number)
         # reconstruct language relations
         if relation.section_uid == section_uid
           language_sections&.each do |relation2|

@@ -53,11 +53,13 @@
 </script>
 
 <style scoped>
+    input {
+        padding-left: 5px;
+        border: black 1px solid;
+        border-radius: 3px;
+    }
     p {
         font-size: 2em;
         text-align: center;
-    }
-    .width_100_plus_toggle {
-        width: 95%;
     }
 </style>

@@ -1,6 +1,13 @@
 %div{:class => "centre"}
-  = link_to 'New Document', new_document_path, {:class => "btn btn-info"} if current_user&.admin?
-  -#users do not see unparsed documents or actions, and may not be signed in
+  %div{:class => "gap1"}
+  %h1 All Documents
+  %div{:class => "document_header_grid"}
+    -# filter box options
+    %div{:class => "action"}
+      = link_to 'New Document', new_document_path, {:class => "btn btn-info width_block special_text", :id => ''} if current_user&.admin?
+  %div{:class => "gap1"}
+
+  -#users do not see unparsed documents or actions, and may not be signed in (& saftey)
   %div{:class => current_user&.admin? ? "documents_grid" : "documents_users_grid"}
     %div{:class => "country"}
       %h4 Country
@@ -17,6 +24,7 @@
         %h4 Parse Status
       %div
         %h4 Actions
+    -# alternate the colours of country rows for clarity
     - alternating = true
     - @grouped_documents.each do |country, documents|
       - country_row = true
@@ -31,7 +39,7 @@
           %div{:class => alternating ? 'alternating' : ''}= document.cycle
           %div{:class => alternating ? 'alternating' : ''}= document.year
           %div{:class => alternating ? 'alternating' : ''}
-            = link_to 'Original document', document.url, target: '_blank'
+            = link_to 'Original Document', document.url, target: '_blank'
             %br
             - if document.status == 2
               = link_to 'View Sectioning', document_path(document)
@@ -60,6 +68,8 @@
             %div{:class => alternating ? 'alternating' : ''}= document.year
             %div{:class => alternating ? 'alternating' : ''}
               = link_to 'Original Document', document.url, target: '_blank'
+              %br
               = link_to 'View Sectioning', document_path(document)
       - alternating ? alternating = false : alternating = true
+
 

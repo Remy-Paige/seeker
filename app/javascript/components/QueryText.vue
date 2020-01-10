@@ -15,10 +15,6 @@
                 required: true
             },
             value: null,
-            field: {
-                type: String,
-                required: true
-            },
             emitType: {
                 type: String,
                 required: true
@@ -33,16 +29,34 @@
                 searchText: ''
             }
         },
+        mounted () {
+            var keywords = this.$store.getters.getKeywordsByIndex(this.index)
+            var makeString = ''
+            console.log(keywords)
+            for (var word in keywords) {
+
+                makeString = makeString + keywords[word]
+            }
+            this.searchText = makeString
+        },
+        computed: {
+            field: {
+                get () {
+                    return this.$store.getters.getFieldByIndex(this.index)
+                }
+            }
+        },
         watch: {
             searchText: function () {
-                if(this.field == 'Article' || this.field == 'Section Number') {
-                    if(this.searchText.indexOf(',') > -1) {
-                        var keywords = this.searchText.split(',')
-                        keywords.map(str => str.replace(/\s/g, ''))
-                        this.$emit('updateQueryLine', [this.emitType, this.index, keywords])
-                    }
+                if(this.field === 'Article' || this.field === 'Section Number') {
+                    var input = this.searchText
+                    input = input.replace(/[^a-zA-Z0-9\s\.]/g,' ');
+                    input = input.trim()
+                    var keywords = input.split(/\s+/);
+                    this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: keywords})
+
                 } else {
-                    this.$emit('updateQueryLine', [this.emitType, this.index, this.searchText])
+                    this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: this.searchText})
                 }
             },
             // searchText: function (newValue) { if we want them to be able to type the whole thing

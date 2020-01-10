@@ -52,10 +52,6 @@
                 type: String,
                 required: true
             },
-            filter: {
-                type: String,
-                required: true
-            },
             elements: {
                 type: Object,
                 required: true
@@ -90,7 +86,16 @@
                 this.$set(this.elements, item, item)
                 this.element = 'a'
                 this.element = ''
-                this.$emit('updateQueryLine', [this.emitType, this.index, this.selectedElements])
+                this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: this.selectedElements})
+
+            },
+            addElement(item) {
+                this.selectedElements.push(item[0])
+                delete this.elements[item[0]]
+                //hack to get the computed matches to change to update the auto_dropdown
+                this.element = 'a'
+                this.element = ''
+                this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: this.selectedElements})
             },
             //clear text,open the auto_dropdown, focus on text input
             //or set text element as last element if click away
@@ -118,14 +123,9 @@
             //change in value prop via element triggers updatecomponent with value
             suggestionSelected (suggestion) {
                 this.open = false
-                this.selectedElements.push(suggestion[0])
-                delete this.elements[suggestion[0]]
-                //hack to get the computed matches to change to update the auto_dropdown
-                this.element = 'a'
-                this.element = ''
-                this.$emit('updateQueryLine', [this.emitType, this.index, this.selectedElements])
-                this.$emit('input', suggestion[1])
+                this.addElement(suggestion)
             },
+
             //update our component’s state when a new value is provided
             //triggered on mount and when value prop is changed via element
             //We need to handle updating our component’s state when a new value is provided.
@@ -163,16 +163,20 @@
                     this.setOpen(true)
                 }
             },
-            searchChanged () {
-                if (!this.open) {
-                    this.open = true
-                }
-
-                this.highlightIndex = 0
-            }
+            // searchChanged () {
+            //     if (!this.open) {
+            //         this.open = true
+            //     }
+            //
+            //     this.highlightIndex = 0
+            // }
         },
         mounted () {
             this.updateComponentWithValue(this.value)
+            var keywords = this.$store.getters.getKeywordsByIndex(this.index)
+            for (const element of keywords) {
+                this.addElement([element,element])
+            }
         },
         watch: {
             value: function (newValue) {

@@ -19,7 +19,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from '../components/app.vue'
-import AutocompleteDropdown from '../components/AutocompleteDropdown.vue'
+import AutocompleteDropdown from '../components/AutocompleteDropdownFilter.vue'
 import QueryLine from '../components/QueryLine.vue'
 
 Vue.use(Vuelidate);
@@ -27,6 +27,7 @@ Vue.use(Vuex);
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
 
+import { mapState } from 'vuex';
 console.log("hello from load");
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -145,16 +146,94 @@ document.addEventListener('DOMContentLoaded', () => {
         var countries = JSON.parse(search_element.dataset.countries);
         var report_types = JSON.parse(search_element.dataset.reportTypes);
 
-        console.log(query);
-
         const store = new Vuex.Store({
             state: {
-                query: null
+                message: 'Hello Vuex',
+                fieldOptions: {
+                    'Country':'Country',
+                    'Language':'Language',
+                    'Section Text':'Section Text',
+                    'Article':'Article',
+                    'Section Number':'Section Number',
+                    'Report Type':'Report Type',
+                    'Year':'Year',
+                    'Cycle':'Cycle'
+                },
+                query: {
+                    id: null,
+                    options: [{
+                        label_select: 'label',
+                        field: 'Article',
+                        filter: 'includes',
+                        keywords: []
+                    },{
+                        label_select: 'label',
+                        field: 'Language',
+                        filter: 'includes',
+                        keywords: []
+                    }, {
+                        label_select: 'label',
+                        field: 'Country',
+                        filter: 'includes',
+                        keywords: []
+                    }]
+                }
+            },
+            mutations: {
+                updateMessage (state, message) {
+                    state.message = message
+                },
+                updateQuery (state, {query}) {
+                    state.query = query
+                },
+                removeLineFromQuery (state, {index}) {
+                    state.query.options.splice(index, 1)
+                },
+                updateFieldByIndex (state, {index, value}) {
+                    state.query.options[index].field = value
+                    state.query.options[index].keywords = []
+                },
+                updateFilterByIndex (state, {index, value}) {
+                    state.query.options[index].filter = value
+                },
+                updateKeywordsByIndex (state, {index, value}) {
+                    state.query.options[index].keywords = value
+                },
+                removeOptionFromFieldOptions (state, {field}) {
+                    delete state.fieldOptions[field]
+                },
+                addOptionToFieldOptions (state, {field}) {
+                    state.fieldOptions[field] = field
+                },
+            },
+            getters: {
+                getQuery: state => {
+                    return state.query
+                },
+                getFieldOptions: state => {
+                    return state.fieldOptions
+                },
+                getOptionsByIndex: (state) => (index) => {
+                    return state.query.options[index]
+                },
+                getLabelSelectByIndex: (state) => (index) => {
+                    return state.query.options[index].label_select
+                },
+                getFieldByIndex: (state) => (index) => {
+                    return state.query.options[index].field
+                },
+                getFilterByIndex: (state) => (index) => {
+                    return state.query.options[index].filter
+                },
+                getKeywordsByIndex: (state) => (index) => {
+                    return state.query.options[index].keywords
+                }
             }
         });
 
         const app = new Vue({
             el: search_element,
+            store,
             data: function () {
                 return {
                     query: query,
@@ -164,17 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             methods: {
-                updateRoot: function (emit_payload) {
-                    var index = emit_payload[0]
-                    var new_option = emit_payload[1]
-                    this.query.options[index] = new_option
-                },
                 submitToSearch() {
                     var query_string = JSON.stringify(this.query);
                     window.location='/submit_search?query='+query_string;
-                },
-                saveQuery() {
-
                 },
                 addQueryLine(){
                     this.query.options.push({
@@ -183,7 +254,35 @@ document.addEventListener('DOMContentLoaded', () => {
                             "filter": '',
                             "keywords": []
                     })
+                    this.$store.commit('updateQuery', {query: this.query})
                 }
+            },
+            created(){
+                this.$store.commit('updateQuery', {query: this.query})
+            },
+            mounted() {
+                for (var option in this.query.options) {
+                    console.log(this.query.options[option].field)
+                    this.$store.commit('removeOptionFromFieldOptions', {field: this.query.options[option].field})
+                }
+
+            },
+            computed: {
+                options: {
+                    get() {
+                        return this.$store.getters.getFieldOptions
+                    }
+                },
+                storeQuery: {
+                    get() {
+                        return this.$store.getters.getQuery
+                    }
+                }
+            },
+            watch: {
+                storeQuery: function (newValue) {
+                    this.query = newValue
+                },
             },
             components: {
                 'query-line' : QueryLine

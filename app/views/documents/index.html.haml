@@ -50,7 +50,7 @@
           - else
             %div{:class => alternating ? 'alternating' : ''}In Progress
           %div{:class => alternating ? 'alternating' : ''}
-            = link_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
+            = button_to 'Delete Document', document, :method => :delete, :data => { :confirm => 'Are you sure?' }
             %br
             = link_to 'Edit Metadata', edit_document_path(document)
             %br

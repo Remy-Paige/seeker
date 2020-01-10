@@ -39,16 +39,8 @@
                 required: true
             },
             value: null,
-            field: {
-                type: String,
-                required: true
-            },
             emitType: {
                 type: String,
-                required: true
-            },
-            options: {
-                type: Object,
                 required: true
             },
             placeholder: {
@@ -66,6 +58,9 @@
             }
         },
         methods: {
+            updateMessage (e) {
+                this.$store.commit('updateMessage', e.target.value)
+            },
             setOpen (isOpen) {
                 this.open = isOpen
 
@@ -81,14 +76,21 @@
                 if (!this.open) {
                     this.open = true
                 }
+                //TODO: add 'type only input' events here
             },
             suggestionSelected (suggestion) {
                 this.open = false
                 this.searchText = suggestion[0]
-                this.$emit('updateQueryLine', [this.emitType, this.index, this.searchText])
-                this.$emit('input', suggestion[1])
+                console.log(this.emitType)
+
+                this.$store.commit('updateFieldByIndex', {index: parseInt(this.index, 10), value: this.searchText})
+                this.$store.commit('removeOptionFromFieldOptions', {field: this.searchText})
+                this.$store.commit('addOptionToFieldOptions', {field: this.lastSearchText})
+                this.$store.commit('updateFilterByIndex', {index: parseInt(this.index, 10), value: ''})
+                this.searchText = suggestion[0]
             },
             updateComponentWithValue(newValue) {
+                //I honestly always forget what this does
                 if (Object.values(this.options).indexOf(newValue) > -1) {
                     // Find the matching text for the supplied option value
                     for (var text in this.options) {
@@ -118,21 +120,18 @@
                     this.setOpen(true)
                 }
             },
-            searchChanged () {
-                if (!this.open) {
-                    this.open = true
-                }
-
-                this.highlightIndex = 0
-            }
+            // searchChanged () {
+            //     if (!this.open) {
+            //         this.open = true
+            //     }
+            //
+            //     this.highlightIndex = 0
+            // }
         },
         mounted () {
-            //theres a better way to load i nthese default values but the prop wasnt working so whatever
-            if (this.index <3) {
-                this.updateComponentWithValue('includes')
-            } else {
-                this.updateComponentWithValue(this.value)
-            }
+            var field = this.$store.getters.getFieldByIndex(this.index)
+            this.updateComponentWithValue(field)
+
         },
         watch: {
             value: function (newValue) {
@@ -142,12 +141,15 @@
                 this.value = ''
                 this.searchText = ''
                 this.updateComponentWithValue('')
-            }
-            // searchText: function (newValue) { if we want them to be able to type the whole thing
-            //     this.$emit('does this work')
-            // }
+            },
+
         },
         computed: {
+            options: {
+                get () {
+                    return this.$store.getters.getFieldOptions
+                }
+            },
             matches () {
                 return Object.entries(this.options).filter((option) => {
                     var optionText = option[0].toUpperCase()

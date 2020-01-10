@@ -5,47 +5,47 @@
     <div>
         <div class="query_line">
             <div class="label_select">
-                <div v-if="option.label_select == 'label'" class="send_to_bottom_hack_label"></div>
+                <div v-if="labelSelect == 'label'" class="send_to_bottom_hack_label"></div>
                 <div v-else class="send_to_bottom_hack"></div>
-                <span class="query_label" v-if="option.label_select == 'label'">{{option.field}}</span>
-                <autocomplete-dropdown
+                <span class="query_label" v-if="labelSelect === 'label'">{{selectedField}}</span>
+                <autocomplete-dropdown-field
                         v-else
                         v-on:updateQueryLine="updateMe"
                         :index="this.index"
                         emitType="field"
-                        :options="fieldOptions"
-                        v-model="selectedfield"
+                        v-model="selectedField"
                         placeholder="Select a field"
-                ></autocomplete-dropdown>
+                ></autocomplete-dropdown-field>
             </div>
             <div class="filter_options">
                 <div class="send_to_bottom_hack"></div>
-                <autocomplete-dropdown
-                        v-if="selectedfield == 'Year' || selectedfield == 'Cycle'"
+                <autocomplete-dropdown-filter
+                        v-if="selectedField === 'Year' || selectedField === 'Cycle'"
                         v-on:updateQueryLine="updateMe"
                         :index="this.index"
-                        :field="this.option.field"
+                        :field="selectedField"
                         value="all"
                         emitType="filter"
                         :options="filterOptions.numeric"
                         v-model="selectedFilter"
                         placeholder="Enter a filter type"
-                ></autocomplete-dropdown>
-                <autocomplete-dropdown
+                ></autocomplete-dropdown-filter>
+                <autocomplete-dropdown-filter
                         v-else
                         v-on:updateQueryLine="updateMe"
                         :index="this.index"
-                        :field="this.option.field"
+                        :field="selectedField"
                         value="includes"
                         emitType="filter"
                         :options="filterOptions.inex"
                         v-model="selectedFilter"
                         placeholder="Enter a filter type"
-                ></autocomplete-dropdown>
+                ></autocomplete-dropdown-filter>
             </div>
             <div class="input">
-                <div v-if="this.option.field == 'Country'">
-                    <p class="help-text" v-if="this.option.filter == 'includes'">Select countries to include in search results</p>
+                <div v-if="selectedField == 'Country'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Select countries to include in search results</p>
                     <p class="help-text" v-else>Select countries to exclude from search results</p>
                     <pill-selector
                             class="width_100"
@@ -56,8 +56,9 @@
                             placeholder="Select"
                     ></pill-selector>
                 </div>
-                <div v-else-if="this.option.field == 'Language'">
-                    <p class="help-text" v-if="this.option.filter == 'includes'">Select languages to include in search results</p>
+                <div v-else-if="selectedField == 'Language'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Select languages to include in search results</p>
                     <p class="help-text" v-else>Select languages to exclude from search results</p>
                     <pill-selector
                             class="width_100"
@@ -68,8 +69,9 @@
                             placeholder="Select"
                     ></pill-selector>
                 </div>
-                <div v-else-if="this.option.field == 'Report Type'">
-                    <p class="help-text" v-if="this.option.filter == 'includes'">Select report types to include in search results</p>
+                <div v-else-if="selectedField == 'Report Type'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Select report types to include in search results</p>
                     <p class="help-text" v-else>Select report types to exclude from search results</p>
                     <pill-selector
                             class="width_100"
@@ -80,61 +82,66 @@
                             placeholder="Select"
                     ></pill-selector>
                 </div>
-                <div v-else-if="this.option.field == 'Section Text'">
-                    <p class="help-text" v-if="this.option.filter == 'includes'">Include sections that match a word or phrase in results</p>
+                <div v-else-if="selectedField == 'Section Text'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Include sections that match a word or phrase in results</p>
                     <p class="help-text" v-else>Exclude sections that match a word or phrase from results</p>
                     <query-text
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
-                            :field="this.option.field"
+                            :field="selectedField"
                             emitType="section_text"
                             placeholder="this has been satisfactorily fulfilled"
                     ></query-text>
                 </div>
-                <div v-else-if="this.option.field == 'Article'">
-                    <p class="help-text" v-if="this.option.filter == 'includes'">Separate articles to include with commas</p>
+                <div v-else-if="selectedField == 'Article'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Separate articles to include with spaces</p>
                     <p class="help-text" v-else>Separate articles to exclude with commas</p>
                     <query-text
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
-                            :field="this.option.field"
+                            :field="selectedField"
                             emitType="article"
                             placeholder="7.1, 9.11, 8.2.b"
                     ></query-text>
                 </div>
-                <div v-else-if="this.option.field == 'Section Number'">
-                    <p class="help-text" v-if="this.option.filter == 'includes'">Separate section or chapter numbers to include with commas</p>
+                <div v-else-if="selectedField == 'Section Number'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Separate section or chapter numbers to include with spaces</p>
                     <p class="help-text" v-else>Separate section or chapter numbers to exclude with commas</p>
                     <query-text
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
-                            :field="this.option.field"
+                            :field="selectedField"
                             emitType="section_number"
                             placeholder="1.5, 2.3"
                     ></query-text>
                 </div>
-                <div v-else-if="this.option.field == 'Year'">
-                    <p class="help-text" v-if="this.option.filter == 'only'">Include documents only from selected year</p>
-                    <p class="help-text" v-else-if="this.option.filter == 'less than'">Include documents released before selected year</p>
-                    <p class="help-text" v-else-if="this.option.filter == 'greater than'">Include documents released after selected year</p>
-                    <p class="help-text" v-else-if="this.option.filter == 'between'">Include documents released between selected years</p>
+                <div v-else-if="selectedField == 'Year'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'only'">Include documents only from selected year</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'less than'">Include documents released before selected year</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'greater than'">Include documents released after selected year</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'between'">Include documents released between selected years</p>
                     <numeric
                             class="width_100"
-                            :filter="this.option.filter"
+                            :filter="selectedFilter"
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
                             emitType="year"
                             placeholder="YYYY"
                     ></numeric>
                 </div>
-                <div v-else-if="this.option.field == 'Cycle'">
-                    <p class="help-text" v-if="this.option.filter == 'only'">Include documents only from selected cycle</p>
-                    <p class="help-text" v-else-if="this.option.filter == 'less than'">Include documents released before selected cycle</p>
-                    <p class="help-text" v-else-if="this.option.filter == 'greater than'">Include documents released after selected cycle</p>
-                    <p class="help-text" v-else-if="this.option.filter == 'between'">Include documents released between selected cycle</p>
+                <div v-else-if="selectedField == 'Cycle'">
+                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'only'">Include documents only from selected cycle</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'less than'">Include documents released before selected cycle</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'greater than'">Include documents released after selected cycle</p>
+                    <p class="help-text" v-else-if="selectedFilter == 'between'">Include documents released between selected cycle</p>
                     <numeric
                             class="width_100"
-                            :filter="this.option.filter"
+                            :filter="selectedFilter"
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
                             emitType="cycle"
@@ -143,26 +150,24 @@
                 </div>
                 <div v-else></div>
             </div>
-            <div class="gap"></div>
+            <div class="gap">
+                <div class="size" v-if="this.index > 2" v-on:click="removeQueryLine"> <span class="remove_filter_label" >Remove Filter</span></div>
+            </div>
         </div>
         <div class="break-and-align"></div>
     </div>
 </template>
 
 <script>
-    import AutocompleteDropdown from '../components/AutocompleteDropdown'
+    import AutocompleteDropdownField from './AutocompleteDropdownField'
+    import AutocompleteDropdownFilter from './AutocompleteDropdownFilter'
     import PillSelector from '../components/PillSelector.vue'
     import QueryText from '../components/QueryText.vue'
     import Numeric from '../components/Numeric.vue'
-    import EventBus from '../packs/event-bus.js';
     export default {
         props: {
             index: {
                 type: String,
-                required: true
-            },
-            option: {
-                type: Object,
                 required: true
             },
             languages: {
@@ -180,22 +185,6 @@
         },
         data: function () {
             return {
-                //v-model this, matches search text prop
-                selectedfield: this.option.field,
-                selectedFilter: '',
-                componentKey: 0,
-                input:'',
-                //dropdown options
-                fieldOptions: {
-                    'Country':'Country',
-                    'Language':'Language',
-                    'Section Text':'Section Text',
-                    'Article':'Article',
-                    'Section Number':'Section Number',
-                    'Report Type':'Report Type',
-                    'Year':'Year',
-                    'Cycle':'Cycle'
-                },
                 filterOptions: {
                     'inex': {
                         'includes':'includes',
@@ -212,35 +201,44 @@
             }
         },
         methods: {
-            updateMe: function (emit_payload) {
-            //    emit types:field filter country langauage report type section text article section number year cycle
-            //    options object :{
-            //         "label_select": 'select',
-            //         "field": 'Article',
-            //         "filter": 'includes',
-            //         "keywords": []
-            // }
-            //
-                var type = emit_payload[0]
-                var index = emit_payload[1]
-                var input = emit_payload[2]
+            updateMe() {
 
-                if(type === 'field'){
-                    this.option.field = input
-                    this.$emit('updateRoot', [index, this.option])
-
-                } else if (type === 'filter') {
-                    this.option.filter = input
-                    this.$emit('updateRoot', [index, this.option])
-                } else {
-                    console.log(input)
-                    this.option.keywords = input
-                    this.$emit('updateRoot', [index, this.option])
+            },
+            removeQueryLine(){
+                this.$store.commit('removeLineFromQuery', {index: this.index})
+            }
+        },
+        computed: {
+            selectedField: {
+                get () {
+                    return this.$store.getters.getFieldByIndex(this.index)
+                },
+                set (value) {
+                    this.$store.commit('updateFieldByIndex', {index: this.index, value: value})
+                }
+            },
+            selectedFilter: {
+                get () {
+                    return this.$store.getters.getFilterByIndex(this.index)
+                },
+                set (value) {
+                    this.$store.commit('updateFilterByIndex', {index: this.index, value: value})
+                }
+            },
+            labelSelect: {
+                get () {
+                    return this.$store.getters.getLabelSelectByIndex(this.index)
+                }
+            },
+            fieldOptions: {
+                get () {
+                    return this.$store.getters.getFieldOptions
                 }
             }
         },
         components: {
-            'autocomplete-dropdown': AutocompleteDropdown,
+            'autocomplete-dropdown-field': AutocompleteDropdownField,
+            'autocomplete-dropdown-filter': AutocompleteDropdownFilter,
             'pill-selector': PillSelector,
             'query-text': QueryText,
             'numeric': Numeric
@@ -280,7 +278,17 @@
     .break-and-align {
         height: 15px;
     }
-
+    .remove_filter_label {
+        font-size: 15px;
+        color: #6c6c6a;
+        cursor: default;
+    }
+    .size {
+        width: 103px;
+        position: relative;
+        right: 100px;
+        top: 19px;
+    }
     .query_select {
         width: 150px;
     }

@@ -38,10 +38,6 @@
                 type: String,
                 required: true
             },
-            filter: {
-                type: String,
-                required: true
-            },
             placeholder: {
                 type: String,
                 default: 'Enter an item name to search'
@@ -54,17 +50,32 @@
                 searchText2: ''
             }
         },
+        mounted () {
+            var filter = this.$store.getters.getFilterByIndex(this.index)
+            var keywords = this.$store.getters.getKeywordsByIndex(this.index)
+            this.searchText1 = keywords[0]
+            if (filter === 'between') {
+                this.searchText2 = keywords[1]
+            }
+        },
+        computed: {
+            filter: {
+                get () {
+                    return this.$store.getters.getFilterByIndex(this.index)
+                }
+            }
+        },
         watch: {
             searchText: function () {
-                if(this.filter == 'between'){
-                    this.$emit('updateQueryLine', [this.emitType, this.index, [this.searchText1, this.searchText2]])
+                if(this.filter === 'between'){
+                    this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: [this.searchText1, this.searchText2]})
                 } else {
-                    this.$emit('updateQueryLine', [this.emitType, this.index, this.searchText])
+                    this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: [this.searchText]})
                 }
 
             },
             filter: function() {
-                if(this.filter == 'between'){
+                if(this.filter === 'between'){
                     this.searchText1 = this.searchText;
                     this.searchText = '';
                 } else {
@@ -73,9 +84,6 @@
                     this.searchText2 = ''
                 }
             }
-            // searchText: function (newValue) { if we want them to be able to type the whole thing
-            //     this.$emit('does this work')
-            // }
         },
     }
 </script>
@@ -86,12 +94,9 @@
         border: black 1px solid;
         border-radius: 3px;
     }
-    .width_100_plus_toggle {
-        width: 90%;
-    }
 
     .half_width_100_plus_toggle {
-        width: 44.5%;
+        width: 35%;
     }
 
     p {

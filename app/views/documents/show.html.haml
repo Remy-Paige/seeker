@@ -26,7 +26,7 @@
     %div{:class => "action"}
       - if current_user&.admin?
         %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning width_block special_text"
-        %div= link_to 'Delete Document', @document, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-danger width_block special_text"
+        %div= button_to 'Delete Document', @document, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-danger width_block special_text"
         = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info width_block special_text"
 
   %div{:class => "gap2"}

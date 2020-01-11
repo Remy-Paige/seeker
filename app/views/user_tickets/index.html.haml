@@ -12,6 +12,6 @@
       %h4
         Status:
         = UserTicket::STATUS_TYPES[user_ticket.status]
-      = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-default"
-      = link_to 'Edit', edit_user_ticket_path(user_ticket), :class => "btn btn-default"
-      = link_to 'Delete', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"
+      = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-info special_text"
+      = link_to 'Edit', edit_user_ticket_path(user_ticket), :class => "btn btn-info special_text"
+      = button_to 'Delete', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning special_text", :form_class=>'inline_style'

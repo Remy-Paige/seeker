@@ -5,7 +5,7 @@ class QueriesController < ApplicationController
   # GET /queries
   # GET /queries.json
   def index
-    @queries = Query.all
+    redirect_to '/search'
   end
 
   def replace_query
@@ -80,15 +80,17 @@ class QueriesController < ApplicationController
   # GET /queries/1
   # GET /queries/1.json
   def show
+    redirect_to '/search'
   end
 
   # GET /queries/new
   def new
-    @query = Query.new
+    redirect_to '/search'
   end
 
   # GET /queries/1/edit
   def edit
+    redirect_to '/search'
   end
 
   # POST /queries

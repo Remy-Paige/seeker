@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   resources :queries
   post 'save_query' => 'queries#save_query'
+  post 'replace_query' => 'queries#replace_query'
 
   resources :collections do
     member do

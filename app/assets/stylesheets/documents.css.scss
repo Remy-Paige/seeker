@@ -27,7 +27,16 @@
 .alternating{
   background: #fff6b3;
 }
-
+form.select_child_delete_document_button input {
+  background-color: transparent;
+  color: #007bff;
+  padding: 0;
+  border: 0px;
+}
+form.select_child_delete_document_button input:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
 
 //show
 .document_header_grid {

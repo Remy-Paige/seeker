@@ -5,7 +5,8 @@
                     languages: locals[:languages].to_json,
                     countries: locals[:countries].to_json,
                     report_types: locals[:report_types].to_json,
-                    query: locals[:query]
+                    query: locals[:query],
+                    query_id: locals[:query_id]
                 } do %>
   <!--main form-->
   <div v-for="(option, index) in query.options">
@@ -25,7 +26,16 @@
     </div>
   </div>
 
-  <button class="btn btn-primary btn-search btn-lg"  v-on:click="submitToSearch" >Search</button>
+
+  <button class="btn btn-info btn-search2 special_text"  v-on:click="submitToSearch" >Run Query</button>
+  <br>
+  <form format="js" action="/replace_query" accept-charset="UTF-8" data-remote="true" method="post">
+    <input name="utf8" type="hidden" value="✓">
+    <input type="hidden" name="query" id="query" v-bind:value="this.$store.getters.getQueryString">
+    <%== '<input type="hidden" name="collection" id="collection" value=' + locals[:collection].name + '>' %>
+
+    <input type="submit" name="commit" value="Save Query" class="btn btn-info btn-save_query special_text">
+  </form>
 
 <% end %>
 

@@ -33,11 +33,20 @@
             var keywords = this.$store.getters.getKeywordsByIndex(this.index)
             var makeString = ''
             console.log(keywords)
-            for (var word in keywords) {
+            if(this.field === 'Article' || this.field === 'Section Number') {
+                for (var word in keywords) {
 
-                makeString = makeString + keywords[word]
+                    makeString = makeString + keywords[word] + ' '
+                }
+                this.searchText = makeString
+            } else {
+                for (var word in keywords) {
+
+                    makeString = makeString + keywords[word]
+                }
+                this.searchText = makeString
             }
-            this.searchText = makeString
+
         },
         computed: {
             field: {

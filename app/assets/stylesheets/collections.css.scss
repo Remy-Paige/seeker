@@ -7,7 +7,48 @@
   border-radius: .25rem;
   padding: 1.25rem;
   margin: 0.75rem;
+  width: 300px;
 }
+.query_card {
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+  padding: 1.25rem;
+  margin: 0.75rem;
+}
+.btn-search2 {
+  float: right;
+  position: relative;
+  right: 17.75%;
+}
+.btn-save_query {
+  float: right;
+  position: relative;
+  right: 18.5%;
+  bottom: 24px;
+}
+.btn-delete_query {
+  position: relative;
+  left: 43.7%;
+  bottom: 24px;
+}
+
+@media only screen
+and (min-width : 1224px) {
+  /* Styles */
+  .card_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media only screen
+and (max-width : 600px) {
+  /* Styles */
+  .card_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 
 .results_grid {
   display: grid;

@@ -7,7 +7,7 @@
       = link_to 'New Collection', new_collection_path, :class => "btn btn-info width_block special_text"
   %div{:class => "gap1"}
 
-  %div{:class => 'edit_user_grid'}
+  %div{:class => 'card_grid'}
     - @collections.each do |collection|
       %div{:class => 'collection_card'}
         %h4=collection.name

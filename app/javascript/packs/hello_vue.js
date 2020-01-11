@@ -18,8 +18,7 @@ import Vuex from 'vuex';
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-import App from '../components/app.vue'
-import AutocompleteDropdown from '../components/AutocompleteDropdownFilter.vue'
+
 import QueryLine from '../components/QueryLine.vue'
 
 Vue.use(Vuelidate);
@@ -27,7 +26,6 @@ Vue.use(Vuex);
 Vue.use(VueResource);
 Vue.use(BootstrapVue);
 
-import { mapState } from 'vuex';
 console.log("hello from load");
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -106,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         }
     }
+
     var save_query_element = document.getElementById("save_query_element_0");
     if (save_query_element != null ) {
         new Vue({
@@ -134,10 +133,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
+    const store = new Vuex.Store({
+        state: {
+            message: 'Hello Vuex',
+            fieldOptions: {
+                'Country':'Country',
+                'Language':'Language',
+                'Section Text':'Section Text',
+                'Article':'Article',
+                'Section Number':'Section Number',
+                'Report Type':'Report Type',
+                'Year':'Year',
+                'Cycle':'Cycle'
+            },
+            query: {
+                id: null,
+                options: [{
+                    label_select: 'label',
+                    field: 'Article',
+                    filter: 'includes',
+                    keywords: []
+                },{
+                    label_select: 'label',
+                    field: 'Language',
+                    filter: 'includes',
+                    keywords: []
+                }, {
+                    label_select: 'label',
+                    field: 'Country',
+                    filter: 'includes',
+                    keywords: []
+                }]
+            }
+        },
+        mutations: {
+            updateMessage (state, message) {
+                state.message = message
+            },
+            updateQuery (state, {query}) {
+                state.query = query
+            },
+            removeLineFromQuery (state, {index}) {
+                state.query.options.splice(index, 1)
+            },
+            updateFieldByIndex (state, {index, value}) {
+                state.query.options[index].field = value
+                state.query.options[index].keywords = []
+            },
+            updateFilterByIndex (state, {index, value}) {
+                state.query.options[index].filter = value
+            },
+            updateKeywordsByIndex (state, {index, value}) {
+                state.query.options[index].keywords = value
+            },
+            removeOptionFromFieldOptions (state, {field}) {
+                delete state.fieldOptions[field]
+            },
+            addOptionToFieldOptions (state, {field}) {
+                state.fieldOptions[field] = field
+            },
+        },
+        getters: {
+            getQuery: state => {
+                return state.query
+            },
+            getQueryString: state => {
+                return JSON.stringify({query: state.query})
+            },
+            getFieldOptions: state => {
+                return state.fieldOptions
+            },
+            getOptionsByIndex: (state) => (index) => {
+                return state.query.options[index]
+            },
+            getLabelSelectByIndex: (state) => (index) => {
+                return state.query.options[index].label_select
+            },
+            getFieldByIndex: (state) => (index) => {
+                return state.query.options[index].field
+            },
+            getFilterByIndex: (state) => (index) => {
+                return state.query.options[index].filter
+            },
+            getKeywordsByIndex: (state) => (index) => {
+                return state.query.options[index].keywords
+            }
+        }
+    });
     Vue.http.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    var search_element = document.getElementById("search-form");
 
+
+    //home/advanced_search
+    var search_element = document.getElementById("search-form");
     if (search_element != null ) {
 
         //from the div - set up the JSON
@@ -146,90 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         var countries = JSON.parse(search_element.dataset.countries);
         var report_types = JSON.parse(search_element.dataset.reportTypes);
 
-        const store = new Vuex.Store({
-            state: {
-                message: 'Hello Vuex',
-                fieldOptions: {
-                    'Country':'Country',
-                    'Language':'Language',
-                    'Section Text':'Section Text',
-                    'Article':'Article',
-                    'Section Number':'Section Number',
-                    'Report Type':'Report Type',
-                    'Year':'Year',
-                    'Cycle':'Cycle'
-                },
-                query: {
-                    id: null,
-                    options: [{
-                        label_select: 'label',
-                        field: 'Article',
-                        filter: 'includes',
-                        keywords: []
-                    },{
-                        label_select: 'label',
-                        field: 'Language',
-                        filter: 'includes',
-                        keywords: []
-                    }, {
-                        label_select: 'label',
-                        field: 'Country',
-                        filter: 'includes',
-                        keywords: []
-                    }]
-                }
-            },
-            mutations: {
-                updateMessage (state, message) {
-                    state.message = message
-                },
-                updateQuery (state, {query}) {
-                    state.query = query
-                },
-                removeLineFromQuery (state, {index}) {
-                    state.query.options.splice(index, 1)
-                },
-                updateFieldByIndex (state, {index, value}) {
-                    state.query.options[index].field = value
-                    state.query.options[index].keywords = []
-                },
-                updateFilterByIndex (state, {index, value}) {
-                    state.query.options[index].filter = value
-                },
-                updateKeywordsByIndex (state, {index, value}) {
-                    state.query.options[index].keywords = value
-                },
-                removeOptionFromFieldOptions (state, {field}) {
-                    delete state.fieldOptions[field]
-                },
-                addOptionToFieldOptions (state, {field}) {
-                    state.fieldOptions[field] = field
-                },
-            },
-            getters: {
-                getQuery: state => {
-                    return state.query
-                },
-                getFieldOptions: state => {
-                    return state.fieldOptions
-                },
-                getOptionsByIndex: (state) => (index) => {
-                    return state.query.options[index]
-                },
-                getLabelSelectByIndex: (state) => (index) => {
-                    return state.query.options[index].label_select
-                },
-                getFieldByIndex: (state) => (index) => {
-                    return state.query.options[index].field
-                },
-                getFilterByIndex: (state) => (index) => {
-                    return state.query.options[index].filter
-                },
-                getKeywordsByIndex: (state) => (index) => {
-                    return state.query.options[index].keywords
-                }
-            }
-        });
+
 
         const app = new Vue({
             el: search_element,

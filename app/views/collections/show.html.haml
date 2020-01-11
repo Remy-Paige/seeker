@@ -5,17 +5,16 @@
   %h3 Description:
   %p= @collection.description
   %div{:class => "gap1"}
-  %h4 Queries:
+  %h3 Query:
   -@queries.each do |query|
-    %div{:class => ''}
+    %div{:class => 'query_card'}
       - params = ActiveSupport::JSON.decode(query.query)
-      = render 'shared/query_display', locals: {query: params['query'], languages: @vue_languages, countries: @countries, report_types: @report_types}
-      = link_to 'Run Query', submit_search_path(params), :class => "btn btn-info"
-      = button_to 'Delete', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning"
+      = render 'shared/query_display', locals: {query: params['query'], query_id: query.id, collection: @collection, languages: @vue_languages, countries: @countries, report_types: @report_types}
+      = button_to 'Delete Query', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning btn-delete_query"
 
 
   %div{:class => "gap1"}
-  %h4 Sections:
+  %h3 Sections:
   %div{:class => "gap1"}
   %div{:class => "document_header_grid"}
     -# filter box options
@@ -27,5 +26,5 @@
   %div
     - @sections.each do |section|
       = render 'shared/section_display', locals: {display_type: 'collections#show', section: section }
-%div{:id => 'sticky', :class => "btn btn-primary"}
-  Jump to Top
+%b-button{:id => 'sticky', :class => "btn btn-info"}
+  %a{:href => '#', :style => 'color: white;'}Jump to Top

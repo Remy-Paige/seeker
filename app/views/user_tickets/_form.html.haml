@@ -1,3 +1,29 @@
+:css
+  label {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    line-height: 1.2;
+    display: block;
+  }
+  .comment_box {
+    width: 27.2em;
+    height: 6em;
+  }
+  .ticket_document_header_grid {
+    display: grid;
+    grid-template-columns: 0px 100px 300px
+  }
+  .ticket_document_card {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: .25rem;
+    padding: 15px;
+    width: 435px;
+  }
+  .line_break {
+    overflow-wrap: break-word;
+  }
+
 = simple_form_for @user_ticket, defaults: { input_html: { class: 'block' } } do |f|
   - if @user_ticket.errors.any?
     #error_explanation
@@ -5,33 +31,43 @@
       %ul
         - @user_ticket.errors.full_messages.each do |msg|
           %li= msg
-  %h4= current_user.email
-  -#something about if statements doesnt work here
+
+  = f.input :subject, placeholder: 'Subject', as: :select, include_blank: false, collection: [['meta-data error', 'meta-data error'], ['sectioning error','sectioning error'], ['document request','document request'], ['other','other']], input_html: { class: 'form-control ', style: "width: auto;" }
   - if @document_id == nil
-    = f.input :link, placeholder: 'Link'
+    = f.input :link, placeholder: 'Link to Document'
   - if @document_id != nil
-    %h4
-      Document reference number:
-      = @document_id
+    %label{:class => 'select optional'}
+      Document
+    - doc = Document.find(@document_id)
+    %div{:class => "ticket_document_header_grid ticket_document_card"}
+      %div{:class => "label"}
+        URL
+      %div{:class => "line_break"}= link_to doc.url.to_s, doc.url, target: :_blank
+
+      %div{:class => "label"}
+        Country
+      %div{:class => ""}= doc.country
+
+      %div{:class => "label"}
+        Type
+      %div{:class => ""}= Document::DOCUMENT_TYPES[doc.document_type]
+
+      %div{:class => "label"}
+        Year
+      %div{:class => "ifo"}= doc.year
   - if @section_uid != nil
-    %h4
-      Section reference number:
-      = @section_uid
+    %label{:class => 'select optional'}
+      Section
+    - section = Section.where('document_id = ' + doc.id.to_s + ' AND section_uid = \'' + @section_uid + '\'').first
+    %div{:class => "ticket_document_card"}
+      - section.article_paragraph != '' ? text = ', Article: ' + section&.article_paragraph : text = ''
+
+      = 'Section Number: ' + section.section_number + " " + text
+      %br
+      = section.section_name
   = f.hidden_field :document_id, :value => @document_id
   = f.hidden_field :section_uid, :value => @section_uid
-  = f.input :subject, placeholder: 'Subject', as: :select, include_blank: false, collection: [['meta-data error', 'meta-data error'], ['sectioning error','sectioning error'], ['document request','document request'], ['other','other']], input_html: { class: 'form-control ', style: "width: auto;" }
-  = f.input :comment, placeholder: 'Comment', input_html: { class: 'comment_box block' }
-  %div{:class => "actions form-action-padding"}
-    = f.submit 'Save'
 
-    -# t.string   "name"
-    -# t.string   "email"
-    -# t.string   "link"
-    -## t.text     "comment"
-    -## t.integer  "status"
-    -## t.integer  "admin_id"
-    -## t.datetime "created_at",     null: false
-    -## t.datetime "updated_at",     null: false
-    -## t.string   "subject"
-    -## t.string   "section_number"
-    -## t.integer  "document_id"
+  = f.input :comment, placeholder: 'Comment', input_html: { class: 'comment_box' }
+  %div{:class => "actions form-action-padding"}
+    = f.submit 'Save', :class => 'btn btn-info special_text'

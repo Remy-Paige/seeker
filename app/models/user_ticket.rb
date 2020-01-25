@@ -15,7 +15,6 @@ class UserTicket < ActiveRecord::Base
 
   SUBJECT_TYPES = ['meta-data error', 'sectioning error', 'document request', 'other']
 
-  validates :comment, presence: true
 
   def claim(user)
 
@@ -23,6 +22,16 @@ class UserTicket < ActiveRecord::Base
       self.status = 1
       self.save
       user.user_tickets << self
+    end
+  end
+
+  def unclaim(user)
+
+    if self.status == 1
+      self.status = 0
+      self.save
+      user.user_tickets.delete self
+      user.reload
     end
   end
 

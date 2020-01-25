@@ -1,43 +1,100 @@
-%div{:class => "centre"}
-  %h3 Displaying Ticket
+:css
 
-  %h4
-    Subject:
-    = @user_ticket.subject
-  %h4
-    Email:
-    = @user_ticket.email
-  %h4
-    Created at:
-    = @user_ticket.created_at
-  %h4
-    Status:
-    = @user_ticket.status == 0 ? 'UnManaged' : 'Open'
-  %h4
+  .ticket_header_grid {
+    display: grid;
+    grid-template-columns: 20px 125px 435px
+  }
+  .ticket_document_card {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: .25rem;
+    padding: 15px;
+    width: 435px;
+  }
+  .ticket_document_header_grid {
+    display: grid;
+    grid-template-columns: 0px 100px 300px
+  }
+  .info2 {
+    grid-column-start: 3;
+    padding-top: 0.2rem;
+  }
+%div{:class => "centre"}
+  %div{:class => "gap1"}
+  %h1 Displaying Ticket
+  %div{:class => "gap1"}
+  %div{:class => "ticket_header_grid"}
+
+    %div{:class => "label"}
+      %h4 Subject
+    %div{:class => "info2"}
+      %h5= @user_ticket.subject
+
+    - if current_user.admin?
+      %div{:class => "label"}
+        %h4 User Email
+      %div{:class => "info"}= @user_ticket.email
+
+    %div{:class => "label"}
+      %h4 Created at
+    %div{:class => "info"}= @user_ticket.created_at.strftime("%d/%m/%Y")
+
+    %div{:class => "label"}
+      %h4 Status
+    %div{:class => "info"}= @user_ticket.status == 0 ? 'Unmanaged' : 'Open'
+
     - if @user_ticket.link != nil
-      Link:
-      = link_to @user_ticket.link.to_s, @user_ticket.link, target: :_blank
-  %h4
+      %div{:class => "label"}
+        %h4 Link
+      %div{:class => "info"}= link_to @user_ticket.link.to_s, @user_ticket.link, target: :_blank
     - if @user_ticket.document_id != nil
-      Document Reference Number:
-      = @user_ticket.document_id
-  %h4
-    - if @user_ticket.document_id != nil
-      Section Number:
-      = @user_ticket.section_number
-  %h4
-    comments:
-  = @user_ticket.comment
-  %br
-  %br
-  %br
+      %div{:class => "label"}
+        %h4{:style => "margin-top: 16px;"} Document
+      - doc = Document.find(@user_ticket.document_id)
+      %div{:class => "info"}
+        %div{:class => "ticket_document_header_grid ticket_document_card", :style => 'display: grid;'}
+          %div{:class => "label"}
+            URL
+          %div{:class => "line_break"}= link_to doc.url.to_s, doc.url, target: :_blank
+
+          %div{:class => "label"}
+            Country
+          %div{:class => ""}= doc.country
+
+          %div{:class => "label"}
+            Type
+          %div{:class => ""}= Document::DOCUMENT_TYPES[doc.document_type]
+
+          %div{:class => "label"}
+            Year
+          %div{:class => "ifo"}= doc.year
+
+    - if @user_ticket.section_uid != nil
+      %div{:class => "label"}
+        %h4{:style => "margin-top: 16px;"} Section
+      - section = Section.where('document_id = ' + doc.id.to_s + ' AND section_uid = \'' + @user_ticket.section_uid + '\'').first
+      %div{:class => "info"}
+        %div{:class => "ticket_document_card"}
+          - section.article_paragraph != '' ? text = ', Article: ' + section&.article_paragraph : text = ''
+
+          = 'Section Number: ' + section.section_number + " " + text
+          %br
+          = section.section_name
+    %div{:class => "gap1"}
+    %div{:class => "gap1"}
+    %div{:class => "label"}
+      %h4 Comments
+    %div{:class => "info"}
+      = @user_ticket.comment
+
+  %div{:class => "gap1"}
   - if @user_ticket.status == 0 && current_user.admin?
-    = link_to 'Claim Ticket', claim_user_ticket_path(@user_ticket), :class => "btn btn-default"
+    = link_to 'Claim Ticket', claim_user_ticket_path(@user_ticket), :class => "btn btn-info special_text"
   - if @user_ticket.status == 1 && current_user.admin?
-    = link_to 'Mark Resolved', resolve_user_ticket_path(@user_ticket), :class => "btn btn-default"
+    = link_to 'Mark Resolved', resolve_user_ticket_path(@user_ticket), :class => "btn btn-infor special_text"
   - if @user_ticket.link != nil && current_user.admin?
-    = link_to 'Create New Document', new_document_path, :class => "btn btn-info", target: :_blank
+    = link_to 'Create New Document', new_document_path, :class => "btn btn-info special_text", target: :_blank
   - if @user_ticket.document_id != nil
-    = link_to 'View Sectioning', document_path(@user_ticket.document_id), :class => "btn btn-default", target: :_blank
+    = link_to 'View Sectioning', document_path(@user_ticket.document_id), :class => "btn btn-info special_text", target: :_blank
   - if @user_ticket.document_id != nil && current_user.admin?
-    = link_to 'Edit Sections', edit_section_separation_document_path(@user_ticket.document_id), :class => "btn btn-default", target: :_blank
+    = link_to 'Edit Sections', edit_section_separation_document_path(@user_ticket.document_id), :class => "btn btn-info special_text", target: :_blank
+  %div{:class => "gap1"}

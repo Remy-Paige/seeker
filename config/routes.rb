@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     member do
       get 'claim'
       get 'resolve'
+      get 'unclaim'
     end
   end
 

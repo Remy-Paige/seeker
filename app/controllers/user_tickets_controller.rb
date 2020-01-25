@@ -47,6 +47,14 @@ class UserTicketsController < ApplicationController
     redirect_to user_tickets_path
   end
 
+  # GET /user_tickets/1/claim
+  def unclaim(current_user)
+    user_ticket = UserTicket.find(params[:id])
+    user_ticket.unclaim(current_user)
+
+    redirect_to user_tickets_path
+  end
+
   def resolve
     user_ticket = UserTicket.find(params[:id])
     user_ticket.resolve

@@ -1,0 +1,15 @@
+%h4
+  = locals[:user_ticket].subject
+%h5
+  Status:
+  = UserTicket::STATUS_TYPES[locals[:user_ticket].status]
+%h5
+  Created on:
+  = locals[:user_ticket].created_at.strftime("%d/%m/%Y")
+- if locals[:type] == 'claimed'
+  = link_to 'View', user_ticket_path(locals[:user_ticket]), :class => "btn btn-info special_text"
+  = link_to 'Mark Resolved', resolve_user_ticket_path(locals[:user_ticket]), :class => "btn btn-info special_text"
+  = link_to 'Return to Unmanaged', unclaim_user_ticket_path(locals[:user_ticket]), :class => "btn btn-warning special_text", :style => 'margin-top: 5px; width: 198px;'
+- else
+  = link_to 'View', user_ticket_path(locals[:user_ticket]), :class => "btn btn-info special_text"
+  = link_to 'Claim Ticket', claim_user_ticket_path(locals[:user_ticket]), :class => "btn btn-info special_text"

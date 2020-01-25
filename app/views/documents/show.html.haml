@@ -24,8 +24,8 @@
     %div{:class => "info"}= @document.year
 
     %div{:class => "action"}
+      %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning width_block special_text"
       - if current_user&.admin?
-        %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-warning width_block special_text"
         %div= button_to 'Delete Document', @document, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-danger width_block special_text"
         = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-info width_block special_text"
 
@@ -51,19 +51,19 @@
             - if section.section_number =~ re1
               %a{:class => 'level1', :href=>"#" + section.section_uid}
                 = section.section_number
-              %div{:class => "name"}
+              %div{:class => "name_toc"}
                 %a{:class => 'level1', :href=>"#" + section.section_uid}
                   = section.section_name
             - elsif section.section_number =~ re2
               %a{:class => 'level2', :href=>"#" + section.section_uid}
                 = section.section_number
-              %div{:class => "name"}
+              %div{:class => "name_toc"}
                 %a{:class => 'level2', :href=>"#" + section.section_uid}
                   = section.section_name
             - elsif section.section_number =~ re3
               %a{:class => 'level3', :href=>"#" + section.section_uid}
                 = section.section_number
-              %div{:class => "name"}
+              %div{:class => "name_toc"}
                 %a{:class => 'level3', :href=>"#" + section.section_uid}
                   = section.section_name
           - prev_na = section.section_name

@@ -38,8 +38,8 @@
     %br
 
   %div
-    - section.article_paragraph ? text = 'Article: ' + section&.article_paragraph : text = ''
-    %h4= section.document.country.to_s + ', Section Number: ' + section.section_number + ", " + text
+    - section.article_paragraph != '' ? text = ', Article: ' + section&.article_paragraph : text = ''
+    %h4= section.document.country.to_s + ', Section Number: ' + section.section_number + "" + text
 
     %h5= section.section_name
 

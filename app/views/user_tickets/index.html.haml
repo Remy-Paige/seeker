@@ -1,17 +1,22 @@
 %div{:class => "centre"}
-  - if !current_user.admin?
-    = link_to 'New Ticket', new_user_ticket_path, :class => "btn btn-info"
-  %h3 Listing tickets
-  %div{:class => "user_tickets_grid"}
+  %div{:class => "gap1"}
+  %h1 User Tickets
+  %div{:class => "document_header_grid"}
+    -# filter box options
+    %div{:class => "action"}
+      - if !current_user.admin?
+        = link_to 'New Ticket', new_user_ticket_path, :class => "btn btn-info width_block special_text"
+  %div{:class => "gap1"}
 
-  - @user_tickets.each do |user_ticket|
-    %div{:class => "ticket left"}
-      %h4
-        Subject:
-        = user_ticket.subject
-      %h4
-        Status:
-        = UserTicket::STATUS_TYPES[user_ticket.status]
-      = link_to 'Show', user_ticket_path(user_ticket), :class => "btn btn-info special_text"
-      = link_to 'Edit', edit_user_ticket_path(user_ticket), :class => "btn btn-info special_text"
-      = button_to 'Delete', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning special_text", :form_class=>'inline_style'
+  %div{:class => 'card_grid'}
+    - @user_tickets.each do |user_ticket|
+      %div{:class => "ticket left collection_card"}
+        %h4
+          = user_ticket.subject
+        %h5
+          Status:
+          = UserTicket::STATUS_TYPES[user_ticket.status]
+        %p=user_ticket.comment
+        = link_to 'View', user_ticket_path(user_ticket), :class => "btn btn-info special_text"
+        = link_to 'Edit', edit_user_ticket_path(user_ticket), :class => "btn btn-info special_text"
+        = button_to 'Delete', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning special_text", :form_class=>'inline_style'

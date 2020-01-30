@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
 
   def index
-    redirect_to advanced_path
+    redirect_to search_path
   end
 end

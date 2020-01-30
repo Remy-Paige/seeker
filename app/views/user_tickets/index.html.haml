@@ -1,11 +1,9 @@
 %div{:class => "centre"}
   %div{:class => "gap1"}
-  %h1 User Tickets
-  %div{:class => "document_header_grid"}
-    -# filter box options
-    %div{:class => "action"}
-      - if !current_user.admin?
-        = link_to 'New Ticket', new_user_ticket_path, :class => "btn btn-info width_block special_text"
+  %div
+    %h1{:style => 'display: inline'} User Tickets
+    = link_to 'New Ticket', new_user_ticket_path, :class => "btn btn-info width_block special_text", :style => 'float: right; width: 225px; margin-top: 6px;'
+
   %div{:class => "gap1"}
 
   %div{:class => 'card_grid'}

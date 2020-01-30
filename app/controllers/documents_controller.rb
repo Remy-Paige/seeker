@@ -127,7 +127,7 @@ class DocumentsController < ApplicationController
   def destroy
     @document.destroy
     respond_to do |format|
-      format.html { redirect_to documents_url, notice: 'Document was successfully destroyed.' }
+      format.html { redirect_to documents_url, notice: 'Document was successfully deleted.' }
       format.json { head :no_content }
     end
   end
@@ -164,6 +164,7 @@ class DocumentsController < ApplicationController
 
     @languages = Language.all
     @collections = current_user&.collections
+    @search_results_number = @search_results.length
     @search_results = @search_results.paginate(page: params[:page], per_page: 10)
     render :search_results
   end

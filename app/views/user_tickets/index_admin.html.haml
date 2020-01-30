@@ -1,6 +1,38 @@
+:css
+  .legend {
+    width: auto;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    background-color: #d3d3d340;
+    padding: 7px;
+    float: right;
+  }
+  .legbox {
+    width: 25px;
+    height: 25px;
+    border-radius: 0.25rem;
+    margin: 3px;
+  }
+  .legtext {
+    margin-top: 3.5px;
+  }
+  .fresh {
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+  }
 %div{:class => "centre"}
   %div{:class => "gap1"}
-  %h1 My Claimed Tickets
+  %div
+    %h1{:style => 'display: inline'} My Claimed Tickets
+    %div{:class => 'legend'}
+      %span{:class => 'legtext'} Older than 28 days:
+      %span{:class => 'old legbox'}
+      %span{:class => 'legtext'} Older than 14 days:
+      %span{:class => 'medium legbox'}
+      %span{:class => 'legtext'} Older than 7 days:
+      %span{:class => 'new legbox'}
+      %span{:class => 'legtext'} New:
+      %span{:class => 'fresh legbox'}
   %div{:class => "gap1"}
 
   %div{:class => 'card_grid'}

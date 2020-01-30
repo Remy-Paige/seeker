@@ -1,3 +1,10 @@
+:css
+  .comment_box {
+    width: 27.2em;
+    height: 6em;
+    border-radius: 3px;
+    border: 1px #b6b6b3 solid;
+  }
 = simple_form_for(@collection, defaults: { input_html: { class: 'documents_form' } }) do |f|
   - if @collection.errors.any?
     #error_explanation
@@ -8,7 +15,8 @@
 
   .form-inputs
     = f.input :name, placeholder: 'Name'
-    = f.input :description, placeholder: 'Description', input_html: { class: 'comment_box block' }
+    %label{ :class =>"string ", :for=>"description"} Description
+    = f.text_area :description, placeholder: 'Description', class: 'comment_box block'
   .form-actions
     %br
     = f.button :submit, :class => 'btn btn-info special_text'

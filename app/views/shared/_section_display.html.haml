@@ -45,9 +45,10 @@
 
   %div
     - if locals[:display_type] != 'collections#show' or locals[:display_type] == 'documents#search_results'
-      = Document::DOCUMENT_TYPES[section.document.document_type]
-      = section.document.year
-      = section.document.cycle.ordinalize + ' cycle'
+      %div{:style => 'font-style: italic'}
+        = Document::DOCUMENT_TYPES[section.document.document_type]
+        = section.document.year
+        = section.document.cycle.ordinalize + ' cycle'
       %div{:class => 'language_span'}
         - section.language_sections&.sort_by(&:strength)&.each do |relation|
           %div{:class => 'language_box'}

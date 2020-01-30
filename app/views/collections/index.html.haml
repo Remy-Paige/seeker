@@ -1,10 +1,8 @@
 %div{:class => "centre"}
   %div{:class => "gap1"}
-  %h1 Your Collections
-  %div{:class => "document_header_grid"}
-    -# filter box options
-    %div{:class => "action"}
-      = link_to 'New Collection', new_collection_path, :class => "btn btn-info width_block special_text"
+  %div
+    %h1{:style => 'display: inline'} Your Collections
+    = link_to 'New Collection', new_collection_path, :class => "btn btn-info special_text", :style => 'float: right; width: 225px; margin-top: 6px;'
   %div{:class => "gap1"}
 
   %div{:class => 'card_grid'}

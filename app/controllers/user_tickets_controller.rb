@@ -48,7 +48,7 @@ class UserTicketsController < ApplicationController
   end
 
   # GET /user_tickets/1/claim
-  def unclaim(current_user)
+  def unclaim
     user_ticket = UserTicket.find(params[:id])
     user_ticket.unclaim(current_user)
 
@@ -104,7 +104,7 @@ class UserTicketsController < ApplicationController
   def destroy
     @user_ticket.destroy
     respond_to do |format|
-      format.html { redirect_to user_tickets_url, notice: 'User ticket was successfully destroyed.' }
+      format.html { redirect_to user_tickets_url, notice: 'User ticket was successfully deleted.' }
       format.json { head :no_content }
     end
   end

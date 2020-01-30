@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :authenticate_admin, except: [:show]
 
   def index
-    @users = User.where("admin is false")
+    @users = User.where("admin is not true")
     @admins = User.where("admin is true")
 
   end
@@ -24,7 +24,7 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
     respond_to do |format|
-      format.html { redirect_to users_path, notice: 'User was successfully destroyed.' }
+      format.html { redirect_to users_path, notice: 'User was successfully deleted.' }
       format.json { head :no_content }
     end
   end
@@ -36,7 +36,7 @@ class UsersController < ApplicationController
     if current_user.admin?
       redirect_to :controller => 'users', :action => 'index'
     else
-      redirect_to :controller => 'documents', :action => 'advanced_search'
+      redirect_to :controller => 'documents', :action => 'search_form'
     end
   end
 
@@ -56,7 +56,7 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       #params.fetch(:user, {})
-      params.require(:user).permit(:name, :email,:admin, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :admin, :password, :password_confirmation)
     end
 
     def authenticate_admin

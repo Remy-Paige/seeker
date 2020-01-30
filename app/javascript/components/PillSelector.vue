@@ -31,7 +31,7 @@
         <div></div>
         <div class="width_100_plus_toggle">
             <span v-for="(item, index) in selectedElements" >
-                <div class="pill">
+                <div class="">
                     {{item}}
                     <span v-on:click="removeElement(item)"><i class="fas fa-times-circle"></i></span>
                 </div>
@@ -191,11 +191,16 @@
                     return optionText.match(this.element.toUpperCase().replace(/\s+/g, '.+'))
                 }).sort(this.elements[0])
             },
-            redGreenObject: function () {
-                return {
-                    'red_pill': this.filter == 'excludes',
-                    'green_pill': this.filter == 'includes',
-                    'pill': this.filter == ''
+            includes () {
+                var filter = this.$store.getters.getFilterByIndex(this.index)
+                if (filter === 'includes') {
+                    return true
+                }
+            },
+            excludes () {
+                var filter = this.$store.getters.getFilterByIndex(this.index)
+                if (filter === 'excludes') {
+                    return true
                 }
             }
         }

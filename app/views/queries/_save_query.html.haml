@@ -1,12 +1,12 @@
 %div{:class => 'save_query', :id => 'save_query_element_0'}
-  %b-button{'v-b-toggle.collapse-0' => true, :variant=>"outline-dark", :class=>"", :style => "color: #212529; font-size: 1.25em; box-shadow: 0 0 0 0"}
+  %b-button{'v-b-toggle.collapse-0' => true, :variant=>"outline-dark", :class=>"", :style => " font-size: 1.25em; box-shadow: 0 0 0 0; margin-top: 6px;"}
     Add Query to Collection
     %span.when-opened
       %i.fas.fa-chevron-down
     %span.when-closed
       %i.fas.fa-chevron-right
 
-  %b-collapse{:id=>"collapse-0", :class=>"collection_box"}
+  %b-collapse{:id=>"collapse-0", :class=>"collection_box", :style => "width:260px;"}
     - if @collections.length == 0
       %div{:class => ''}
         = link_to 'Create Collection', new_collection_path, :class => "btn btn-outline-dark collection_btn", :style => 'border-radius: 0px;'

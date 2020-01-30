@@ -1,11 +1,11 @@
 %div{:class => "centre"}
   %div{:class => "gap1"}
-  %h1 Query Results
+  %div{:class => 'search_results_header_grid'}
+    %h1 Query Results
+    - if user_signed_in?
+      %div{:class => 'save_query_container'}
+        = render 'queries/save_query',  locals: {query: ActiveSupport::JSON.encode(params) , collections: @collections}
   %div{:class => "gap1"}
-  - if user_signed_in?
-    %div{:class => 'save_query_container'}
-      = render 'queries/save_query',  locals: {query: ActiveSupport::JSON.encode(params) , collections: @collections}
-
   %div
     - if @search_results.blank?
       %div{:class => 'result'}
@@ -15,7 +15,15 @@
         %br
         = "Contact the administrator if you believe there is a problem."
     - else
+      %div{:class => 'gap1'}
+      - if params[:page] != nil
+        %h5{:class => 'search_results_number'}= 'Showing ' + ((params[:page].to_i * 10)-9).to_s + ' to ' + (params[:page].to_i * 10).to_s + ' of ' + @search_results_number.to_s + ' results'
+      - else
+        %h5{:class => 'search_results_number'}= 'Showing ' + 1.to_s + ' to ' + 10.to_s + ' of ' + @search_results_number.to_s + ' results'
       - @search_results.each do |section, details|
         = render 'shared/section_display', locals: {display_type: 'documents#search_results', section: section, details: details }
 
-      = will_paginate(@search_results)
+      %div{:class => 'gap1'}
+      %div{:class => 'flickr_pagination'}
+        = will_paginate(@search_results)
+      %div{:class => 'gap1'}

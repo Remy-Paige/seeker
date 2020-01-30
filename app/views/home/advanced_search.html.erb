@@ -27,6 +27,7 @@
                 } do %>
   <h1 class="main-heading">Query Builder</h1>
   <!--main form-->
+  <p class="field-help-text">If you don't want to use one of the provided filters, just leave it blank</p>
   <div v-for="(option, index) in query.options">
     <query-line
         v-on:updateroot="updateRoot"

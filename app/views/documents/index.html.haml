@@ -1,10 +1,8 @@
 %div{:class => "centre"}
   %div{:class => "gap1"}
-  %h1 All Documents
-  %div{:class => "document_header_grid"}
-    -# filter box options
-    %div{:class => "action"}
-      = link_to 'New Document', new_document_path, {:class => "btn btn-info width_block special_text", :id => ''} if current_user&.admin?
+  %div
+    %h1{:style => 'display: inline'} All Documents
+    = link_to 'New Document', new_document_path, {:class => "btn btn-info width_block special_text", :id => '', :style => 'float: right; width: 225px; margin-top: 6px;'} if current_user&.admin?
   %div{:class => "gap1"}
 
   -#users do not see unparsed documents or actions, and may not be signed in (& saftey)

@@ -7,7 +7,7 @@
                    :placeholder="placeholder"
                    v-model="searchText1"
             >
-            and
+            to
             <input
                    class="half_width_100_plus_toggle"
                    type="text"
@@ -96,7 +96,7 @@
     }
 
     .half_width_100_plus_toggle {
-        width: 35%;
+        width: 35.2%;
     }
 
     p {

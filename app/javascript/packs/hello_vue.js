@@ -60,7 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
         data() {
             return {
                 name: 'BootstrapVue',
-                show: true
+                show: true,
+                localShow: true,
+                showDismissibleAlert: true
             }
         },
         watch: {
@@ -75,6 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             dismissed() {
                 console.log('Alert dismissed')
+            }
+        }
+    })
+    DismissibleAlert
+    var DismissibleAlert =   new Vue({
+        el: '#DismissibleAlert',
+        data() {
+            return {
+                name: 'BootstrapVue',
+                show: true
             }
         }
     })

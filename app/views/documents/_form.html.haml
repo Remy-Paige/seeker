@@ -1,3 +1,11 @@
+:css
+  .make_width {
+    width: 340px;
+    display: block;
+  }
+  .unset {
+    all: unset;
+  }
 = simple_form_for @document, defaults: { input_html: { class: 'block' } } do |f|
   - if @document.errors.any?
     #error_explanation
@@ -9,10 +17,10 @@
     %h4
       = link_to 'Original Document', @document.url, target: '_blank'
   - else
-    = f.input :url, placeholder: 'URL of document', as: :url, input_html: { :pattern => "https?://.+" }
-  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries, input_html: { class: 'form-control ', style: "width: auto;" }
-  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types, input_html: { class: 'form-control ', style: "width: auto;" }
-  = f.input :year, placeholder: 'Year'
-  = f.input :cycle, placeholder: 'Cycle (1, 2, 3, ...)'
+    = f.input :url, placeholder: 'URL of document', as: :url, input_html: { :pattern => "https?://.+", class: 'make_width' }
+  = f.input :country_id, placeholder: 'Country of Origin', as: :select, include_blank: false, collection: @countries, input_html: { class: 'form-control make_width' }
+  = f.input :document_type, placeholder: 'Document type', as: :select, include_blank: false, collection: @document_types, input_html: { class: 'form-control make_width' }
+  = f.input :year, placeholder: 'YYYY'
+  = f.input :cycle, placeholder: '2'
   %div{:class => "actions form-action-padding"}
     = f.submit 'Save', class: "btn btn-info special_text"

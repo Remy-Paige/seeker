@@ -31,7 +31,7 @@
         <div></div>
         <div class="width_100_plus_toggle">
             <span v-for="(item, index) in selectedElements" >
-                <div class="">
+                <div class="pill" v-bind:class="{ red_pill: excludes, green_pill: includes }">
                     {{item}}
                     <span v-on:click="removeElement(item)"><i class="fas fa-times-circle"></i></span>
                 </div>
@@ -195,12 +195,16 @@
                 var filter = this.$store.getters.getFilterByIndex(this.index)
                 if (filter === 'includes') {
                     return true
+                } else {
+                    return false
                 }
             },
             excludes () {
                 var filter = this.$store.getters.getFilterByIndex(this.index)
                 if (filter === 'excludes') {
                     return true
+                } else {
+                    return false
                 }
             }
         }
@@ -226,10 +230,10 @@
         position: relative;
     }
     .red_pill {
-        background-color: red;
+        background-color: #fb6949 !important;
     }
     .green_pill {
-        background-color: green;
+        background-color: #01c290 !important;
     }
 
     .pill {

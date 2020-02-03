@@ -67,12 +67,13 @@
         },
         watch: {
             searchText: function () {
-                if(this.filter === 'between'){
-                    this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: [this.searchText1, this.searchText2]})
-                } else {
-                    this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: [this.searchText]})
-                }
-
+                this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: [this.searchText]})
+            },
+            searchText1: function () {
+                this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: [this.searchText1, this.searchText2]})
+            },
+            searchText2: function () {
+                this.$store.commit('updateKeywordsByIndex', {index: parseInt(this.index, 10), value: [this.searchText1, this.searchText2]})
             },
             filter: function() {
                 if(this.filter === 'between'){

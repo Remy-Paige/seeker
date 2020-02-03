@@ -78,10 +78,22 @@ module SearchGenerator
     # the _ to ' ' is there because of dropdowns - they were only sending the first word.
     # But this changed with the upgrade to vue so thats no longer needed
     def logical_queries(query_type, filter_type, keyword)
-
+      field_report_type_sym = :report_type
+      # from document model
+      document_types = ['State Report', 'Committee of Experts Report', 'Committee of Ministers Recommendation']
       if filter_type == :all or keyword == []
         return {}
+      elsif query_type == field_report_type_sym
+      #   report type
+        keyword.map! do |word|
+          document_types.index(word)
+        end
+        search = Hash.new
+        search[query_type] = keyword
+        output = {terms: search}
+        return output
       else
+        # country and language
         # map! edits the og array
         keyword.map! do |word|
           if word.include? "_"
@@ -93,7 +105,8 @@ module SearchGenerator
 
         search = Hash.new
         search[query_type] = keyword
-        {terms: search}
+        output = {terms: search}
+        return output
       end
     end
 
@@ -155,6 +168,7 @@ module SearchGenerator
       field_article_paragraph_sym = :article_paragraph
       field_country_sym = :country
       field_report_type_sym = :report_type
+
       field_language_sym = :language
       field_year_sym = :year
       field_cycle_sym = :cycle
@@ -164,6 +178,7 @@ module SearchGenerator
       # :language from front end will be changed to :medium_language if its seen
       logical_queries = [field_country_sym, field_report_type_sym, :medium_language]
 
+      include_filter_type = [filter_include_sym, :between, :greater_than, :less_than, :only]
       # these arrays contain the text_search, section_number, article_paragraph queries
       # they need to be surrounded by a dis_max thing, like this # must_arr.push({dis_max:{queries: text_arr}})
       # includes (text) and excludes (must not text) arrays are separate
@@ -231,7 +246,7 @@ module SearchGenerator
             must_not_arr.append(logical_queries(query_type, filter_type, keyword))
           end
 
-        elsif filter_type == filter_include_sym
+        elsif  include_filter_type.include?(filter_type)
 
           if query_type == field_text_search_sym
             #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array elastic search complains

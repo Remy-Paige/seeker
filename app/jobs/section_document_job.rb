@@ -130,12 +130,14 @@ class SectionDocumentJob
           if processed_line =~ section_number_regex
             write_to_log('hit processed_line =~ section_number_regex')
             check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_content, prev_page, prev_thing)
-
+            write_to_log('passed make')
             # new old thing
             prev_content = ''
             prev_chapter = prev_chapter
             prev_section_number = processed_line.match(section_number_regex)[0]
             prev_section_name = line.slice(line.index(/[A-Za-z]/)..-1)
+            write_to_log(prev_section_name)
+            write_to_log('passed line 138')
             prev_article = 0
             prev_paragraph = 0
             prev_page = current_page
@@ -211,6 +213,7 @@ class SectionDocumentJob
     LanguageParserJob.perform_in(60, document.id)
 
   rescue StandardError => e
+    write_to_log(e)
     logger.info 'Failure'
     document.status = 1
     document.save

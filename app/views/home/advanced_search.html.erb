@@ -30,7 +30,6 @@
   <p class="field-help-text">If you don't want to use one of the provided filters, just leave it blank</p>
   <div v-for="(option, index) in query.options">
     <query-line
-        v-on:updateroot="updateRoot"
         :index="index.toString()"
         :option="option"
         :languages="languages"

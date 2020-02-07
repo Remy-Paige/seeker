@@ -163,7 +163,7 @@ module SearchGenerator
       filter_include_sym = :includes
       filter_exclude_sym = :excludes
       # database fields - see section model
-      field_text_search_sym = :text_search
+      field_text_search_sym = :section_text
       field_section_number_sym = :section_number
       field_article_paragraph_sym = :article_paragraph
       field_country_sym = :country
@@ -251,14 +251,12 @@ module SearchGenerator
           if query_type == field_text_search_sym
             #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array elastic search complains
             text_search_present = true
-            keyword&.each do |word|
               # not good results
-              text_arr.append({match:{"content":{query: word,boost:10,operator:"and"}}})
-              text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search"}}})
-              text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search2"}}})
-              text_arr.append({match:{"content.analyzed":{query: word,boost:1,operator:"and",analyzer:"searchkick_search",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
-              text_arr.append({match:{"content.analyzed":{"query": word,boost:1,operator:"and",analyzer:"searchkick_search2",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
-            end
+            text_arr.append({match:{"content":{query: keyword,boost:10,operator:"and"}}})
+            text_arr.append({match:{"content.analyzed":{query: keyword,boost:10,operator:"and",analyzer:"searchkick_search"}}})
+            text_arr.append({match:{"content.analyzed":{query: keyword,boost:10,operator:"and",analyzer:"searchkick_search2"}}})
+            text_arr.append({match:{"content.analyzed":{query: keyword,boost:1,operator:"and",analyzer:"searchkick_search",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
+            text_arr.append({match:{"content.analyzed":{"query": keyword,boost:1,operator:"and",analyzer:"searchkick_search2",fuzziness:1,prefix_length:0,max_expansions:3,fuzzy_transpositions:true}}})
           elsif query_type == field_section_number_sym
             keyword&.each do |word|
               if word != ""
@@ -267,8 +265,17 @@ module SearchGenerator
               end
             end
           elsif query_type == field_article_paragraph_sym
+            subparagraph_search_regex = /^.*[\.].*[\.][a-zA-Z]/
             keyword&.each do |word|
-              if word != ""
+              word = word.strip! || word
+              # resiliancy for if the sectioning process didn't pick up the subparagraphs
+              if word =~ subparagraph_search_regex
+                text_search_present = true
+                pattern = /[a-zA-Z][\.]/
+                new_word = word.reverse.sub(pattern, '').reverse
+                text_arr.append({match:{"article_paragraph.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
+                text_arr.append({match:{"article_paragraph.word_start":{query:new_word,operator:"and",analyzer:"searchkick_word_search"}}})
+              elsif word != ""
                 text_search_present = true
                 text_arr.append({match:{"article_paragraph.word_start":{query:word,boost:10,operator:"and",analyzer:"searchkick_word_search"}}})
               end
@@ -281,13 +288,13 @@ module SearchGenerator
           end
         end
 
-        if must_not_text_search_present
-          must_not_arr.append(dis_max:{queries: must_not_text_arr})
-        end
-        if text_search_present
-          must_arr.append(dis_max:{queries: text_arr})
-        end
+      end
 
+      if must_not_text_search_present
+        must_not_arr.append(dis_max:{queries: must_not_text_arr})
+      end
+      if text_search_present
+        must_arr.append(dis_max:{queries: text_arr})
       end
 
       output = {

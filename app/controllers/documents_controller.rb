@@ -19,9 +19,8 @@ class DocumentsController < ApplicationController
   # GET /documents/
   # GET /documents/.json
   def show
-    # reconstruct a temporary section from parts
     @languages = Language.all
-    @sections = @document.sections
+    @sections = @document.sections.sort_by(&:page_number)
 
     render "documents/show"
   end

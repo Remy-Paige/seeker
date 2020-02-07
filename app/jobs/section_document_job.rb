@@ -23,6 +23,7 @@ class SectionDocumentJob
       prev_section_name = ''
       prev_article = 0
       prev_paragraph = 0
+      prev_subparagraph = ''
 
       prev_thing = ''
 
@@ -56,6 +57,7 @@ class SectionDocumentJob
         chapter_regex = /^chapter\d/
         article_regex = /^article\d/
         paragraph_regex = /^(.|)paragraph\d/
+        subparagraph_regex = /^(.|)[a-f][\.]/
 
         page_number_regex = /^(.|)pagenumber:\d/
 
@@ -111,8 +113,8 @@ class SectionDocumentJob
             write_to_log('hit processed_line =~ chapter_regex and !exceptions_check')
             # prev_chapter, prev_article, prev_paragraph
 
-            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_content, prev_page, prev_thing)
-
+            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph, prev_content, prev_page, prev_thing)
+            prev_subparagraph = ''
 
             # new old thing
             prev_content = ''
@@ -129,8 +131,9 @@ class SectionDocumentJob
 
           if processed_line =~ section_number_regex
             write_to_log('hit processed_line =~ section_number_regex')
-            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_content, prev_page, prev_thing)
+            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph, prev_content, prev_page, prev_thing)
             write_to_log('passed make')
+            prev_subparagraph = ''
             # new old thing
             prev_content = ''
             prev_chapter = prev_chapter
@@ -147,8 +150,8 @@ class SectionDocumentJob
           end
           if processed_line =~ article_regex and !exceptions_check
             write_to_log('hit processed_line =~ article_regex and !exceptions_check')
-            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_content, prev_page, prev_thing)
-
+            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph,prev_content, prev_page, prev_thing)
+            prev_subparagraph = ''
             # new old thing
             prev_content = ''
             prev_chapter = prev_chapter
@@ -164,8 +167,8 @@ class SectionDocumentJob
 
           if processed_line =~ paragraph_regex
             write_to_log('hit processed_line =~ paragraph_regex')
-            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_content, prev_page, prev_thing)
-
+            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph,prev_content, prev_page, prev_thing)
+            prev_subparagraph = ''
             # new old thing
             prev_content = ''
             prev_chapter = prev_chapter
@@ -178,13 +181,28 @@ class SectionDocumentJob
             create_section = true
           end
 
+          if line =~ subparagraph_regex and prev_thing == 'paragraph'
+            write_to_log(line)
+            write_to_log('hit line =~ subparagraph_regex')
+            check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph,prev_content, prev_page, prev_thing)
+
+            # new old thing
+            prev_content = ''
+            prev_chapter = prev_chapter
+            prev_section_number = prev_section_number
+            prev_section_name = prev_section_name
+            prev_article = prev_article
+            prev_subparagraph = '.' +  line[0,3].scan(/[a-f]/).first
+            prev_page = current_page
+            prev_thing = 'paragraph'
+            create_section = true
+
+          end
+
         end
+        prev_content += line
         # this should only happen if a section was not created because the line should be the section name
-        if create_section
-          create_section = false
-        else
-          prev_content += line
-        end
+
 
         prev_line = processed_line
       end
@@ -220,7 +238,7 @@ class SectionDocumentJob
     raise e
   end
 
-  def check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_content, prev_page, prev_thing)
+  def check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph, prev_content, prev_page, prev_thing)
 
     if prev_thing == 'preamble'
       # chapter, section_number, section_name, article_paragraph
@@ -239,9 +257,13 @@ class SectionDocumentJob
       write_to_log('thing: ' + prev_thing)
       save_section(document,prev_chapter, prev_section_number, prev_section_name,prev_article.to_s, prev_content, prev_page)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_section_number + 'section name: ' + prev_section_name + 'article paragraph: ' + prev_article.to_s + 'content: '+ prev_content)
-    elsif prev_thing == 'paragraph'
+    elsif prev_thing == 'paragraph' and prev_subparagraph == ''
       write_to_log('thing: ' + prev_thing)
       save_section(document,prev_chapter, prev_section_number, prev_section_name,prev_article.to_s + '.' + prev_paragraph.to_s, prev_content, prev_page)
+      write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_section_number + 'section name: ' + prev_section_name + 'article paragraph: ' + prev_article.to_s + '.' + prev_paragraph.to_s + 'content: '+ prev_content)
+    elsif prev_thing == 'paragraph' and prev_subparagraph != ''
+      write_to_log('thing: ' + prev_thing)
+      save_section(document,prev_chapter, prev_section_number, prev_section_name,prev_article.to_s + '.' + prev_paragraph.to_s + prev_subparagraph, prev_content, prev_page)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_section_number + 'section name: ' + prev_section_name + 'article paragraph: ' + prev_article.to_s + '.' + prev_paragraph.to_s + 'content: '+ prev_content)
     end
 

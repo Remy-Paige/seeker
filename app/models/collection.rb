@@ -62,7 +62,7 @@ class Collection < ActiveRecord::Base
       country = Country.find(document.country_id)
       section = document.sections.where("section_uid = '" + relation.section_uid.to_s + "'").first
       File.open('export.txt', 'a') {
-          |file| file.write('URL: ' + document.url.to_s + "\n" + 'type: ' + Document::DOCUMENT_TYPES[document.document_type].to_s + "\n" + 'year: ' + document.year.to_s + "\n" + 'cycle: ' + document.cycle.to_s + "\n" + 'country: ' + country.name.to_s + "\n" + 'section name: ' + section.section_name.to_s + 'section number: ' + section.section_number.to_s + "\n" + "\n")
+          |file| file.write('URL: ' + document.url.to_s + "\n" + 'type: ' + Document::DOCUMENT_TYPES[document.document_type].to_s + "\n" + 'year: ' + document.year.to_s + "\n" + 'cycle: ' + document.cycle.to_s + "\n" + 'country: ' + country.name.to_s + "\n" + 'section name: ' + section.section_name.to_s + "\n" + 'section number: ' + section.section_number.to_s + "\n" + 'article.paragraph:' + section.article_paragraph.to_s + "\n" + "\n")
       }
     end
 
@@ -74,7 +74,7 @@ class Collection < ActiveRecord::Base
     country = Country.find(document.country_id)
 
     File.open('export.txt', 'w') {
-        |file| file.write('URL: ' + document.url.to_s + "\n" + 'type: ' + Document::DOCUMENT_TYPES[document.document_type].to_s + "\n" + 'year: ' + document.year.to_s + "\n" + 'cycle: ' + document.cycle.to_s + "\n" + 'country: ' + country.name.to_s + "\n" + 'section name: ' + section.section_name.to_s + 'section number: ' + section.section_number.to_s + "\n" + "\n")
+        |file| file.write('URL: ' + document.url.to_s + "\n" + 'type: ' + Document::DOCUMENT_TYPES[document.document_type].to_s + "\n" + 'year: ' + document.year.to_s + "\n" + 'cycle: ' + document.cycle.to_s + "\n" + 'country: ' + country.name.to_s + "\n" + 'section name: ' + section.section_name.to_s + "\n" + 'section number: ' + section.section_number.to_s + "\n" + 'article.paragraph:' + section.article_paragraph.to_s + "\n" + "\n")
     }
   end
 

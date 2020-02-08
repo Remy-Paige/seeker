@@ -5,28 +5,35 @@
                     languages: @languages.to_json,
                     countries: @countries.to_json,
                     report_types: @report_types.to_json,
+                    errors: [],
                     query: {
                         "id": NIL,
                         "options": [{
                             "label_select": 'label',
                             "field": 'Article',
                             "filter": 'includes',
+                            "error": false,
                             "keywords": []
                         },{
                             "label_select": 'label',
                             "field": 'Language',
                             "filter": 'includes',
+                            "error": false,
                             "keywords": []
                         }, {
                             "label_select": 'label',
                             "field": 'Country',
                             "filter": 'includes',
+                            "error": false,
                             "keywords": []
                         }]
                     }
                 } do %>
   <h1 class="main-heading">Query Builder</h1>
   <!--main form-->
+  <div class="error" v-for="(error) in errors">
+    {{ error }}
+  </div>
   <p class="field-help-text">If you don't want to use one of the provided filters, just leave it blank</p>
   <div v-for="(option, index) in query.options">
     <query-line

@@ -111,7 +111,7 @@ module SearchGenerator
     end
 
     def numeric_queries(query_type, filter_type, keyword)
-      if filter_type == :all
+      if filter_type == :all or keyword[0] == '' or keyword[1] == ''
         #do nothing
         return {}
       elsif filter_type == :only

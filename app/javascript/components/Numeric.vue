@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="{ 'form-group--error': $v.$anyError }">
         <div v-if="filter == 'between'">
             <input
                    class="half_width_100_plus_toggle"
@@ -98,6 +98,9 @@
 
     .half_width_100_plus_toggle {
         width: 35.2%;
+    }
+    .form-group--error {
+        background-color: red;
     }
 
     p {

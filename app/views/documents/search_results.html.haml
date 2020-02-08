@@ -16,7 +16,9 @@
         = "Contact the administrator if you believe there is a problem."
     - else
       %div{:class => 'gap1'}
-      - if params[:page] != nil
+      - if @search_results_number < 10
+        %h5{:class => 'search_results_number'}= 'Showing ' + (1).to_s + ' to ' + @search_results_number.to_s + ' of ' + @search_results_number.to_s + ' results'
+      - elsif params[:page] != nil
         %h5{:class => 'search_results_number'}= 'Showing ' + ((params[:page].to_i * 10)-9).to_s + ' to ' + (params[:page].to_i * 10).to_s + ' of ' + @search_results_number.to_s + ' results'
       - else
         %h5{:class => 'search_results_number'}= 'Showing ' + 1.to_s + ' to ' + 10.to_s + ' of ' + @search_results_number.to_s + ' results'

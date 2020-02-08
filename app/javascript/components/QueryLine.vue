@@ -3,7 +3,7 @@
     <!--the update handler is one function as the emit event has all the information needed-->
     <!--[this.emitType, this.index, this.selectedElements]-->
     <div>
-        <div class="query_line">
+        <div class="query_line" v-bind:class="{ line_error: error }">
             <div class="label_select">
                 <div v-if="labelSelect == 'label'" class="send_to_bottom_hack_label"></div>
                 <div v-else class="send_to_bottom_hack"></div>
@@ -44,9 +44,9 @@
             </div>
             <div class="input">
                 <div v-if="selectedField == 'Country'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Select countries to include in search results</p>
-                    <p class="help-text" v-else>Select countries to exclude from search results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'includes'">Select countries to include in search results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else>Select countries to exclude from search results</p>
                     <pill-selector
                             class="width_100"
                             v-on:updateQueryLine="updateMe"
@@ -57,9 +57,9 @@
                     ></pill-selector>
                 </div>
                 <div v-else-if="selectedField == 'Language'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Select languages to include in search results</p>
-                    <p class="help-text" v-else>Select languages to exclude from search results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'includes'">Select languages to include in search results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else>Select languages to exclude from search results</p>
                     <pill-selector
                             class="width_100"
                             v-on:updateQueryLine="updateMe"
@@ -70,9 +70,9 @@
                     ></pill-selector>
                 </div>
                 <div v-else-if="selectedField == 'Report Type'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Select report types to include in search results</p>
-                    <p class="help-text" v-else>Select report types to exclude from search results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'includes'">Select report types to include in search results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else>Select report types to exclude from search results</p>
                     <pill-selector
                             class="width_100"
                             v-on:updateQueryLine="updateMe"
@@ -83,9 +83,9 @@
                     ></pill-selector>
                 </div>
                 <div v-else-if="selectedField == 'Section Text'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Include sections that match a word or phrase in results</p>
-                    <p class="help-text" v-else>Exclude sections that match a word or phrase from results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'includes'">Include sections that match a word or phrase in results</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else>Exclude sections that match a word or phrase from results</p>
                     <query-text
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
@@ -95,9 +95,9 @@
                     ></query-text>
                 </div>
                 <div v-else-if="selectedField == 'Article'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Separate articles to include with spaces</p>
-                    <p class="help-text" v-else>Separate articles to exclude with commas</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'includes'">Separate articles to include with spaces</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else>Separate articles to exclude with commas</p>
                     <query-text
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
@@ -107,9 +107,9 @@
                     ></query-text>
                 </div>
                 <div v-else-if="selectedField == 'Section Number'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'includes'">Separate section or chapter numbers to include with spaces</p>
-                    <p class="help-text" v-else>Separate section or chapter numbers to exclude with commas</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'includes'">Separate section or chapter numbers to include with spaces</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else>Separate section or chapter numbers to exclude with commas</p>
                     <query-text
                             v-on:updateQueryLine="updateMe"
                             :index="this.index"
@@ -119,11 +119,11 @@
                     ></query-text>
                 </div>
                 <div v-else-if="selectedField == 'Year'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'only'">Include documents only from selected year</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'less than'">Include documents released before selected year</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'greater than'">Include documents released after selected year</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'between'">Include documents released between selected years</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'only'">Include documents only from selected year</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'less than'">Include documents released before selected year</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'greater than'">Include documents released after selected year</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'between'">Include documents released between selected years</p>
                     <numeric
                             class="width_100"
                             :filter="selectedFilter"
@@ -134,11 +134,11 @@
                     ></numeric>
                 </div>
                 <div v-else-if="selectedField == 'Cycle'">
-                    <p class="help-text" v-if="selectedFilter == ''">Select a filter</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'only'">Include documents only from selected cycle</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'less than'">Include documents released before selected cycle</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'greater than'">Include documents released after selected cycle</p>
-                    <p class="help-text" v-else-if="selectedFilter == 'between'">Include documents released between selected cycle</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-if="selectedFilter == ''">Select a filter</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'only'">Include documents only from selected cycle</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'less than'">Include documents released before selected cycle</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'greater than'">Include documents released after selected cycle</p>
+                    <p class="help-text" v-bind:class="{ text_error: error }" v-else-if="selectedFilter == 'between'">Include documents released between selected cycle</p>
                     <numeric
                             class="width_100"
                             :filter="selectedFilter"
@@ -151,7 +151,7 @@
                 <div v-else></div>
             </div>
             <div class="gap">
-                <div class="size" v-if="this.index > 2" v-on:click="removeQueryLine"> <span class="remove_filter_label" >Remove Filter</span></div>
+                <div class="size" v-if="this.index > 2" v-on:click="removeQueryLine"> <span class="remove_filter_label" v-bind:class="{ text_error: error }" >Remove Filter</span></div>
             </div>
         </div>
         <div class="break-and-align"></div>
@@ -205,10 +205,19 @@
 
             },
             removeQueryLine(){
+                this.$store.commit('addOptionToFieldOptions', {field: this.$store.getters.getFieldByIndex(this.index)})
                 this.$store.commit('removeLineFromQuery', {index: this.index})
             }
         },
         computed: {
+            error () {
+                var error = this.$store.getters.getErrorByIndex(this.index)
+                if (error === true) {
+                    return true
+                } else {
+                    return false
+                }
+            },
             selectedField: {
                 get () {
                     return this.$store.getters.getFieldByIndex(this.index)
@@ -291,6 +300,14 @@
     }
     .query_select {
         width: 150px;
+    }
+    .line_error {
+        background-color: #dc2c25;
+        border-radius: 0.25rem;
+        padding: 5px;
+    }
+    .text_error {
+        color: white !important;
     }
 
 

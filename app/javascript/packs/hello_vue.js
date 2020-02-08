@@ -350,6 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     }
+                    app.$forceUpdate();
                     if (this.errors.length === 0) {
                         window.location='/submit_search?query='+query_string;
                     }

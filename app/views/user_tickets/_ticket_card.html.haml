@@ -6,6 +6,12 @@
 %h5
   Created on:
   = locals[:user_ticket].created_at.strftime("%d/%m/%Y")
+%div{:class => 'comment_height'}
+  -if user_ticket.comment.length > 150
+    - string = '...'
+  -else
+    -string = ''
+  %p=user_ticket.comment[0..150] + string
 - if locals[:type] == 'claimed'
   = link_to 'View', user_ticket_path(locals[:user_ticket]), :class => "btn btn-info special_text"
   = link_to 'Mark Resolved', resolve_user_ticket_path(locals[:user_ticket]), :class => "btn btn-info special_text"

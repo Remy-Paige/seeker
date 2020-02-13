@@ -68,7 +68,7 @@
             Year
           %div{:class => "ifo"}= doc.year
 
-    - if @user_ticket.section_uid != nil
+    - if @user_ticket.document_id != nil and @user_ticket.section_uid != ''
       %div{:class => "label"}
         %h4{:style => "margin-top: 16px;"} Section
       - section = Section.where('document_id = ' + doc.id.to_s + ' AND section_uid = \'' + @user_ticket.section_uid + '\'').first

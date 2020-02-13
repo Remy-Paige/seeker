@@ -22,6 +22,32 @@
   }
 %div{:class => "centre"}
   %div{:class => "gap1"}
+
+  %div
+    %h1{:style => 'display: inline'} My Tickets
+    = link_to 'New Ticket', new_user_ticket_path, :class => "btn btn-info width_block special_text", :style => 'float: right; width: 225px; margin-top: 6px;'
+
+  %div{:class => "gap1"}
+
+  %div{:class => 'card_grid'}
+    - @my_user_tickets.each do |user_ticket|
+      %div{:class => "ticket collection_card"}
+        %h4
+          = user_ticket.subject
+        %h5
+          Status:
+          = UserTicket::STATUS_TYPES[user_ticket.status]
+        %div{:class => 'comment_height'}
+          -if user_ticket.comment.length > 150
+            - string = '...'
+          -else
+            -string = ''
+          %p=user_ticket.comment[0..150] + string
+        = link_to 'View', user_ticket_path(user_ticket), :class => "btn btn-info special_text"
+        = link_to 'Edit', edit_user_ticket_path(user_ticket), :class => "btn btn-info special_text"
+        = button_to 'Delete', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning special_text", :form_class=>'inline_style'
+
+
   %div
     %h1{:style => 'display: inline'} My Claimed Tickets
     %div{:class => 'legend'}

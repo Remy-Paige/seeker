@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200103005906) do
+ActiveRecord::Schema.define(version: 20200212190745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,6 +87,7 @@ ActiveRecord::Schema.define(version: 20200103005906) do
     t.text     "query"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.text     "feedback"
   end
 
   add_index "queries", ["collection_id"], name: "index_queries_on_collection_id", using: :btree
@@ -128,6 +129,7 @@ ActiveRecord::Schema.define(version: 20200103005906) do
     t.integer  "user_ticket_id"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
+    t.boolean  "manages_owns"
   end
 
   add_index "user_user_tickets", ["user_id"], name: "index_user_user_tickets_on_user_id", using: :btree

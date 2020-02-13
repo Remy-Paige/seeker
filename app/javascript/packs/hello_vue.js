@@ -158,25 +158,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Year':'Year',
                 'Cycle':'Cycle'
             },
+            error_list: {},
             query: {
                 id: null,
                 options: [{
                     label_select: 'label',
                     field: 'Article',
                     filter: 'includes',
-                    error: false,
                     keywords: []
                 },{
                     label_select: 'label',
                     field: 'Language',
                     filter: 'includes',
-                    error: false,
                     keywords: []
                 }, {
                     label_select: 'label',
                     field: 'Country',
                     filter: 'includes',
-                    error: false,
                     keywords: []
                 }]
             }
@@ -199,7 +197,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.query.options[index].filter = value
             },
             updateErrorByIndex (state, {index, value}) {
-                state.query.options[index].error = value
+                state.error_list[index] = value
+            },
+            removeAllErrors (state) {
+                state.error_list = {}
             },
             updateKeywordsByIndex (state, {index, value}) {
                 state.query.options[index].keywords = value
@@ -234,7 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return state.query.options[index].filter
             },
             getErrorByIndex: (state) => (index) => {
-                return state.query.options[index].error
+                if (Object.keys(state.error_list).includes(index)) {
+                    return true
+                } else {
+                    return false
+                }
             },
             getKeywordsByIndex: (state) => (index) => {
                 return state.query.options[index].keywords
@@ -268,23 +273,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             methods: {
-                submitToSearch() {
+                error_fetch() {
+                    //reset errors
                     this.errors = []
-                    for (var x = 0; x < this.query.options.length; x++) {
-                        this.$store.commit('updateErrorByIndex', {index: x, value: false})
-                    }
+                    this.$store.commit('removeAllErrors')
+                    //remake errors
                     var query_string = JSON.stringify(this.query);
                     console.log(query_string)
                     for (var i = 0; i < this.query.options.length; i++) {
                         console.log(this.query.options[i].field);
                         if (this.query.options[i].field === '') {
                             console.log('error')
-                            this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                            this.$store.commit('updateErrorByIndex', {index: i, value: 'Select a field on line ' + (i+1).toString()})
                             this.errors.push('Select a field on line ' + (i+1).toString())
                         }
                         if (this.query.options[i].filter === '') {
                             console.log('error')
-                            this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                            this.$store.commit('updateErrorByIndex', {index: i, value: 'Select a filter on line ' + (i+1).toString()})
                             this.errors.push('Select a filter on line ' + (i+1).toString())
                         }
                         if (this.query.options[i].field === 'Year') {
@@ -292,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 console.log(this.query.options[i].keywords);
                                 if (this.query.options[i].keywords[0] === '' || parseInt(this.query.options[i].keywords[0]) < 1900 || isNaN(this.query.options[i].keywords[0]) || this.query.options[i].keywords[1] === '' || parseInt(this.query.options[i].keywords[1]) < 1900 || isNaN(this.query.options[i].keywords[1])) {
                                     console.log('error')
-                                    this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                                    this.$store.commit('updateErrorByIndex', {index: i, value: 'Year field must be a 4 digit number above 1900'})
                                     this.errors.push('Year field must be a 4 digit number above 1900')
                                 }
                             }
@@ -301,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (this.query.options[i].keywords[0] === '' || parseInt(this.query.options[i].keywords[0]) < 1900 || isNaN(this.query.options[i].keywords[0])) {
                                     console.log(this.query.options[i].keywords)
                                     console.log('error')
-                                    this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                                    this.$store.commit('updateErrorByIndex', {index: i, value: 'Year field must be a 4 digit number above 1900'})
                                     this.errors.push('Year field must be a 4 digit number above 1900')
                                 }
                             }
@@ -311,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 console.log(this.query.options[i].keywords);
                                 if (this.query.options[i].keywords[0] === '' || parseInt(this.query.options[i].keywords[0]) > 99 || isNaN(this.query.options[i].keywords[0]) || this.query.options[i].keywords[1] === '' || parseInt(this.query.options[i].keywords[1]) > 99 || isNaN(this.query.options[i].keywords[1])) {
                                     console.log('error')
-                                    this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                                    this.$store.commit('updateErrorByIndex', {index: i, value: 'Cycle field must be a 1 or 2 digit number'})
                                     this.errors.push('Cycle field must be a 1 or 2 digit number')
                                 }
                             }
@@ -320,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (this.query.options[i].keywords[0] === '' || parseInt(this.query.options[i].keywords[0]) > 99 || isNaN(this.query.options[i].keywords[0])) {
                                     console.log(this.query.options[i].keywords)
                                     console.log('error')
-                                    this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                                    this.$store.commit('updateErrorByIndex', {index: i, value: 'Cycle field must be a 1 or 2 digit number'})
                                     this.errors.push('Cycle field must be a 1 or 2 digit number')
                                 }
                             }
@@ -334,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             console.log(this.query.options[i].keywords)
                             if (this.query.options[i].keywords === '' || this.query.options[i].keywords.length === 0 ) {
                                 console.log('error')
-                                this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                                this.$store.commit('updateErrorByIndex', {index: i, value: 'Section Text field is blank. Add text or remove filter'})
                                 this.errors.push('Section Text field is blank. Add text or remove filter')
                             }
                         }
@@ -344,13 +349,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                 console.log(match)
                                 if (match[0] !== this.query.options[i].keywords[z]) {
                                     console.log('error')
-                                    this.$store.commit('updateErrorByIndex', {index: i, value: true})
+                                    this.$store.commit('updateErrorByIndex', {index: i, value: this.query.options[i].field + 's must be in the form number, number.number or number.number.letter and separated with spaces'})
                                     this.errors.push(this.query.options[i].field + 's must be in the form number, number.number or number.number.letter and separated with spaces')
                                 }
                             }
                         }
                     }
-                    app.$forceUpdate();
+                },
+                submitToSearch() {
+                    this.error_fetch()
+                    var query_string = JSON.stringify(this.query);
                     if (this.errors.length === 0) {
                         window.location='/submit_search?query='+query_string;
                     }
@@ -360,7 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         "label_select": 'select',
                             "field": '',
                             "filter": '',
-                            "error": false,
                             "keywords": []
                     })
                     this.$store.commit('updateQuery', {query: this.query})
@@ -389,7 +396,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             watch: {
+                query: {
+                    handler: function (val, oldVal) {
+                        console.log('watch store query')
+                        this.error_fetch()
+                    },
+                    deep: true
+                },
                 storeQuery: function (newValue) {
+                    console.log('watch store query')
                     this.query = newValue
                 },
             },

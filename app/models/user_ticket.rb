@@ -22,6 +22,19 @@ class UserTicket < ActiveRecord::Base
       self.status = 1
       self.save
       user.user_tickets << self
+
+      ticket_relations = user.user_user_tickets.where('user_ticket_id =' + self.id.to_s)
+      ticket_relations[0].manages_owns = true
+      ticket_relations[0].save
+
+      if ticket_relations[1] != nil
+        ticket_relations[1].manages_owns = false
+        ticket_relations[1].save
+      end
+
+      user.reload
+
+
     end
   end
 
@@ -30,7 +43,14 @@ class UserTicket < ActiveRecord::Base
     if self.status == 1
       self.status = 0
       self.save
-      user.user_tickets.delete self
+
+      ticket_relations = user.user_user_tickets.where('user_ticket_id =' + self.id.to_s)
+      if ticket_relations[0].manages_owns
+        ticket_relations[0].destroy
+      elsif ticket_relations[1] != nil and ticket_relations[1].manages_owns
+        ticket_relations[1].destroy
+      end
+
       user.reload
     end
   end

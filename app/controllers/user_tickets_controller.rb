@@ -8,8 +8,9 @@ class UserTicketsController < ApplicationController
   # GET /user_tickets.json
   def index
     if current_user.admin?
-      @unmanaged_user_tickets = UserTicket.where('status = 0')
-      @open_user_tickets = current_user.user_tickets.where('status = 1').uniq
+      @my_user_tickets = current_user.user_tickets.where('manages_owns = false')
+      @unmanaged_user_tickets = UserTicket.where('status = 0').uniq
+      @open_user_tickets = current_user.user_tickets.where('status = 1 and manages_owns = true').uniq
       render 'user_tickets/index_admin'
     else
       @user_tickets = current_user.user_tickets
@@ -23,15 +24,11 @@ class UserTicketsController < ApplicationController
 
   # GET /user_tickets/new
   def new
-    if current_user.admin?
-      render 'user_tickets/admin_new'
-    else
-      @user_ticket = UserTicket.new
+    @user_ticket = UserTicket.new
 
-      # can be nil
-      @document_id = params[:document_id]
-      @section_uid = params[:section_uid]
-    end
+    # can be nil
+    @document_id = params[:document_id]
+    @section_uid = params[:section_uid]
   end
 
   # GET /user_tickets/1/edit
@@ -72,7 +69,9 @@ class UserTicketsController < ApplicationController
                                   :section_uid => user_ticket_params[:section_uid], :document_id => user_ticket_params[:document_id])
 
     current_user.user_tickets << @user_ticket
-
+    ticket_relation = current_user.user_user_tickets.where('user_ticket_id =' + @user_ticket.id.to_s).first
+    ticket_relation.manages_owns = false
+    ticket_relation.save
     respond_to do |format|
       if @user_ticket.save
         format.html { redirect_to @user_ticket, notice: 'User ticket was successfully created.' }

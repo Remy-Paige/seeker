@@ -31,12 +31,15 @@
 
   %div{:class => 'card_grid'}
     - @my_user_tickets.each do |user_ticket|
-      %div{:class => "ticket collection_card"}
+      %div{:class => "ticket2 collection_card"}
         %h4
           = user_ticket.subject
         %h5
           Status:
           = UserTicket::STATUS_TYPES[user_ticket.status]
+        %h5
+          Created on:
+          = user_ticket.created_at.strftime("%d/%m/%Y")
         %div{:class => 'comment_height'}
           -if user_ticket.comment.length > 150
             - string = '...'
@@ -66,16 +69,16 @@
       - now = Time.now
       - days = (now - user_ticket.created_at.to_time)/86400
       - if days > 28
-        %div{:class => "ticket collection_card old"}
+        %div{:class => "ticket2 collection_card old"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'claimed' }
       - elsif days > 14
-        %div{:class => "ticket collection_card medium"}
+        %div{:class => "ticket2 collection_card medium"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'claimed' }
       - elsif days > 7
-        %div{:class => "ticket collection_card new"}
+        %div{:class => "ticket2 collection_card new"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'claimed' }
       - else
-        %div{:class => "ticket collection_card"}
+        %div{:class => "ticket2 collection_card"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'claimed' }
 
   %div{:class => "gap1"}
@@ -87,14 +90,14 @@
       - now = Time.now
       - days = (now - user_ticket.created_at.to_time)/86400
       - if days > 28
-        %div{:class => "ticket collection_card old"}
+        %div{:class => "ticket2 collection_card old"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'unmanaged' }
       - elsif days > 14
-        %div{:class => "ticket collection_card medium"}
+        %div{:class => "ticket2 collection_card medium"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'unmanaged' }
       - elsif days > 7
-        %div{:class => "ticket collection_card new"}
+        %div{:class => "ticket2 collection_card new"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'unmanaged' }
       - else
-        %div{:class => "ticket collection_card"}
+        %div{:class => "ticket2 collection_card"}
           = render 'ticket_card', locals: {user_ticket: user_ticket, type: 'unmanaged' }

@@ -2,6 +2,9 @@
 ## All this logic will automatically be available in application.js.
 ## You can use CoffeeScript in this file: http://coffeescript.org/
 #
+
+
+
 ##off to only fire event once
 #counter = 3
 #field_counter = []

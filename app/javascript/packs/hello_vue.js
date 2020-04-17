@@ -28,10 +28,11 @@ Vue.use(BootstrapVue);
 
 console.log("hello from load");
 
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log("hello from DOM");
-    //get csrf token
-    //submit as part of ajax
+
+    //create nav bar
     var nav =   new Vue({
         el: '#nav',
         data() {
@@ -55,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     })
+
+    //table of contents collapsible?
+    //meaningless functions in watch and methods
     var djwdoij =   new Vue({
         el: '#table_contents_element',
         data() {
@@ -80,7 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     })
-    DismissibleAlert
+
+    //alert box. very delicate, doesnt quite work according to its documentation
     var DismissibleAlert =   new Vue({
         el: '#DismissibleAlert',
         data() {
@@ -90,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     })
+
+    //table of contents collapsible?
     var table_contents_element = document.getElementById("table_of_contents");
     if (table_contents_element != null ) {
         var table_contents_element =   new Vue({
@@ -102,6 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
     }
+
+    //create all save section to collection collapsibles
     var list = document.getElementsByClassName("save_section");
     if (list != null) {
         for (let item of list) {
@@ -117,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    //create save query to collection collapsible
     var save_query_element = document.getElementById("save_query_element_0");
     if (save_query_element != null ) {
         new Vue({
@@ -129,6 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
     }
+
+    //create all show more collapsables
     var liiist = document.getElementsByClassName("show_more");
     if (liiist != null) {
         for (let item of liiist) {
@@ -144,6 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         }
     }
+
+
 
     const store = new Vuex.Store({
         state: {
@@ -246,6 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    //get csrf token
+    //submit as part of ajax
     Vue.http.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
 
@@ -253,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var search_element = document.getElementById("search-form");
     if (search_element != null ) {
 
-        //from the div - set up the JSON
+        //JSONS from the div in views/home/advanced_search and shared/query_display - set up the JSON
         var query = JSON.parse(search_element.dataset.query);
         var languages = JSON.parse(search_element.dataset.languages);
         var countries = JSON.parse(search_element.dataset.countries);
@@ -281,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     var query_string = JSON.stringify(this.query);
                     console.log(query_string)
                     for (var i = 0; i < this.query.options.length; i++) {
+                        //check each field individually
                         console.log(this.query.options[i].field);
                         if (this.query.options[i].field === '') {
                             console.log('error')
@@ -374,9 +391,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             created(){
+                //load in saved JSON
                 this.$store.commit('updateQuery', {query: this.query})
             },
             mounted() {
+                //remove the automatically given fields from the list of fields you can 'add filter'
                 for (var option in this.query.options) {
                     console.log(this.query.options[option].field)
                     this.$store.commit('removeOptionFromFieldOptions', {field: this.query.options[option].field})
@@ -397,6 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             watch: {
                 query: {
+                    //live update the errors. Doesnt work in shared
                     handler: function (val, oldVal) {
                         console.log('watch store query')
                         this.error_fetch()

@@ -9,6 +9,8 @@ class UsersController < ApplicationController
 
   end
 
+  # this is separate from devise
+
   # GET /users/1
   # GET /users/1.json
   # main account page

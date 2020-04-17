@@ -1,60 +1,64 @@
 %div{:class => "centre"}
-  -#TODO: fix javascript bug - new sections cant add languages
-  %h1 Editing sections
-  - full_section = nil
-  - @sections.each do |section|
-    -if section.section_name != 'Full Content'
-    -else
-      - full_section = section
-  %h4 Full Content
-  %div{:class => 'fixed_height_scroll'}= full_section.content
-  %h4 Sections
-  = form_tag update_section_separation_document_path, method: :post do
-    %div{:style => "  display: grid; grid-template-columns:1fr 3fr 1fr;", :id => 'sections_box'}
-      - count = 0
-      - @sections.each do |section|
-        -if section.section_name != 'Full Content'
-          %div{:class => count}
-            chapter
-            = text_field_tag 'section_number' + text, section.chapter
-            %br
-            section number
-            - text = '[' + count.to_s + '][]'
-            %br
-            = text_field_tag 'section_number' + text, section.section_number
-            %br section name
-            = text_field_tag 'section_name' + text, section.section_name
-            %br page number
-            = text_field_tag 'page_number' + text, section.page_number
-            %br article.paragraph
-            = text_field_tag 'page_number' + text, section.article_paragraph
-
-
-          %div{:class => count}
-            = text_area_tag 'content' + text, section.content, :class =>'edit_section_box'
-          %div{:class => count}
-            %div{:class => 'languages', :id => 'languages_' + count.to_s}
-              - count2 = 0
-              - section.language_sections&.each do |relation|
-                %div{:class => 'language_box strength_' + relation.strength.to_s, :id => 'language_box_' + count.to_s + '_' + count2.to_s }
-                  = @languages[relation.language_id-1]
-                  = hidden_field_tag 'language_id' + text, relation.language_id, :id => 'language_id_' + count.to_s + '_' + count2.to_s
-                  = hidden_field_tag 'strength' + text, relation.strength, :id => 'strength_' + count.to_s + '_' + count2.to_s
-                  - if relation.strength != 0
-                    %a{:href=>"#", :class=>"language_confirm_human fas fa-check", :title => 'Confirm that this section mentions this language', :id => 'language_confirm_human_' + count.to_s + '_' + count2.to_s}
-                  %a{:href=>"#", :class=>"language_remove fas fa-times", :title => 'Confirm that this section does not mention this language', :id => 'language_remove_' + count.to_s + '_' + count2.to_s}
-                - count2 = count2 + 1
-            Add Language
-            = select_tag 'blank[]', options_from_collection_for_select(@languages, :id, :name), include_blank: true, :class => 'form-control language', :id => 'language_' + count.to_s
-            - unless section.full_content?
-              = link_to 'Delete Section', '#', class: 'delete_section', id: count, data: { confirm: 'Are you sure? All unsaved changes will be lost' }
-          - count = count + 1
-    %div{:class => 'remove_submit'}= submit_tag 'Save sections'
-  %div= link_to 'Add New Section', '#', id: 'add_section'
-  %div= link_to 'Cancel Editing', documents_path, data: { confirm: 'Are you sure? All unsaved changes will be lost' }
-
-
-%div{:id => 'sticky', :class => "btn btn-primary"}
-  Jump to Top
+  %div{:class => "gap1"}
+  %div{:class => 'search_results_header_grid'}
+    %h1 Under Construction
+-#%div{:class => "centre"}
+-#  %h1 Editing sections
+-#  - full_section = nil
+-#  - @sections.each do |section|
+-#    -if section.section_name != 'Full Content'
+-#    -else
+-#      - full_section = section
+-#  %h4 Full Content
+-#  %div{:class => 'fixed_height_scroll'}= full_section.content
+-#  %h4 Sections
+-#  = form_tag update_section_separation_document_path, method: :post do
+-#    %div{:style => "  display: grid; grid-template-columns:1fr 3fr 1fr;", :id => 'sections_box'}
+-#      - count = 0
+-#      - @sections.each do |section|
+-#        -if section.section_name != 'Full Content'
+-#          %div{:class => count}
+-#            chapter
+-#            = text_field_tag 'section_number' + text, section.chapter
+-#            %br
+-#            section number
+-#            - text = '[' + count.to_s + '][]'
+-#            %br
+-#            = text_field_tag 'section_number' + text, section.section_number
+-#            %br section name
+-#            = text_field_tag 'section_name' + text, section.section_name
+-#            %br page number
+-#            = text_field_tag 'page_number' + text, section.page_number
+-#            %br article.paragraph
+-#            = text_field_tag 'page_number' + text, section.article_paragraph
+-#
+-#
+-#          %div{:class => count}
+-#            = text_area_tag 'content' + text, section.content, :class =>'edit_section_box'
+-#          %div{:class => count}
+-#            %div{:class => 'languages', :id => 'languages_' + count.to_s}
+-#              - count2 = 0
+-#              - section.language_sections&.each do |relation|
+-#                %div{:class => 'language_box strength_' + relation.strength.to_s, :id => 'language_box_' + count.to_s + '_' + count2.to_s }
+-#                  = @languages[relation.language_id-1]
+-#                  = hidden_field_tag 'language_id' + text, relation.language_id, :id => 'language_id_' + count.to_s + '_' + count2.to_s
+-#                  = hidden_field_tag 'strength' + text, relation.strength, :id => 'strength_' + count.to_s + '_' + count2.to_s
+-#                  - if relation.strength != 0
+-#                    %a{:href=>"#", :class=>"language_confirm_human fas fa-check", :title => 'Confirm that this section mentions this language', :id => 'language_confirm_human_' + count.to_s + '_' + count2.to_s}
+-#                  %a{:href=>"#", :class=>"language_remove fas fa-times", :title => 'Confirm that this section does not mention this language', :id => 'language_remove_' + count.to_s + '_' + count2.to_s}
+-#                - count2 = count2 + 1
+-#            Add Language
+-#            = select_tag 'blank[]', options_from_collection_for_select(@languages, :id, :name), include_blank: true, :class => 'form-control language', :id => 'language_' + count.to_s
+-#            - unless section.full_content?
+-#              = button_to("Delete", user_ticket, {:onclick => "return confirm('Are you sure?')", :method => :delete, :remote => true, :class => "btn btn-warning special_text", :form_class=>'inline_style'})
+-#              = link_to 'Delete Section', '#', class: 'delete_section', id: count, data: { confirm: 'Are you sure? All unsaved changes will be lost' }
+-#          - count = count + 1
+-#    %div{:class => 'remove_submit'}= submit_tag 'Save sections'
+-#  %div= link_to 'Add New Section', '#', id: 'add_section'
+-#  %div= link_to 'Cancel Editing', documents_path, data: { confirm: 'Are you sure? All unsaved changes will be lost' }
+-#
+-#
+-#%div{:id => 'sticky', :class => "btn btn-primary"}
+-#  Jump to Top
 
 

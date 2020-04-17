@@ -12,13 +12,13 @@ class Collection < ActiveRecord::Base
   validates :name, presence: true
 
 
-
+  # save a section into a collection
   def self.save_section(params, user)
 
     collection = user.collections.where("name = '" + params[:collection].to_s + "'").first
 
     if collection == nil
-      # caught by controller and creates a flash message
+      # error is caught by controller and creates a flash message
       return 'nil collection'
     end
 
@@ -29,9 +29,10 @@ class Collection < ActiveRecord::Base
     if section_list.length == 0
       # add a new relation
       collection.documents << document
-      # this is why the section number validation doesnt work
 
       # edit the new relation to include the section number
+      # it is done this way because the sections can be deleted and remade, this ensure that
+      # they will always be correctly fetched.
       relation = collection.collection_documents.where("section_uid IS ?", nil).first
       relation.section_uid = params[:section_uid]
       relation.save
@@ -46,6 +47,8 @@ class Collection < ActiveRecord::Base
     relation&.destroy
   end
 
+  # create a file containing information on all the sections in the collection
+  # and allow the user to download it
   # maybe these should go in a service, or in the 2 separate controllers
   def export_collection
     # cant delete the file - so create new at beginning every time
@@ -68,6 +71,8 @@ class Collection < ActiveRecord::Base
 
   end
 
+  # create a file containing information on the section
+  # and allow the user to download it
   def self.export_section(params)
     document = Document.find(params[:document_id])
     section = document.sections.where("section_uid = '" + params[:section_uid].to_s + "'").first
@@ -78,12 +83,14 @@ class Collection < ActiveRecord::Base
     }
   end
 
+  # display a full section to the user, as sections are split into parts if they are too long for elasticsearch
   def construct_sections_from_parts
     section_list = []
 
     # patch together section parts
     self.collection_documents.each do |relation|
       document = Document.find(relation.document_id)
+
       document.sections.group_by(&:section_uid).map do |section_uid, sections|
         document_id = sections.first.document_id
         chapter = sections.first.chapter
@@ -97,6 +104,7 @@ class Collection < ActiveRecord::Base
         content = sections.sort_by(&:section_part).map(&:content).join
         sec = Section.new(id: id, section_uid: section_uid, document_id: document_id, chapter: chapter, section_number: section_number, section_name: section_name,article_paragraph: article_paragraph ,content: content, page_number: page_number)
         # reconstruct language relations
+        # not entirly sure what the if statement is for, sorry
         if relation.section_uid == section_uid
           language_sections&.each do |relation2|
             sec.language_sections << relation2
@@ -109,6 +117,7 @@ class Collection < ActiveRecord::Base
     return section_list
   end
 
+  # used in collection create to enforce unique names
   def self.check_exists(collection_params, user)
     collections = user.collections
     collections.each do |collect|

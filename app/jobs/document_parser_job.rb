@@ -18,13 +18,15 @@ class DocumentParserJob
       logger.info 'text' + document.url_text
 
       begin
+        # start splitting the document into parts
         HexaPDF::CLI.run(args =["split", document.clean_url])
 
+        # disassemble file path
         dir = document.clean_url.split('/')[0...-1].join('/')
         raw_file_path = document.clean_url.chomp('.pdf')
         i = 1
         while true do
-          # count up numbers and turn them into file names that match the hexapdf pattern
+          # count up numbers and turn the path parts and numbers into file names that match the files hexapdf creates
           if i > 999
             number = '_' + i.to_s
           elsif i > 99
@@ -34,9 +36,11 @@ class DocumentParserJob
           else
             number = '_000' + i.to_s
           end
+          # reassemble file path
           part_file_path = raw_file_path + number + '.pdf'
           # if the pdf file exists, process it into a 'one page' text file
           if File.file?(part_file_path)
+            # create text part files from pdf part files
             Docsplit.extract_text(part_file_path, output: dir, ocr: true)
           else
             break
@@ -57,11 +61,9 @@ class DocumentParserJob
       file_name = document.url_text
       #a+ - Read-write, each write call appends data at end of file.
       # Creates a new file for reading and writing if file does not exist.
-      #a+ - Read-write, each write call appends data at end of file.
-      # Creates a new file for reading and writing if file does not exist.
       document_file = File.new(file_name, "a+")
 
-      # 'path'
+      # reassemble text file from parts
       page_number = 1
       while true do
         # count up numbers like before
@@ -80,6 +82,8 @@ class DocumentParserJob
         puts document_page_file_name
 
         # if the file exists, write its contents to the end of the master file
+        #   there might be a bug where if the file is added again,
+        #   the old txt file is not deleted and the material is added onto the end
         # delete both .pdf and .txt part files
         if File.file?(document_page_file_name)
           File.open(document_page_file_name, 'rb') do |input_stream|

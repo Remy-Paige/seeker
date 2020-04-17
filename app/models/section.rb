@@ -18,7 +18,7 @@ class Section < ActiveRecord::Base
   # elasticsearch string length limit is 32766, take caution
   STRING_LEN_LIMIT = 30_000
 
-  # dont forget the callbacks
+  # define elastic search document
   def search_data
     {
       #   the url is for the language parsing not the main search function
@@ -48,8 +48,10 @@ class Section < ActiveRecord::Base
     }
   end
 
+  # used in section document job
   def self.add_section(chapter:, section_number:, section_name:, article_paragraph: ,content:, languages:, strengths:, page_number:)
     section_uid = chapter.to_s + '.' + section_number + '.' + article_paragraph
+    # split full section into parts
     ((content.length / STRING_LEN_LIMIT) + 1).times do |section_part|
       section_start = section_part * STRING_LEN_LIMIT
       section_end = (section_part + 1) * STRING_LEN_LIMIT

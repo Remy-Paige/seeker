@@ -30,7 +30,7 @@
 }
 .edit_user_grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 50px 1fr;
 }
 
 .name {
@@ -46,8 +46,7 @@
   grid-column-start: 4;
 }
 .edit_user_button {
-  position: relative;
-  left: 68px;
+
 }
 .up_button {
   position: relative;

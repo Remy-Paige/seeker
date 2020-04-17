@@ -72,7 +72,7 @@ module SearchGenerator
   # I have no idea why this helps
   class << self
     # logical queries are the ones with a set list of options
-    # we simply need to weed them in or out, instead of scoring them
+    # we simply need to weed them in or out, instead of scoring them, so filter is used
     # use the terms function in the elastic search DSL because we don't need to worry about the analysis of the text
     #
     # the _ to ' ' is there because of dropdowns - they were only sending the first word.
@@ -83,6 +83,7 @@ module SearchGenerator
       document_types = ['State Report', 'Committee of Experts Report', 'Committee of Ministers Recommendation']
       if filter_type == :all or keyword == []
         return {}
+      # empty input safe
       elsif query_type == field_report_type_sym
       #   report type
         keyword.map! do |word|
@@ -94,7 +95,7 @@ module SearchGenerator
         return output
       else
         # country and language
-        # map! edits the og array
+        # map! edits the original array
         keyword.map! do |word|
           if word.include? "_"
             word.gsub!('_', ' ')
@@ -112,7 +113,7 @@ module SearchGenerator
 
     def numeric_queries(query_type, filter_type, keyword)
       if filter_type == :all or keyword[0] == '' or keyword[1] == ''
-        #do nothing
+        #empty input safe
         return {}
       elsif filter_type == :only
         word = Integer(keyword[0])
@@ -159,7 +160,6 @@ module SearchGenerator
     def generate_search_hash(query)
       # TODO: tidy up variable name conventions - query type vs field, filter etc
       # these are here so they're easier to change if things change.
-      # Fuck. Gotta map database fields to front end fields
       filter_include_sym = :includes
       filter_exclude_sym = :excludes
       # database fields - see section model
@@ -174,11 +174,13 @@ module SearchGenerator
       field_cycle_sym = :cycle
 
       numeric_queries = [field_year_sym, field_cycle_sym]
-      # hiding language strengths from users, but keeping it in the backend because I'm lazy
+      # hiding language strengths from users, but keeping it in the backend
       # :language from front end will be changed to :medium_language if its seen
       logical_queries = [field_country_sym, field_report_type_sym, :medium_language]
 
       include_filter_type = [filter_include_sym, :between, :greater_than, :less_than, :only]
+
+
       # these arrays contain the text_search, section_number, article_paragraph queries
       # they need to be surrounded by a dis_max thing, like this # must_arr.push({dis_max:{queries: text_arr}})
       # includes (text) and excludes (must not text) arrays are separate
@@ -192,8 +194,7 @@ module SearchGenerator
 
       # this array is what the text arr gets folded into with the dismax
       must_arr = []
-      # text queries are handled differently to the filter queries and must_not and must_not_text queries
-      # must_not and must_not_text both get folded into must_not
+      # text queries are handled differently to the filter queries, must_not, and must_not_text queries
 
 
       # mark whether to add dis_max
@@ -204,7 +205,7 @@ module SearchGenerator
       query['options'].each do |option|
         option['field'] = option['field'].parameterize.underscore.to_sym
         option['filter'] = option['filter'].parameterize.underscore.to_sym
-        # hiding language strengths from users, but keeping it in the backend because I'm lazy
+        # hiding language strengths from users, but keeping it in the backend
         if option['field'] == field_language_sym
           option['field'] = :medium_language
         end
@@ -223,7 +224,7 @@ module SearchGenerator
         if filter_type == filter_exclude_sym
 
           if query_type == field_text_search_sym
-            #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array es complains
+            #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array elastic search complains
             must_not_text_search_present = true
             keyword&.each do |word|
               must_not_text_arr.append({match:{"content.analyzed":{query: word,boost:10,operator:"and",analyzer:"searchkick_search"}}})
@@ -251,7 +252,6 @@ module SearchGenerator
           if query_type == field_text_search_sym
             #so that we know to append the dismax queries - if we include dis_max in the skeleton with an empty array elastic search complains
             text_search_present = true
-              # not good results
             text_arr.append({match:{"content":{query: keyword,boost:10,operator:"and"}}})
             text_arr.append({match:{"content.analyzed":{query: keyword,boost:10,operator:"and",analyzer:"searchkick_search"}}})
             text_arr.append({match:{"content.analyzed":{query: keyword,boost:10,operator:"and",analyzer:"searchkick_search2"}}})

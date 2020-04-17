@@ -35,7 +35,10 @@ class LanguageParserJob
 
     strengths = [3,2,1]
 
-    # this will do each part
+    # this will do each section
+    # sections usually name the languages they talk about because of the writing style of the reports
+    # but this is a quite naive approach, we could be a lot cleverer about it
+    # Also, language strengths are not used in the front end anymore
     document.sections.each do |section|
       parse_log.info section.section_uid.to_s
       languages.each do |language|
@@ -44,6 +47,7 @@ class LanguageParserJob
           parse_log.info '    strength' + strength.to_s
 
           if strength == 1
+            # perform a strong search
             search_results = strong_search(document, language, section)
             parse_log.info '      length' + search_results.length.to_s
             # if the language is in the section part

@@ -1,3 +1,10 @@
+<style>
+  label {
+    margin-top: 0.4rem;
+    margin-bottom: 0.2rem !important;
+  }
+
+</style>
 <div class="centre">
   <div class="gap1"></div>
   <h2>Edit <%= resource_name.to_s.humanize %></h2>
@@ -13,22 +20,25 @@
           <p>Currently waiting confirmation for: <%= resource.unconfirmed_email %></p>
         <% end %>
 
-        <%= f.input :password, autocomplete: "off", hint: "(leave it blank if you don't want to change it)", required: false %>
+        <%= f.input :password, autocomplete: "off", required: false %>
+        <p class="field-help-text">Leave it blank if you don't want to change it</p>
         <%= f.input :password_confirmation, required: false %>
-        <%= f.input :current_password, hint: "we need your current password to confirm your changes", required: true %>
+        <%= f.input :current_password, required: true %>
+        <p class="field-help-text">We need your current password to confirm your changes</p>
       </div>
-
+      <div class="gap1"></div>
       <div class="form-actions">
+        <%= link_to "Back", :back, :class => "btn btn-info special_text" %>
         <%= f.button :submit, "Update", :class => "btn btn-info special_text" %>
-        <%= link_to "Back", :back, :class => "btn btn-info special_text edit_user_button" %>
         <br>
       </div>
     <% end %>
 
-    <div class = "email">
+    <div></div>
+    <div class = "">
       <p>
         <h3>Unhappy?</h3> <br>
-        <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, :class => "btn btn-warning up_button special_text" %>
+        <%= button_to("Cancel my account", registration_path(resource_name), {:onclick => "return confirm('Are you sure?')", method: :delete, :class => "btn btn-warning up_button special_text"}) %>
       </p>
 
 

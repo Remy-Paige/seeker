@@ -36,8 +36,9 @@ class Document < ActiveRecord::Base
     self.update_attributes(status: 2)
   end
 
+  # display a full section to the user, as sections are split into parts if they are too long for elasticsearch
+  # # if you change this, also change the one in collections. I'm not sure where to refactor the common code to
   def construct_sections_from_parts
-    # if you change this, also change the one in collections. I'm not sure where to refactor the common code to
     self.sections.group_by(&:section_uid).map do |section_uid, sections|
       document_id = sections.first.document_id
       chapter = sections.first.chapter
@@ -57,21 +58,25 @@ class Document < ActiveRecord::Base
 
   end
 
+  # admin testing routes
   def language_parse
     LanguageParserJob.perform_async(self)
   end
 
+  # TODO: remove
   def test_pdf
     TestJob.perform_async(self)
   end
 
+  # admin testing routes
   def resection_document
     SectionDocumentJob.perform_async(self)
   end
 
+  # used in edit section separation
   def remove_sections
     # destroy sections except full section
-    #
+
     # If foo is an object with a to_proc method,
     # then you can pass it to a method as &foo,
     # which will call foo.to_proc and use that as the method's block.
@@ -85,11 +90,11 @@ class Document < ActiveRecord::Base
     end
   end
 
+  # broken - POST method for edit section separation
   def reconstruct_sections(params)
     # create new sections with custom method
     # each section created new - split into section parts in the sections model
 
-    # TODO: validate input
 
     # section uid is created by add section
     params[:section_uid]&.each_key do |key|
@@ -122,6 +127,7 @@ class Document < ActiveRecord::Base
     SectionReindexJob.perform_async
   end
 
+  # one website includes the .pdf and another doesnt, so support is needed for both
   def clean_url
 
     if self.url.include?('.pdf')
@@ -132,6 +138,7 @@ class Document < ActiveRecord::Base
 
   end
 
+  # return file name with .txt at the end.
   def url_text
     self.url_local&.gsub(/\.pdf$/i, '.txt') || self.clean_url&.gsub(/\.pdf$/i, '.txt')
   end

@@ -110,6 +110,7 @@ class DocumentsController < ApplicationController
     end
   end
 
+  # TODO: fix
   def update_section_separation
 
     document = Document.find(params[:id])
@@ -160,6 +161,10 @@ class DocumentsController < ApplicationController
 
   def submit_search
     @search_results = Section.search(SearchGenerator.generate_search_hash(JSON.parse(params['query']))).with_details
+    # extract into model
+    current_user.recent_url = params['query']
+    current_user.save
+
 
     @languages = Language.all
     @collections = current_user&.collections

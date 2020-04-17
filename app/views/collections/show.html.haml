@@ -5,16 +5,22 @@
   %h3 Description:
   %p= @collection.description
   %div{:class => "gap1"}
-  %h3 Query:
-  -@queries.each do |query|
+  -if @queries.length == 0
+    %h5 Save a query into this collection and it will appear here for you to run again and edit.
+  -else
+    %h3 Query:
+  -@queries&.each do |query|
     %div{:class => 'query_card'}
       - params = ActiveSupport::JSON.decode(query.query)
       = render 'shared/query_display', locals: {query: params['query'], query_id: query.id, collection: @collection, languages: @vue_languages, countries: @countries, report_types: @report_types}
-      = button_to 'Delete Query', query, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning btn-delete_query"
+      = button_to('Delete Query', query, {:onclick => "return confirm('Are you sure?')", :method => :delete, :class => "btn btn-warning btn-delete_query"})
 
 
   %div{:class => "gap1"}
-  %h3 Sections:
+  -if @sections.length == 0
+    %h5 Sections that you save into this collection will appear here.
+  -else
+    %h3 Sections:
   %div{:class => "gap1"}
   %div{:class => "document_header_grid"}
     -# filter box options
@@ -24,7 +30,7 @@
 
 
   %div
-    - @sections.each do |section|
+    - @sections&.each do |section|
       = render 'shared/section_display', locals: {display_type: 'collections#show', section: section }
 %b-button{:id => 'sticky', :class => "btn btn-info"}
   %a{:href => '#', :style => 'color: white;'}Jump to Top

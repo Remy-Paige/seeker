@@ -10,6 +10,7 @@ class SectionDocumentJob
 
     if Document::DOCUMENT_TYPES[document.document_type] == 'Committee of Experts Report'
 
+      #                                                                                       remove spaces
       prefix_section = 'report of the committee of experts on the application of the charter'.gsub(/\s/, '')
 
       second_prefix_occurrence = false
@@ -30,19 +31,36 @@ class SectionDocumentJob
       current_page = 1
       prev_page = 1
 
+      section_number_regex = /^\d(\.\d)+\.?/
+      section_number_regex_no_nl = /\d(\.\d)+\.?/
+      chapter_regex = /^chapter\d/
+      article_regex = /^article\d/
+      paragraph_regex = /^(.|)paragraph\d/
+      subparagraph_regex = /^(.|)[a-f][\.]/
+
+      page_number_regex = /^(.|)pagenumber:\d/
+
       content.each_line do |line|
 
         next if line.blank?
 
         processed_line = line.downcase.gsub(/\s/, '')
-        write_to_log('            line:' + processed_line)
 
-        # match start line, digits, end line
+        # increment page number if required. All sections will be saved as the page they first appeared on.
+        # regex: match start line, digits, end line
+        # this line is added in the document parser job
+        #
+        # I'm not sure why both of these functions are here
         page_number = line[/^\d+$/].to_i
         if page_number != nil && page_number > current_page
           current_page = page_number
         end
+        if processed_line =~ page_number_regex
+          current_page = line.scan(/\d/).join('').to_i + 1
+          next
+        end
 
+        # table of contents is bookended by prefix_section text
         # catch when the prefix is split over 2 lines
         lines = prev_line + processed_line
         if lines.include?(prefix_section)
@@ -52,29 +70,16 @@ class SectionDocumentJob
           write_to_log('includes prefix')
         end
 
-        section_number_regex = /^\d(\.\d)+\.?/
-        section_number_regex_no_nl = /\d(\.\d)+\.?/
-        chapter_regex = /^chapter\d/
-        article_regex = /^article\d/
-        paragraph_regex = /^(.|)paragraph\d/
-        subparagraph_regex = /^(.|)[a-f][\.]/
 
-        page_number_regex = /^(.|)pagenumber:\d/
-
+        # chapter check outside of main preamble passed if statement is used
+        # to detect the first chapter after the second bookend line
         if processed_line =~ chapter_regex
           chapter_header_check = true
         else
           chapter_header_check = false
         end
 
-        if processed_line =~ page_number_regex
-          # prev page is the page of the old thing
-          # when a hit occurs, set the new old thing prev page to current page
-          # that way, the page where the section starts is recorded
-          # plus 1 because this hits at the end of the page
-          current_page = line.scan(/\d/).join('').to_i + 1
-          next
-        end
+
 
         if processed_line =~ section_number_regex_no_nl
           # catch "Chapter 2.2 of this report" exception - not a new chapter
@@ -85,13 +90,16 @@ class SectionDocumentJob
           exceptions_check = false
         end
 
-        # when you encounter a new thing, you save the old thing
-
+        # when the first valid chapter is seen after the second book end has passed
+        # mark preamble section
+        # the preamble section will be saved and the next section started within the same loop cycle
+        # as the preamble_passed if statement will start triggering
 
         #  true                     true                          false                         false
         if chapter_header_check and second_prefix_occurrence and !exceptions_check and !preamble_passed
-
+          write_to_log('hit processed_line =~ chapter_regex and !exceptions_check !preamble_passed')
           preamble_passed = true
+          write_to_log('preamble passed = true')
           prev_chapter = 0
           prev_section_number = '0'
           prev_section_name = 'preamble'
@@ -99,12 +107,12 @@ class SectionDocumentJob
           prev_paragraph = 0
           prev_thing = 'preamble'
 
-        #   create the preamble on the next hit
+        #create the preamble on the next hit
         end
 
         # start looking for chapters, section numbers, article, paragraphs
 
-        # whenever we encounter a new thing, we have to check what the old thing was, make the old thing, and then set the new old thing
+        # whenever we encounter a new thing, we have to check what the old thing was, make the old thing, and then set the variables for the new thing
 
         if preamble_passed
 
@@ -132,15 +140,12 @@ class SectionDocumentJob
           if processed_line =~ section_number_regex
             write_to_log('hit processed_line =~ section_number_regex')
             check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph, prev_content, prev_page, prev_thing)
-            write_to_log('passed make')
             prev_subparagraph = ''
             # new old thing
             prev_content = ''
             prev_chapter = prev_chapter
             prev_section_number = processed_line.match(section_number_regex)[0]
             prev_section_name = line.slice(line.index(/[A-Za-z]/)..-1)
-            write_to_log(prev_section_name)
-            write_to_log('passed line 138')
             prev_article = 0
             prev_paragraph = 0
             prev_page = current_page
@@ -182,7 +187,6 @@ class SectionDocumentJob
           end
 
           if line =~ subparagraph_regex and prev_thing == 'paragraph'
-            write_to_log(line)
             write_to_log('hit line =~ subparagraph_regex')
             check_and_make_old_thing(document,prev_chapter,prev_section_number, prev_section_name ,prev_article, prev_paragraph, prev_subparagraph,prev_content, prev_page, prev_thing)
 
@@ -201,9 +205,6 @@ class SectionDocumentJob
 
         end
         prev_content += line
-        # this should only happen if a section was not created because the line should be the section name
-
-
         prev_line = processed_line
       end
 
@@ -242,6 +243,7 @@ class SectionDocumentJob
 
     if prev_thing == 'preamble'
       # chapter, section_number, section_name, article_paragraph
+      # assemble all the fields correctly according to what was seen last
       save_section(document,prev_chapter, prev_chapter.to_s, prev_section_name,'', prev_content, prev_page)
       write_to_log('thing: ' + prev_thing)
       write_to_log('chapter: ' + prev_chapter.to_s + 'section number: ' + prev_chapter.to_s + 'section name: Chapter ' + prev_chapter.to_s + 'article paragraph: '+ 'content: '+ prev_content)
@@ -269,7 +271,6 @@ class SectionDocumentJob
 
   end
 
-  # this used to do something and now it doesnt
   def save_section(document, prev_chapter, prev_section_number, prev_section_name, prev_article_paragraph, prev_content, current_page)
     document.sections.add_section(chapter: prev_chapter, section_number: prev_section_number, section_name: prev_section_name, article_paragraph: prev_article_paragraph, content: prev_content, page_number: current_page, languages: nil, strengths: nil)
   rescue Searchkick::ImportError

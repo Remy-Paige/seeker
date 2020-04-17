@@ -17,4 +17,4 @@
         %p=user_ticket.comment
         = link_to 'View', user_ticket_path(user_ticket), :class => "btn btn-info special_text"
         = link_to 'Edit', edit_user_ticket_path(user_ticket), :class => "btn btn-info special_text"
-        = button_to 'Delete', user_ticket, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning special_text", :form_class=>'inline_style'
+        = button_to("Delete", user_ticket, {:onclick => "return confirm('Are you sure?')", :method => :delete, :remote => true, :class => "btn btn-warning special_text", :form_class=>'inline_style'})

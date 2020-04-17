@@ -17,7 +17,7 @@
 %div{:class => "results_grid"}
   %div{:class => "results_actions right_box"}
     - section.page_number == nil ? number = 0 : number = section.page_number
-    = link_to 'Go to Page ' + number.to_s, section.document.url + '#page=' +  number.to_s, :class => "btn btn-outline-dark right_button width_block", target: :_blank
+    = link_to 'Go to Page (' + number.to_s + ')', section.document.url + '#page=' +  number.to_s, :class => "btn btn-outline-dark right_button width_block", target: :_blank
     %br
 
     - if locals[:display_type] == 'collections#show'

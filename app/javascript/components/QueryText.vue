@@ -30,12 +30,13 @@
             }
         },
         mounted () {
+            //load from JSON
             var keywords = this.$store.getters.getKeywordsByIndex(this.index)
             var makeString = ''
             console.log(keywords)
             if(this.field === 'Article' || this.field === 'Section Number') {
                 for (var word in keywords) {
-
+                    //reassemble string from array
                     makeString = makeString + keywords[word] + ' '
                 }
                 this.searchText = makeString

@@ -8,8 +8,8 @@
 
       %div{:class => alternating ? 'alternating name' : 'name'}= admin&.name
       %div{:class => alternating ? 'alternating email' : 'email'}= admin.email
-      %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to 'Convert Admin to User', convert_to_user_user_path(admin), :data => { :confirm => 'Are you sure?' }
-      %div{:class => alternating ? 'alternating delete' : 'delete'}= button_to 'Delete Admin', admin, :method => :delete, :data => { :confirm => 'Are you sure?' },  :form_class => 'select_child_delete_document_button'
+      %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to('Convert Admin to User', convert_to_user_user_path(admin),{:onclick => "return confirm('Are you sure?')"})
+      %div{:class => alternating ? 'alternating delete' : 'delete'}= button_to('Delete Admin', admin, {:onclick => "return confirm('Are you sure?')", :method => :delete, :form_class => 'select_child_delete_document_button'})
       - alternating ? alternating = false : alternating = true
   %div{:class => 'gap1'}
   %h1{:class => "main_title"} Listing Users
@@ -19,6 +19,6 @@
     - @users&.each do |user|
       %div{:class => alternating ? 'alternating name' : 'name'}= user&.name
       %div{:class => alternating ? 'alternating email' : 'email'}= user.email
-      %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to 'Convert User to Admin', convert_to_admin_user_path(user), :data => { :confirm => 'Are you sure?' }
-      %div{:class => alternating ? 'alternating delete' : 'delete'}= button_to ' Delete User', user, :method => :delete, :data => { :confirm => 'Are you sure?' },  :form_class => 'select_child_delete_document_button'
+      %div{:class => alternating ? 'alternating admin_button' : 'admin_button'}= link_to('Convert User to Admin', convert_to_admin_user_path(user), {:onclick => "return confirm('Are you sure?')"})
+      %div{:class => alternating ? 'alternating delete' : 'delete'}= button_to('Delete User', user, {:onclick => "return confirm('Are you sure?')",:method => :delete,  :form_class => 'select_child_delete_document_button'})
       - alternating ? alternating = false : alternating = true

@@ -26,47 +26,51 @@
     %div{:class => "action"}
       %div= link_to 'Report Document Problem', new_user_ticket_path(:document_id =>@document.id), :class => "btn btn-outline-dark width_block ", :style => 'margin-bottom: 4px;'
       - if current_user&.admin?
-        %div= button_to 'Delete Document', @document, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-outline-dark width_block ", :style => 'margin-bottom: 4px;'
+        %div= button_to('Delete Document', @document, {:onclick => "return confirm('Are you sure?')" ,:method => :delete, :class => "btn btn-outline-dark width_block ", :style => 'margin-bottom: 4px;'})
         = link_to 'Edit Section Separation', edit_section_separation_document_path(@document), :class => "btn btn-outline-dark width_block "
 
   %div{:class => "gap2"}
+  -display = false
+  -@sections.each do |section|
+    -if section.section_name != 'Full Content'
+      -display = true
+  -if display == true
+    %div{:class => '', :id => 'table_contents_element'}
+      %b-button{'v-b-toggle.collapse-1' => true, :variant=>"outline-dark", :class=>"table_contents_header", :style => "font-size: 1.9em;"}
+        Table of Contents
+        %span.when-opened
+          %i.fas.fa-chevron-down
+        %span.when-closed
+          %i.fas.fa-chevron-right
 
-  %div{:class => 'table_of_contents', :id => 'table_contents_element'}
-    %b-button{'v-b-toggle.collapse-1' => true, :variant=>"outline-dark", :class=>"table_contents_header", :style => "font-size: 1.9em; border: 0px; padding-left: 1px; box-shadow: 0 0 0 0"}
-      Table of Contents
-      %span.when-opened
-        %i.fas.fa-chevron-down
-      %span.when-closed
-        %i.fas.fa-chevron-right
-
-    %b-collapse{:id=>"collapse-1", :class=>"mt-2"}
-      %div{:class => "table_of_contents_grid"}
-        -re = /^[0-9]/
-        -re1 = /^[0-9](\.$|$|\s$|\.\s$)/
-        -re2 = /^[0-9]\.[0-9](\.$|$|\s$|\.\s$)/
-        -re3 = /^[0-9]\.[0-9]\.[0-9](\.$|$|\s$|\.\s$)/
-        -prev_na = nil
-        -@sections.each do |section|
-          - if prev_na != section.section_name
-            - if section.section_number =~ re1
-              %a{:class => 'level1', :href=>"#" + section.section_uid}
-                = section.section_number
-              %div{:class => "name_toc"}
+      %b-collapse{:id=>"collapse-1", :class=>"mt-2"}
+        %div{:class => "table_of_contents_grid"}
+          -re = /^[0-9]/
+          -re1 = /^[0-9](\.$|$|\s$|\.\s$)/
+          -re2 = /^[0-9]\.[0-9](\.$|$|\s$|\.\s$)/
+          -re3 = /^[0-9]\.[0-9]\.[0-9](\.$|$|\s$|\.\s$)/
+          -prev_na = nil
+          -@sections.each do |section|
+            - if prev_na != section.section_name
+              - if section.section_number =~ re1
                 %a{:class => 'level1', :href=>"#" + section.section_uid}
-                  = section.section_name
-            - elsif section.section_number =~ re2
-              %a{:class => 'level2', :href=>"#" + section.section_uid}
-                = section.section_number
-              %div{:class => "name_toc"}
+                  = section.section_number
+                %div{:class => "name_toc"}
+                  %a{:class => 'level1', :href=>"#" + section.section_uid}
+                    = section.section_name
+              - elsif section.section_number =~ re2
                 %a{:class => 'level2', :href=>"#" + section.section_uid}
-                  = section.section_name
-            - elsif section.section_number =~ re3
-              %a{:class => 'level3', :href=>"#" + section.section_uid}
-                = section.section_number
-              %div{:class => "name_toc"}
+                  = section.section_number
+                %div{:class => "name_toc"}
+                  %a{:class => 'level2', :href=>"#" + section.section_uid}
+                    = section.section_name
+              - elsif section.section_number =~ re3
                 %a{:class => 'level3', :href=>"#" + section.section_uid}
-                  = section.section_name
-          - prev_na = section.section_name
+                  = section.section_number
+                %div{:class => "name_toc"}
+                  %a{:class => 'level3', :href=>"#" + section.section_uid}
+                    = section.section_name
+            - prev_na = section.section_name
 
   %div{:class => "gap2"}
   - full_section = nil

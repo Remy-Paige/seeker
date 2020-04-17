@@ -2,7 +2,7 @@
   %div{:class => "gap1"}
   %h1 My Profile
   %div{:class => "gap1"}
-  %h2= @user&.name
-  %h2= @user.email
-
+  %h3= @user&.name
+  %h3= @user.email
+  %div{:class => "gap1"}
   =link_to 'edit email or password', edit_user_registration_path, :class => "btn btn-info special_text"

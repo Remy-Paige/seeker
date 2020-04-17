@@ -9,8 +9,15 @@
     - @collections.each do |collection|
       %div{:class => 'collection_card'}
         %h4=collection.name
-        %p=collection.description
+
+        %div{:class => 'comment_height'}
+          -if collection.description !=nil
+            -if collection&.description.length > 95
+              - string = '...'
+            -else
+              -string = ''
+            %div=collection&.description[0..95] + string
         = link_to 'View Items', collection, :class => "btn btn-info special_text"
         = link_to 'Edit', edit_collection_path(collection), :class => "btn btn-info special_text"
         %span
-          = button_to 'Delete', collection, :method => :delete, :data => { :confirm => 'Are you sure?' }, :class => "btn btn-warning special_text", :form_class=>'inline_style'
+          = button_to('Delete', collection,{:onclick => "return confirm('Are you sure?')", :method => :delete,  :class => "btn btn-warning special_text", :form_class=>'inline_style'})

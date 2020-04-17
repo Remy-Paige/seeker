@@ -8,6 +8,9 @@ class QueriesController < ApplicationController
     redirect_to '/search'
   end
 
+  # honestly this should probably not be a full resource but this is easier
+
+  # save query button in collections screen ONLY
   def replace_query
     result = Query.replace_query(params, current_user)
     if result == 'nil collection'
@@ -38,6 +41,7 @@ class QueriesController < ApplicationController
     end
   end
 
+  # add query to collection in search results ONLY
   def save_query
 
     result = Query.save_query(params, current_user)
@@ -128,7 +132,7 @@ class QueriesController < ApplicationController
   def destroy
     @query.destroy
     respond_to do |format|
-      format.html { redirect_to :back, notice: 'Query was successfully deleteded.' }
+      format.html { redirect_to :back, notice: 'Query was successfully deleted.' }
       format.json { head :no_content }
     end
   end

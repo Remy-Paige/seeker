@@ -11,6 +11,11 @@ class User < ActiveRecord::Base
 
   has_many :collections, dependent: :destroy
 
+  def save_recent_query(query, user)
+    user.recent_url = query
+    user.save
+  end
+
   def convert_to_admin
     self.admin = true
     self.save
